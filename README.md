@@ -29,3 +29,11 @@
 |---|---|
 | `index.html` | 웹앱 (HTML 한 파일) |
 | `kiokmasil-offline.html` | 인터넷 없이 여는 버전 (글꼴 포함) |
+
+## 발표 자료 (내려받기)
+
+| 파일 | 내용 |
+|---|---|
+| [pitch-deck.pptx](https://howoo101.github.io/masil/files/pitch-deck.pptx) | 데모데이 피치덱 (5장 시연 영상, 발표자 노트에 대본) |
+| [demo.mp4](https://howoo101.github.io/masil/files/demo.mp4) | 실제 웹 화면 시연 영상 |
+| [photo-flow.png](https://howoo101.github.io/masil/files/photo-flow.png) | 사진이 리포트에 보이는 방식 |
