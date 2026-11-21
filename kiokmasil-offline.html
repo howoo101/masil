@@ -82,6 +82,20 @@ html[data-frame="phone"] .statusbar,html[data-frame="phone"] .homebar,html[data-
 .c-p{font-size:14.5px;color:var(--text-2)}
 .c-note{font-size:12.5px;color:var(--muted)}
 .foot{font-size:12px;color:var(--muted);text-align:center;padding:6px 0 2px}
+.today{gap:10px;border-color:var(--accent-line)}
+.today.quiet-day{border-color:var(--warn-line)}
+.t-title{font-size:20px;font-weight:700;line-height:1.45}
+.t-sub{font-size:13.5px;color:var(--text-2)}
+.rp{display:grid;grid-template-columns:88px minmax(0,1fr);gap:12px;align-items:center;padding:12px;border-radius:12px;background:var(--inset)}
+.rp-b{display:grid;gap:3px;min-width:0}
+.rp-b b{font-size:15px;line-height:1.4}
+.rp-b span{font-size:13px;color:var(--text-2)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips .btn{flex:1 1 auto}
+.sec-h{font-size:13px;font-weight:700;color:var(--muted);margin:10px 2px -4px}
+.reply-q{font-size:13px;color:var(--accent);font-weight:700;padding:0 2px}
+.e-mine{width:132px;height:132px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.e-mine img,.e-mine video{width:100%;height:100%;object-fit:cover;display:block}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:500;font-size:15px;line-height:1.35;text-align:center;text-decoration:none}
 .btn:hover{border-color:#2e3848}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
@@ -1299,10 +1313,58 @@ var Engine = (function () {
     else if (cs === 'declined' || cs === 'withdrawn') h += stoppedCard(el);
     else {
       if (el.paused && el.paused.on) h += '<div class="banner" role="status"><b>기록 일시 중지</b><span>' + esc(el.short) + ' 님이 ' + esc(fmtStamp(el.paused.at)) + '부터 위치 기록을 잠시 꺼 두셨어요. 식사 체크와 사진은 그대로 받아요.</span></div>';
+      if (!W || W.isCurrent) h += todayCard(el);
       if (!A) h += learningCard(el) + postsCard(el, null);
-      else h += verdictCard(el, W) + glanceCard(el, W) + lifeCard(el, W) + radiusCard(el, W) + (plus() ? mapCard(el, W) : lockCard()) + walkCard(el, W) + mealCard(el, W) + goodCard(el, W) + postsCard(el, W) + trendCard(el, A, W);
+      else h += '<h2 class="sec-h">주간 리포트 · 평소와 다를 때만 알려 드려요</h2>' + verdictCard(el, W) + glanceCard(el, W) + lifeCard(el, W) + radiusCard(el, W) + (plus() ? mapCard(el, W) : lockCard()) + walkCard(el, W) + mealCard(el, W) + goodCard(el, W) + postsCard(el, W) + trendCard(el, A, W);
     }
     return h + '<p class="foot">등장인물과 기록은 모두 테스트용 예시예요</p></div>';
+  }
+
+  // 오늘의 한 줄 안심 + 답장 기다리는 사진: 보호자가 매일 여는 이유
+  function upTo(t, hmv) { return t !== S().today || E.toMin(hmv) <= nowMin(); }
+  function todayLine(el) {
+    var t = S().today, day = el.days[t] || {}, ms = day.m || {};
+    var eaten = E.MEALS.filter(function (k) { return ms[k] && upTo(t, ms[k].t); }).map(function (k) { return E.MEAL_NAME[k]; });
+    var places = [], last = null, snap = false;
+    if (day.q !== 'gap') (day.v || []).forEach(function (v) {
+      if (!upTo(t, v.e) || v.p === 'home') return;
+      var n = v.p === 'snap' ? null : E.TYPES[v.p]; if (n && places.indexOf(n) < 0) places.push(n); if (v.p === 'snap') snap = true;
+      if (!last || v.e > last) last = v.e;
+    });
+    E.MEALS.forEach(function (k) { if (ms[k] && upTo(t, ms[k].t) && (!last || ms[k].t > last)) last = ms[k].t; });
+    if (!places.length && (snap || (day.w && day.w.t && upTo(t, day.w.t)))) places.push('바깥나들이');
+    var who = callOf(el) + '는 오늘 ', s;
+    if (eaten.length && places.length) s = who + eaten.join('·') + ' 드시고 ' + places.join('·') + ' 다녀오셨어요';
+    else if (eaten.length) s = who + eaten.join('·') + ' 드셨어요';
+    else if (places.length) s = who + places.join('·') + ' 다녀오셨어요';
+    else s = '';
+    return { text: s, last: last };
+  }
+  function quickTexts(p) { return p.meal ? ['맛있게 드셨네요!', '반찬 좋아 보여요', '저도 같이 먹고 싶어요'] : p.where === 'out' ? ['잘 다녀오셨네요!', '날씨 좋았죠?', '다음엔 같이 가요'] : ['사진 고마워요!', '보고 싶어요', '오늘도 힘내세요']; }
+  function todayCard(el) {
+    var st = S(), t = st.today, yd = E.addDays(t, -1), tl = todayLine(el), nm = nowMin();
+    var recent = vals(el.posts).filter(function (p) { var d = String(p.at).split(' '); return d[0] >= yd && upTo(d[0], d[1] || '00:00'); }).sort(byAt).reverse();
+    var wait = recent.filter(function (p) { return !p.reply; }), done = recent.filter(function (p) { return p.reply; });
+    var quiet = !tl.text, late = quiet && nm >= 11 * 60;
+    var h = '<section class="card today' + (late ? ' quiet-day' : '') + '"><div class="v-top">' +
+      (quiet ? '<span class="badge' + (late ? ' warn' : '') + '">' + (late ? IC.warn : '') + '아직 오늘 소식이 없어요</span>' : '<span class="badge accent">' + IC.check + '오늘도 괜찮으세요</span>') +
+      '<span class="v-when">오늘 ' + E.md(t) + '</span></div>' +
+      '<h2 class="t-title">' + esc(quiet ? callOf(el) + '의 오늘 첫 소식을 기다리고 있어요' : tl.text) + '</h2>' +
+      '<p class="t-sub">' + (tl.last ? '마지막 소식 ' + esc(tl.last) + ' · ' : '') + (late ? '평소 이 시간엔 소식이 있었어요. 안부 전화 한 통 어떠세요?' : '평소와 다른 점이 생기면 바로 알려 드려요') + '</p>' +
+      (late ? '<a class="btn primary block" href="tel:' + esc(el.phone.replace(/-/g, '')) + '">' + IC.phone + '안부 전화하기</a>' : '');
+    if (wait.length) {
+      var p = wait[0], d = String(p.at).split(' '), tag = p.meal ? E.MEAL_NAME[p.meal] + ' 밥상' : p.where === 'out' ? '마실' : '사진';
+      h += '<p class="reply-q">' + esc(callOf(el)) + '가 답장을 기다리세요</p>' +
+        '<div class="rp">' + thumbBtn(p, tag) + '<div class="rp-b"><b>' + (d[0] === t ? '오늘' : '어제') + ' ' + esc(d[1] || '') + ' · ' + esc(tag) + ' 사진</b><span>' +
+        (p.where === 'out' && p.km != null ? '집에서 ' + E.km(p.km) + ' · ' : '') + '한 번 누르면 어르신 화면에 바로 보여요</span></div></div>' +
+        '<div class="chips">' + quickTexts(p).map(function (q) { return '<button type="button" class="btn small" data-act="quick-reply" data-id="' + el.id + '" data-post="' + esc(p.id) + '" data-text="' + esc(q) + '">' + esc(q) + '</button>'; }).join('') + '</div>' +
+        '<button type="button" class="btn block quiet" data-act="reply" data-id="' + el.id + '" data-post="' + esc(p.id) + '">' + IC.cam + '사진·영상으로 답장하기</button>' +
+        (wait.length > 1 ? '<p class="sent">답장 기다리는 사진 ' + (wait.length - 1) + '장 더 · 아래 ‘받은 사진’에 있어요</p>' : '');
+    } else if (done.length) {
+      var r = done[0].reply, rm = (el.inbox || {})[r.msg];
+      h += '<p class="sent">' + IC.check + ' 최근 사진에 모두 답장했어요 · ' + esc(r.by) + ' 님 “' + esc(r.text || '사진') + '” · ' + (rm && rm.seenAt ? '어르신이 보셨어요' : '아직 안 보셨어요') + '</p>';
+    }
+    return h + '</section>';
   }
 
   // 판정 → 근거 → 행동
@@ -1460,7 +1522,8 @@ var Engine = (function () {
     var tag = p.meal ? E.MEAL_NAME[p.meal] + ' 밥상' : p.where === 'out' ? '마실' : '집에서';
     var d = String(p.at).split(' '), cap = E.DOW[E.dow(d[0])] + ' ' + (d[1] || '') + (p.where === 'out' ? (p.km != null ? ' · 집에서 ' + E.km(p.km) + ' · 약 ' + E.steps(p.km).toLocaleString() + '걸음' : ' · 밖에서') : '');
     var ai = p.ai ? '<p class="ai">AI 참고: ' + esc(p.ai) + '</p>' : (p.meal && p.kind !== 'video' && caps.sampleImg ? '<button type="button" class="btn small" data-act="ai-meal" data-el="' + el.id + '" data-id="' + p.id + '">AI로 밥상 읽기</button>' : '');
-    return '<figure class="post"><div class="ph">' + mediaTag(p.media, p.kind, '', tag + ' 사진') + '<span class="tag">' + tag + '</span></div><figcaption class="cap">' + esc(cap) + '</figcaption>' + ai + '</figure>';
+    var rp = p.reply ? '<p class="sent">' + esc(p.reply.by) + ' 님 답장 · ' + esc(p.reply.text || (p.reply.kind === 'video' ? '영상' : '사진')) + '</p>' : '';
+    return '<figure class="post"><div class="ph">' + mediaTag(p.media, p.kind, '', tag + ' 사진') + '<span class="tag">' + tag + '</span></div><figcaption class="cap">' + esc(cap) + '</figcaption>' + ai + rp + '</figure>';
   }
   function trendCard(el, A, W) {
     var weeks = A.slice(Math.max(0, A.length - 8)), n = weeks.length, maxR = Math.max.apply(null, weeks.map(function (w) { return w.m.radius; }).concat([0.1]));
@@ -1767,7 +1830,7 @@ var Engine = (function () {
     var greet = nm < 660 ? '좋은 아침이에요' : nm < 1020 ? '좋은 오후예요' : '편안한 저녁 되세요';
     var unseen = inboxUnseen(el), memo = memoryOpen(el), cur = E.currentMission(day, nm), nj = newJoin(el), card, hidePhoto = false;
     if (unseen.length) {
-      var msg = unseen[0], what = msg.kind === 'praise' ? '칭찬을 보냈어요' : msg.kind === 'video' ? '영상을 보냈어요' : '사진을 보냈어요';
+      var msg = unseen[0], what = msg.post ? '답장했어요' : msg.kind === 'praise' ? '칭찬을 보냈어요' : msg.kind === 'video' ? '영상을 보냈어요' : '사진을 보냈어요';
       card = eCard('now', msg.kind === 'praise' ? MICO.heart : MICO.letter, esc(msg.from) + ' 님이 ' + what, '', '<button type="button" class="btn primary e-main" data-act="e-open" data-to="inbox" data-id="' + esc(msg.id) + '">보기</button>');
     } else if (nj) {
       // 새로 함께 보게 된 가족은 어르신께 먼저 알린다 (싫으시면 바로 뺄 수 있게)
@@ -1781,13 +1844,14 @@ var Engine = (function () {
     } else if (memo) {
       card = eCard('', MICO.memory, '오늘의 옛날 사진이 왔어요', esc(memo.by) + ' 님이 보냈어요', '<button type="button" class="btn primary e-main" data-act="e-open" data-to="memory" data-id="' + esc(memo.id) + '">보기</button>');
     } else {
-      var nx = E.nextMission(day, nm), ms = E.missionState(day), all = ms.b && ms.l && ms.w && ms.d;
-      card = eCard('', MICO.stamp, all ? '오늘 할 일을 다 하셨어요!' : '지금은 쉬셔도 돼요', nx ? '다음 할 일: ' + nx.label + ' · ' + timeLabel(nx.start) : esc(seersText(el)) + '이 리포트로 같이 봐요', '');
+      hidePhoto = true;
+      card = eCard('', MICO.letter, '오늘 본 걸 사진으로 보내 보세요', esc(mainName(el)) + ' 님이 꼭 답장해 드려요', '<button type="button" class="btn primary e-main" data-act="e-photo">' + IC.cam + '사진 찍어 보내기</button>');
     }
     return '<div class="e-page"><p class="e-greet">' + esc(el.short) + ' 님, ' + greet + '<span>' + dateLabel(t) + '</span></p>' + card + stampsHTML(day) +
-      (hidePhoto ? '' : '<button type="button" class="btn e-second" data-act="e-photo">' + IC.cam + '사진·영상 찍기</button>') +
+      (hidePhoto ? '' : '<button type="button" class="btn e-second" data-act="e-photo">' + IC.cam + '사진 보내기</button>') +
       '<button type="button" class="btn e-second" data-act="e-nav" data-to="more">더보기</button></div>';
   }
+  function mainName(el) { var m = mainOf(el); return m ? m.p.short : '가족'; }
   function eMore(el) {
     return '<div class="e-page">' + eHead('더보기', 'home') +
       '<button type="button" class="btn e-second" data-act="e-nav" data-to="week">이번 주 나의 마실</button>' +
@@ -1846,6 +1910,12 @@ var Engine = (function () {
   }
   function eInbox(el, id) {
     var msg = (el.inbox || {})[id]; if (!msg) return eHome(el);
+    var mine = msg.post && (el.posts || {})[msg.post];
+    if (msg.post) return '<div class="e-page">' + eHead(esc(msg.from) + ' 님의 답장', 'home') + '<section class="e-card">' +
+      (mine ? '<div class="e-mine">' + mediaTag(mine.media, mine.kind, '', '내가 보낸 사진') + '</div><p class="e-sub">내가 보낸 사진에</p>' : '') +
+      (msg.text ? '<h2 class="e-q">“' + esc(msg.text) + '”</h2>' : mediaTag(msg.media, msg.kind, 'e-media', esc(msg.from) + ' 님이 보낸 답장')) +
+      '<p class="e-sub">' + esc(fmtStamp(msg.at)) + '</p></section>' +
+      '<button type="button" class="btn primary e-main" data-act="e-seen" data-id="' + esc(id) + '">고마워요</button></div>';
     var body = msg.kind === 'praise' ? MICO.heart.replace('class="e-ico"', 'class="e-ico" style="width:132px;height:132px"') + '<h2 class="e-q">' + esc(msg.text || '잘하셨어요!') + '</h2>' : mediaTag(msg.media, msg.kind, 'e-media', esc(msg.from) + ' 님이 보낸 사진');
     return '<div class="e-page">' + eHead(esc(msg.from) + ' 님이 보냈어요', 'home') + '<section class="e-card">' + body + '<p class="e-sub">' + esc(fmtStamp(msg.at)) + '</p></section>' +
       '<button type="button" class="btn primary e-main" data-act="e-seen" data-id="' + esc(id) + '">고마워요</button></div>';
@@ -1921,9 +1991,9 @@ var Engine = (function () {
     update(patchElder(el.id, ep));
     eflow = null; enav = { screen: 'home', id: null }; render(); goTop();
     var wkOut = vals((S().elders[el.id] || el).posts).filter(function (p) { return p.where === 'out' && !p.meal && String(p.at).split(' ')[0] >= E.mondayOf(t); }).length;
-    if (where === 'out') celebrate({ title: '마실 다녀오셨네요!', sub: kmv ? '집에서 ' + E.km(kmv) + ' · 약 ' + E.steps(kmv).toLocaleString() + '걸음' : '바깥나들이를 기록했어요', next: '이번 주 마실 사진 ' + wkOut + '장째 · ' + to + '께 보냈어요', speak: '마실 다녀오셨네요. 잘하셨어요' });
-    else if (meal) celebrate({ title: '잘 드셨어요!', sub: '밥상 사진을 ' + to + '께 보냈어요', next: nextText(S().elders[el.id] || el), speak: '잘 드셨어요' });
-    else celebrate({ title: '사진을 보냈어요', sub: to + '이 곧 보실 거예요', speak: '사진을 보냈어요' });
+    if (where === 'out') celebrate({ title: '마실 다녀오셨네요!', sub: kmv ? '집에서 ' + E.km(kmv) + ' · 약 ' + E.steps(kmv).toLocaleString() + '걸음' : '바깥나들이를 기록했어요', next: '이번 주 마실 사진 ' + wkOut + '장째 · ' + mainName(el) + ' 님이 답장하면 바로 알려 드릴게요', speak: '마실 다녀오셨네요. 잘하셨어요' });
+    else if (meal) celebrate({ title: '잘 드셨어요!', sub: '밥상 사진을 ' + to + '께 보냈어요', next: mainName(el) + ' 님이 답장하면 바로 알려 드릴게요', speak: '잘 드셨어요' });
+    else celebrate({ title: '사진을 보냈어요', sub: mainName(el) + ' 님이 답장하면 바로 알려 드릴게요', speak: '사진을 보냈어요' });
   }
   function nextText(el) { var day = el.days[S().today] || {}, nx = E.nextMission(day, nowMin()); return nx ? '다음 할 일: ' + nx.label + ' · ' + timeLabel(nx.start) : ''; }
 
@@ -2074,7 +2144,8 @@ var Engine = (function () {
     toast('보내는 중이에요');
     var ref; try { ref = await mediaPut(prep.blob); } catch (e) { toast('보내지 못했어요. 다시 해 주세요'); return; }
     if (c.purpose === 'reply') {
-      var mid = newId('i'), o = { inbox: {} }; o.inbox[mid] = { id: mid, from: me().short, kind: prep.kind, media: ref, at: stamp() };
+      var mid = newId('i'), o = { inbox: {} }; o.inbox[mid] = { id: mid, from: me().short, kind: prep.kind, media: ref, at: stamp(), post: c.post || null };
+      if (c.post) { o.posts = {}; o.posts[c.post] = { reply: { kind: prep.kind, by: me().short, at: stamp(), msg: mid } }; }
       update(patchElder(c.id, o)); toast('어르신께 ' + (prep.kind === 'video' ? '영상' : '사진') + '을 보냈어요');
     } else if (c.purpose === 'mem-answer') {
       var mel0 = curElder(), mm0 = ((mel0 && mel0.memories) || {})[c.id], oa = { memories: {} }; oa.memories[c.id] = { answer: { kind: prep.kind, media: ref, at: stamp() } };
@@ -2151,7 +2222,7 @@ var Engine = (function () {
       case 'home-here': setHomeHere(id, false); return;
       case 'home-photo': pick({ purpose: 'home', id: id, accept: 'image/jpeg,image/*' }); return;
       case 'home-clear': delete homes[id]; saveHomes(); render(); toast('집 위치를 지웠어요'); return;
-      case 'reply': pick({ purpose: 'reply', id: id, accept: 'image/*,video/*' }); return;
+      case 'reply': pick({ purpose: 'reply', id: id, post: t.getAttribute('data-post') || null, accept: 'image/*,video/*' }); return;
       case 'ck-photo': pick({ purpose: 'ck', id: id, item: t.getAttribute('data-item'), accept: 'image/*', capture: 'environment' }); return;
       case 'e-photo': pick({ purpose: 'elder', accept: 'image/*,video/*', capture: 'environment' }); return;
       case 'e-mem-video': pick({ purpose: 'mem-answer', id: id, accept: 'video/*,image/*', capture: 'user' }); return;
@@ -2204,6 +2275,12 @@ var Engine = (function () {
       case 'e-restart': elderStep = 0; update(patchElder(id, { consent: { status: 'pending', at: null } })); return;
       case 'as-elder': ui.elderId = id; elderStep = 0; closeSheet(); setRole('elder'); return;
       case 'log-call': { var ck = newId('k'), oc = { calls: {} }; oc.calls[ck] = { id: ck, by: me().name, at: stamp() }; update(patchElder(id, oc)); toast('안부 전화를 기록했어요. 돌봄 가족이 함께 봐요'); return; }
+      case 'quick-reply': {
+        var qp = t.getAttribute('data-post'), qt = t.getAttribute('data-text'), qm = newId('i'), oq = { inbox: {}, posts: {} };
+        oq.inbox[qm] = { id: qm, from: me().short, kind: 'praise', text: qt, post: qp, at: stamp() };
+        oq.posts[qp] = { reply: { text: qt, by: me().short, at: stamp(), msg: qm } };
+        update(patchElder(id, oq)); toast('답장을 보냈어요. ' + callOf(st.elders[id]) + ' 화면에 바로 보여요'); return;
+      }
       case 'praise': { var pm = newId('i'), op = { inbox: {} }; op.inbox[pm] = { id: pm, from: me().short, kind: 'praise', text: '잘하셨어요!', at: stamp() }; update(patchElder(id, op)); toast('어르신 화면에 칭찬을 보냈어요'); return; }
       case 'confirm-alert': { var o = { alerts: {} }; o.alerts[id] = { confirmedAt: stamp(), by: me().short }; update(o); toast('알림을 확인 완료로 바꿨어요. 돌봄 가족도 함께 봐요'); return; }
       case 'viewer': {
