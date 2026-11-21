@@ -170,6 +170,70 @@ html[data-frame="phone"] .statusbar,html[data-frame="phone"] .homebar,html[data-
 .post .cap{font-size:12.5px;color:var(--text-2);line-height:1.4}
 .post .ai{font-size:12px;color:var(--accent);line-height:1.4}
 .post .btn{min-height:44px;font-size:13px;padding:6px 10px}
+/* 한눈에 보기 */
+.glance{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gl{display:grid;gap:4px;align-content:start;padding:12px;border-radius:14px;background:var(--inset);border:1px solid var(--line);min-width:0}
+.gl.warn{border-color:var(--warn-line);background:var(--warn-weak)}
+.gl-top{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-2);min-width:0}
+.gl-top svg{width:17px;height:17px;flex:none;color:var(--accent)}
+.gl.warn .gl-top svg{color:var(--warn)}
+.gl-top em{margin-left:auto;font-style:normal;font-size:11.5px;font-weight:700;color:var(--accent);white-space:nowrap}
+.gl.warn .gl-top em{color:var(--warn)}
+.gl-val{font:700 24px/1.15 var(--mono)}
+.gl-val small{font:500 13px var(--font);color:var(--text-2);margin-left:2px}
+.gl.warn .gl-val{color:var(--warn)}
+.gl-sub{font-size:12px;color:var(--text-2);line-height:1.4}
+.gl-note{display:flex;gap:6px;align-items:flex-start;font-size:13px;color:var(--warn)}
+.gl-note svg{width:16px;height:16px;flex:none;margin-top:2px}
+/* 생활표 */
+.lt{display:grid}
+.lt-row{display:grid;grid-template-columns:38px 76px minmax(0,1fr) 38px;gap:8px;align-items:center;padding:7px 4px;border-top:1px solid var(--line);min-height:50px}
+.lt-row:first-child{border-top:0}
+.lt-row.today{background:var(--accent-weak);border-radius:10px}
+.lt-row.warn .lt-d b,.lt-row.warn .lt-w{color:var(--warn)}
+.lt-d{display:grid;font:500 11px var(--mono);color:var(--muted);line-height:1.2}
+.lt-d b{font:700 14px var(--font);color:var(--text)}
+.lt-m{display:flex;gap:3px}
+.ml{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;font-style:normal;font-size:11px;font-weight:700;border:1px solid var(--line);color:var(--muted);flex:none}
+.ml svg{width:13px;height:13px}
+.ml.ok{background:var(--accent);border-color:var(--accent);color:#06090f}
+.ml.senior{background:var(--accent-weak);border-color:var(--accent);color:var(--accent)}
+.ml.photo{background:var(--accent);border-color:var(--accent);color:#06090f}
+.ml.miss{border-style:dashed;border-color:var(--warn);color:var(--warn)}
+.ml.none{opacity:.45}
+.lt-walk{display:grid;gap:3px;min-width:0}
+.lt-bar{height:7px;border-radius:4px;background:var(--inset);overflow:hidden}
+.lt-bar i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.lt-w{font-size:12px;color:var(--text-2);line-height:1.35;overflow-wrap:anywhere}
+.lt-none{font-size:12px;color:var(--muted)}
+.lt-ph{position:relative;width:38px;height:38px;border-radius:9px;overflow:hidden;border:1px solid var(--line);background:var(--inset);padding:0}
+.lt-ph img{width:100%;height:100%;object-fit:cover;display:block}
+.lt-ph b{position:absolute;right:2px;bottom:2px;min-width:16px;padding:0 3px;border-radius:8px;background:rgba(6,9,15,.85);font:700 10.5px/16px var(--mono);color:var(--text)}
+.lt-ph.empty{border-style:dashed;opacity:.35}
+.lt-legend{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;font-size:11.5px;color:var(--muted)}
+.lt-legend .ml{width:18px;height:18px;font-size:9.5px;margin-right:-4px}
+/* 마실 기록 · 밥상 일기 */
+.wk{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-items:end;height:118px;padding-top:16px}
+.wk-col{display:grid;justify-items:center;gap:3px;align-content:end;height:100%}
+.wk-col i{display:block;width:70%;max-width:26px;border-radius:5px 5px 2px 2px;background:var(--accent)}
+.wk-col i.zero{background:var(--warn)}
+.wk-col i.na{background:var(--line)}
+.wk-col b{font-size:12px;font-weight:500;color:var(--text-2)}
+.wk-v{font:500 10.5px var(--mono);color:var(--text-2);white-space:nowrap}
+.wk-avg{position:absolute;left:0;right:0;border-top:1px dashed var(--muted);pointer-events:none}
+.wk-col{position:relative;z-index:1}
+.wk-legend{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-top:-4px}
+.wk-legend i{width:18px;border-top:1px dashed var(--muted)}
+.ths{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.ths.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.th{position:relative;aspect-ratio:1/1;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--inset);padding:0;min-width:0}
+.th img,.th video{width:100%;height:100%;object-fit:cover;display:block}
+.th-t{position:absolute;left:4px;bottom:4px;padding:1px 6px;border-radius:999px;background:rgba(6,9,15,.8);font-size:10.5px;font-weight:700;color:var(--text)}
+.ins{display:grid;gap:8px}
+.ins li{display:grid;grid-template-columns:20px minmax(0,1fr);gap:6px;font-size:14px;line-height:1.45}
+.ins li svg{width:17px;height:17px;color:var(--accent);margin-top:2px}
+.ins li.warn{color:var(--warn)}
+.ins li.warn svg{color:var(--warn)}
 .empty-box{display:grid;gap:4px;padding:16px;border-radius:12px;background:var(--inset);text-align:center}
 .empty-box b{font-size:14.5px}
 .empty-box span{font-size:12.5px;color:var(--text-2)}
@@ -380,6 +444,10 @@ html[data-frame="phone"] .statusbar,html[data-frame="phone"] .homebar,html[data-
 .e-told .who{font-size:28px;color:var(--text-2)}
 .e-told .what{font-size:30px;font-weight:700;line-height:1.4}
 .e-told .what.warn{color:var(--warn)}
+.e-album{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.e-album figure{display:grid;gap:4px;margin:0;min-width:0}
+.e-album img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;border:1px solid var(--line);display:block}
+.e-album figcaption{font-size:28px;font-weight:700;color:var(--text-2)}
 .e-bar{height:16px;border-radius:8px;background:var(--inset);overflow:hidden}
 .e-bar i{display:block;height:100%;background:var(--accent);border-radius:8px}
 .e-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:96px;padding:12px 16px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:inherit;text-align:left}
@@ -511,6 +579,7 @@ var Engine = (function () {
   function placeKm(layout, p) { if (p === 'home' || p === 'snap') return 0; var L = LAYOUTS[layout] || LAYOUTS.sudong; return L[p] ? L[p][0] : 0; }
   function visitKm(layout, v) { return v.km != null ? v.km : placeKm(layout, v.p); }
   function steps(k) { return Math.round(2 * k * RULES.stepsPerKm / 100) * 100; }
+  function stepsKm(total) { return Math.round(total * RULES.stepsPerKm / 100) * 100; }   // 오간 거리 합계 → 걸음 (추정)
 
   /* ---------- 테스트 데이터: 하루 = [식사, 외출, 'gap'(위치 기록 빈 날)]. 식사 b 아침 · l 점심(집) · L 점심(경로당) · d 저녁 ---------- */
   var A1 = [['bLd', 'senior 10:30-13:40'], ['bld', 'walk 07:00-07:50; mart 15:00-15:50'], ['bLd', 'senior 10:40-13:30; clinic 14:20-15:10'], ['bld', 'market 09:30-11:40'], ['bLd', 'senior 10:30-13:30'], ['bld', 'walk 07:10-08:00'], ['bl', '']];
@@ -544,13 +613,36 @@ var Engine = (function () {
     return day;
   }
 
+  // 시연용 사진: 4주 동안 어르신이 찍었다고 가정한 마실·밥상 사진 (그림은 'x:종류:번호'로 화면에서 그린다)
+  function seedPosts(s, days) {
+    var posts = {}, k = 0;
+    Object.keys(days).sort().forEach(function (d, n) {
+      if (d > TODAY) return;
+      var day = days[d], fewer = s.id === 'e2' && n >= 14;   // 박영호 님: 2주째 사진도 줄었다
+      (day.v || []).forEach(function (v) {
+        if (v.p !== 'walk' && v.p !== 'market') return;
+        var id = 'p' + s.id + '_' + (++k);
+        posts[id] = { id: id, at: d + ' ' + hm(toMin(v.e) - 8), media: 'x:' + v.p + ':' + (k % 3), kind: 'photo', where: 'out', km: placeKm(s.layout, v.p), meal: null };
+      });
+      ['l', 'd'].forEach(function (mk) {
+        var meal = day.m[mk]; if (!meal) return;
+        var want = mk === 'l' ? (meal.p === 'senior' && n % 2 === 0 && !fewer) : (fewer ? n % 4 === 1 : n % 2 === 1);
+        if (!want) return;
+        var id = 'p' + s.id + '_' + (++k), ref = 'x:' + (meal.p === 'senior' ? 'senior' : 'meal') + ':' + (k % 3);
+        meal.photo = ref;
+        posts[id] = { id: id, at: d + ' ' + hm(toMin(meal.t) + 12), media: ref, kind: 'photo', where: meal.p === 'senior' ? 'out' : 'home', km: null, meal: mk };
+      });
+    });
+    return posts;
+  }
+
   function buildSeed() {
     var elders = {}, order = [];
     SEED_ELDERS.forEach(function (s) {
       var days = {}, n = 0;
       s.weeks.forEach(function (wk) { wk.forEach(function (spec) { days[addDays(SEED_SINCE, n)] = makeDay(spec, n); n++; }); });
       elders[s.id] = { id: s.id, name: s.name, short: s.short, age: s.age, area: s.area, living: s.living, phone: s.phone, layout: s.layout, since: SEED_SINCE, photo: null,
-        consent: { status: 'agreed', at: SEED_SINCE + ' 10:12', code: s.code }, paused: { on: false, at: null }, days: days, posts: {}, inbox: {}, memories: {}, calls: {},
+        consent: { status: 'agreed', at: SEED_SINCE + ' 10:12', code: s.code }, paused: { on: false, at: null }, days: days, posts: seedPosts(s, days), inbox: {}, memories: {}, calls: {},
         circle: { g1: { role: 'main', call: s.call, rel: s.rel, since: SEED_SINCE, status: 'joined', ack: true } } };
       order.push(s.id);
     });
@@ -558,7 +650,7 @@ var Engine = (function () {
     elders.e1.circle.f1 = { role: 'family', call: '어머니', rel: '아들', since: '2026-11-02', status: 'joined', ack: true };
     elders.e2.circle.f2 = { role: 'family', call: '아버지', rel: '아들', since: '2026-11-03', status: 'joined', ack: true };
     elders.e1.calls = { k1: { id: 'k1', by: '김민수', at: '2026-11-17 20:10' } };
-    return { v: 4, today: TODAY, plan: 'plus',
+    return { v: 5, today: TODAY, plan: 'plus',
       people: { g1: { id: 'g1', name: '김미경', short: '미경', area: '서울 강동구' }, f1: { id: 'f1', name: '김민수', short: '민수', area: '경기 수원시' }, f2: { id: 'f2', name: '박준혁', short: '준혁', area: '서울 강동구' } },
       elders: elders, order: order,
       alerts: { 'e2:2026-11-09': { confirmedAt: '2026-11-15 20:10', by: '미경' } },
@@ -621,6 +713,7 @@ var Engine = (function () {
       outDays: avg(function (m) { return m.outRate; }),
       radius: avg(function (m) { return m.radius; }),
       meals: avg(function (m) { return m.meals; }),
+      walkKm: avg(function (m) { return m.locDays ? m.walkKm / m.locDays * 7 : 0; }),
       streakMax: Math.max.apply(null, ms.map(function (m) { return m.streak.len; })),
       regular: PLACE_ORDER.filter(function (p) { return ms.every(function (m) { return m.places[p]; }); })
     };
@@ -750,7 +843,7 @@ var Engine = (function () {
   }
 
   return { TODAY: TODAY, TYPES: TYPES, PLACE_ORDER: PLACE_ORDER, LAYOUTS: LAYOUTS, MEALS: MEALS, MEAL_NAME: MEAL_NAME, MISSIONS: MISSIONS, SLOTS: SLOTS, RULES: RULES, DOW: DOW,
-    buildSeed: buildSeed, analyze: analyze, weekMetrics: weekMetrics, dayMetrics: dayMetrics, longestPlace: longestPlace, headline: headline, flag: flag, level: level,
+    buildSeed: buildSeed, analyze: analyze, stepsKm: stepsKm, weekMetrics: weekMetrics, dayMetrics: dayMetrics, longestPlace: longestPlace, headline: headline, flag: flag, level: level,
     highlights: highlights, topics: topics, weeklyMission: weeklyMission, missionState: missionState, currentMission: currentMission, nextMission: nextMission, photoMealKey: photoMealKey,
     placeAt: placeAt, placeSlots: placeSlots, placeKm: placeKm, visitKm: visitKm, steps: steps, dayList: dayList,
     merge: merge, clone: clone, addDays: addDays, mondayOf: mondayOf, dow: dow, daysBetween: daysBetween, md: md, toMin: toMin, hm: hm, num: num, km: km, dur: dur };
@@ -761,7 +854,7 @@ var Engine = (function () {
 (function () {
   'use strict';
   var E = window.Engine;
-  var KEY_STATE = 'giokmasil.v4.state', KEY_UI = 'giokmasil.v4.ui', KEY_HOME = 'giokmasil.homes', DOC_PATH = 'v4/state';
+  var KEY_STATE = 'giokmasil.v5.state', KEY_UI = 'giokmasil.v5.ui', KEY_HOME = 'giokmasil.homes', DOC_PATH = 'v5/state';
   var CALL_CENTER = '1899-9988';
   var AREAS = ['수동면', '화도읍', '진접읍', '와부읍', '진건읍', '오남읍', '퇴계원읍', '별내면', '조안면', '호평동', '평내동', '금곡동', '양정동', '다산1동', '다산2동', '별내동'];
   // 관할 치매안심센터. tel이 비어 있으면 치매상담콜센터(1899-9988)로 연결한다. 직통 번호를 확인하면 여기에 넣는다.
@@ -791,7 +884,10 @@ var Engine = (function () {
     tabReport: '<svg ' + SV + '><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 16v-3M12 16V8.5M15.5 16v-5"/></svg>',
     tabBell: '<svg ' + SV + '><path d="M6 16v-5a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/></svg>',
     tabFamily: '<svg ' + SV + '><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.6 14.1A4.5 4.5 0 0121 19"/></svg>',
-    tabSet: '<svg ' + SV + '><path d="M4 7h9M18 7h2M4 17h3M11 17h9"/><circle cx="15.5" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>'
+    tabSet: '<svg ' + SV + '><path d="M4 7h9M18 7h2M4 17h3M11 17h9"/><circle cx="15.5" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>',
+    walk: '<svg ' + SV + '><circle cx="13" cy="4.5" r="2"/><path d="M10 21l2.5-6 2.5 2.5V21M8 12l2-4.5h4l2.5 4M12.5 15l.5-7.5"/></svg>',
+    bowl: '<svg ' + SV + '><path d="M3.5 11h17a8.5 8.5 0 01-17 0z"/><path d="M9 20.5h6M9 4c-1 1.5 1 2.5 0 4M13 3.5c-1 1.5 1 2.5 0 4"/></svg>',
+    pin: '<svg ' + SV + '><path d="M12 21s-6.5-6-6.5-11a6.5 6.5 0 0113 0c0 5-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>'
   };
   var PSV = 'viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
   var PIC = {
@@ -937,7 +1033,7 @@ var Engine = (function () {
   function startLocal() {
     store.mode = 'local'; store.ref = null; store.loading = false;
     var saved = lsGet();
-    apply(saved && saved.v === 4 && saved.elders ? saved : E.buildSeed());
+    apply(saved && saved.v === 5 && saved.elders ? saved : E.buildSeed());
   }
   async function connect() {
     if (!viewerAvailable) return false;
@@ -989,7 +1085,27 @@ var Engine = (function () {
   function idbGet(id) { return idbDo('readonly', function (s) { return s.get(id); }); }
   function idbClear() { return idbDo('readwrite', function (s) { return s.clear(); }).catch(function () { /* 없어도 됨 */ }); }
   function blobToDataURL(b) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = rej; r.readAsDataURL(b); }); }
-  function mediaURL(ref) { if (!ref) return ''; if (ref.indexOf('u:') === 0 || ref.indexOf('d:') === 0) return ref.slice(2); return mediaCache[ref] || ''; }
+  function mediaURL(ref) { if (!ref) return ''; if (ref.indexOf('u:') === 0 || ref.indexOf('d:') === 0) return ref.slice(2); if (ref.indexOf('x:') === 0) return demoPhoto(ref); return mediaCache[ref] || ''; }
+  // 시연 데이터 사진: 실제 사진 대신 그림으로 그린다 (마실 · 오일장 · 집 밥상 · 경로당 점심)
+  var demoCache = {};
+  function demoPhoto(ref) {
+    if (demoCache[ref]) return demoCache[ref];
+    var a = ref.split(':'), kind = a[1], v = +a[2] || 0, s;
+    var sky = [['#9fd3f0', '#d8eef8'], ['#f5c79a', '#fbe6cf'], ['#b9dcf2', '#e6f3fa']][v], leaf = ['#4f8a4f', '#5e9a52', '#3f7d4a'][v];
+    var dish = [['#5f9a4a', '#c8402f', '#e9b949'], ['#7aa84f', '#b5552f', '#d9c08a'], ['#4e8b3f', '#d0603a', '#f0d070']][v];
+    function bowl(x, y, r, rim, fill) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + rim + '"/><circle cx="' + x + '" cy="' + y + '" r="' + (r - 7) + '" fill="' + fill + '"/>'; }
+    if (kind === 'walk') s = '<rect width="300" height="170" fill="' + sky[1] + '"/><rect width="300" height="90" fill="' + sky[0] + '"/><path d="M0 150 70 105 140 135 215 95 300 130V190H0z" fill="#86ad7c"/><rect y="168" width="300" height="132" fill="#9cc27e"/><path d="M135 168h30l80 132H55z" fill="#d8c29a"/>' +
+      [[40, 1], [95, .8], [225, .9], [272, 1.1]].map(function (t) { return '<rect x="' + (t[0] - 4 * t[1]) + '" y="' + (150 - 20 * t[1]) + '" width="' + 8 * t[1] + '" height="' + 40 * t[1] + '" fill="#6b4a32"/><circle cx="' + t[0] + '" cy="' + (140 - 30 * t[1]) + '" r="' + 30 * t[1] + '" fill="' + leaf + '"/>'; }).join('') +
+      '<rect x="196" y="236" width="62" height="7" fill="#7c5638"/><rect x="200" y="243" width="5" height="18" fill="#5e412b"/><rect x="249" y="243" width="5" height="18" fill="#5e412b"/>';
+    else if (kind === 'market') s = '<rect width="300" height="300" fill="' + sky[1] + '"/><rect y="200" width="300" height="100" fill="#cdbfa7"/>' +
+      [0, 100, 200].map(function (x, i) { var c = ['#d9534f', '#3b82c4', '#e0a030'][(i + v) % 3]; return '<rect x="' + (x + 6) + '" y="90" width="88" height="120" fill="#efe6d4"/><path d="M' + x + ' 70h100v30H' + x + 'z" fill="' + c + '"/><path d="M' + (x + 20) + ' 70h20v30h-20zM' + (x + 60) + ' 70h20v30h-20z" fill="#fff" opacity=".7"/><rect x="' + (x + 12) + '" y="170" width="76" height="40" fill="#9b7448"/>' +
+        [0, 1, 2, 3].map(function (j) { return '<circle cx="' + (x + 24 + j * 17) + '" cy="164" r="9" fill="' + ['#e8553b', '#f2a33a', '#7dbb4a', '#d9c04a'][(j + i + v) % 4] + '"/>'; }).join(''); }).join('');
+    else if (kind === 'senior') s = '<rect width="300" height="300" fill="#e9dfcc"/><rect x="20" y="70" width="260" height="200" rx="10" fill="#b98c5e"/>' +
+      [[85, 125], [215, 125], [85, 220], [215, 220]].map(function (p) { return '<rect x="' + (p[0] - 55) + '" y="' + (p[1] - 38) + '" width="110" height="76" rx="8" fill="#e8e2d6"/>' + bowl(p[0] - 25, p[1] + 8, 18, '#f4f2ec', '#fbfaf6') + bowl(p[0] + 25, p[1] + 8, 18, '#5c4434', '#c46a3c') + '<rect x="' + (p[0] - 40) + '" y="' + (p[1] - 30) + '" width="22" height="14" rx="4" fill="' + dish[0] + '"/><rect x="' + (p[0] - 11) + '" y="' + (p[1] - 30) + '" width="22" height="14" rx="4" fill="' + dish[1] + '"/><rect x="' + (p[0] + 18) + '" y="' + (p[1] - 30) + '" width="22" height="14" rx="4" fill="' + dish[2] + '"/>'; }).join('');
+    else s = '<rect width="300" height="300" fill="#9a6a45"/><rect x="18" y="18" width="264" height="264" rx="22" fill="#c9a272"/>' + bowl(95, 195, 52, '#eeece6', '#faf9f4') + bowl(205, 195, 52, '#5c4434', ['#c46a3c', '#d9a441', '#8a5a3a'][v]) +
+      bowl(70, 85, 34, '#ecebe6', dish[0]) + bowl(150, 78, 34, '#ecebe6', dish[1]) + bowl(230, 85, 34, '#ecebe6', dish[2]);
+    return (demoCache[ref] = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">' + s + '</svg>'));
+  }
   function srcAttr(ref) { var u = mediaURL(ref); return u ? ' src="' + esc(u) + '"' : ''; }
   async function mediaPut(blob) {
     if (store.mode === 'db' && caps.assets) { var r = await caps.assets.upload(blob); return 'u:' + r.url; }
@@ -1186,7 +1302,7 @@ var Engine = (function () {
     else {
       if (el.paused && el.paused.on) h += '<div class="banner" role="status"><b>기록 일시 중지</b><span>' + esc(el.short) + ' 님이 ' + esc(fmtStamp(el.paused.at)) + '부터 위치 기록을 잠시 꺼 두셨어요. 식사 체크와 사진은 그대로 받아요.</span></div>';
       if (!A) h += learningCard(el) + postsCard(el, null);
-      else h += verdictCard(el, W) + radiusCard(el, W) + (plus() ? mapCard(el, W) : lockCard()) + summaryCard(el, W) + goodCard(el, W) + postsCard(el, W) + trendCard(el, A, W);
+      else h += verdictCard(el, W) + glanceCard(el, W) + lifeCard(el, W) + radiusCard(el, W) + (plus() ? mapCard(el, W) : lockCard()) + walkCard(el, W) + mealCard(el, W) + goodCard(el, W) + postsCard(el, W) + trendCard(el, A, W);
     }
     return h + '<p class="foot">등장인물과 기록은 모두 테스트용 예시예요</p></div>';
   }
@@ -1216,6 +1332,106 @@ var Engine = (function () {
     return '<section class="card"><div class="c-top"><h2 class="c-label">' + wkWord(W) + ' 활동 반경</h2><span class="c-date">' + range(W) + '</span></div>' +
       '<p class="big"><span class="big-num">' + m.radius.toFixed(1) + '</span><span class="big-unit">km</span></p>' + badge + '</section>';
   }
+  /* ---------- 한눈에 보기 · 생활표 · 마실 기록 · 밥상 일기: 어르신이 찍은 사진이 기록이 된다 ---------- */
+  function weekPosts(el, W) { return vals(el.posts).filter(function (p) { return inWeek(p.at, W); }).sort(byAt); }
+  function basePhotos(el, W) {
+    if (!W.base) return null;
+    return W.base.mondays.reduce(function (n, mon) { var to = E.addDays(mon, 6); return n + vals(el.posts).filter(function (p) { var d = String(p.at).split(' ')[0]; return d >= mon && d <= to; }).length; }, 0) / W.base.mondays.length;
+  }
+  function mealState(el, d, k, per) {
+    var m = ((((el.days || {})[d]) || {}).m || {})[k];
+    if (m) return { s: m.photo ? 'photo' : m.p === 'senior' ? 'senior' : 'ok', t: m.t, photo: m.photo };
+    if (!per) return { s: 'none' };
+    if (per.inferredKeys && per.inferredKeys.indexOf(k) >= 0) return { s: 'senior' };
+    var t = S().today, past = d < t || (d === t && nowMin() >= ({ b: 600, l: 840, d: 1200 })[k]);
+    return { s: past ? 'miss' : 'none' };
+  }
+  function missedMeals(el, W) {
+    var out = [];
+    W.m.dates.forEach(function (d, i) {
+      var p = W.m.per[i]; if (!p) return;
+      var ks = E.MEALS.filter(function (k) { return mealState(el, d, k, p).s === 'miss'; });
+      if (ks.length) out.push(E.DOW[i] + ' ' + ks.map(function (k) { return E.MEAL_NAME[k]; }).join('·'));
+    });
+    return out;
+  }
+  function avgMealTime(el, mondays, k) {
+    var xs = [];
+    mondays.forEach(function (mon) { for (var i = 0; i < 7; i++) { var m = ((((el.days || {})[E.addDays(mon, i)]) || {}).m || {})[k]; if (m && m.t && m.p !== 'senior') xs.push(E.toMin(m.t)); } });
+    return xs.length ? xs.reduce(function (a, b) { return a + b; }, 0) / xs.length : null;
+  }
+  function thumbBtn(p, label) { return '<button type="button" class="th" data-act="snap" data-post="' + esc(p.id) + '" aria-label="' + esc(label) + ' 사진 크게 보기">' + mediaTag(p.media, p.kind, '', label) + '<span class="th-t">' + esc(label) + '</span></button>'; }
+  function postLabel(p) { var d = String(p.at).split(' ')[0]; return E.DOW[E.dow(d)] + ' ' + (p.meal ? E.MEAL_NAME[p.meal] : p.where === 'out' ? '마실' : '집'); }
+
+  function glanceCard(el, W) {
+    var m = W.m, b = W.base, st = E.stepsKm(m.walkKm), bst = b ? E.stepsKm(b.walkKm * m.locDays / 7) : null;
+    var miss = missedMeals(el, W), ph = weekPosts(el, W).length, bph = basePhotos(el, W), calls = vals(el.calls).filter(function (c) { return inWeek(c.at, W); }).length;
+    var fo = E.flag(W, 'out'), fs = E.flag(W, 'streak'), fr = E.flag(W, 'radius'), fm = E.flag(W, 'meals');
+    var walkWarn = !!((fo && fo.level === 'warn') || fs || (bst && st < bst * 0.7)), photoWarn = bph != null && bph >= 3 && ph <= bph * 0.5;
+    function tile(ico, lab, val, sub, warn) { return '<div class="gl' + (warn ? ' warn' : '') + '"><span class="gl-top">' + ico + '<span>' + lab + '</span><em>' + (warn ? '살펴보기' : '좋아요') + '</em></span><b class="gl-val">' + val + '</b><span class="gl-sub">' + sub + '</span></div>'; }
+    return '<section class="card"><div class="c-top"><h2 class="c-title">' + wkWord(W) + ' 한눈에 보기</h2><span class="c-note">평소 2주와 비교</span></div><div class="glance">' +
+      tile(IC.walk, '마실', st.toLocaleString() + '<small>걸음</small>', '외출 ' + m.outDays + '/' + m.locDays + '일' + (bst ? ' · 평소 ' + bst.toLocaleString() : ''), walkWarn) +
+      tile(IC.bowl, '식사', m.meals + '<small>/' + m.mealSlots + '끼</small>', miss.length ? '체크 없음: ' + miss.slice(0, 2).join(', ') + (miss.length > 2 ? ' 외' : '') : '빠진 끼니 없음', !!fm || miss.length >= 3) +
+      tile(IC.pin, '활동 반경', m.radius.toFixed(1) + '<small>km</small>', b ? '평소 ' + E.km(b.radius) : '기준 만드는 중', !!fr) +
+      tile(IC.cam, '사진·소식', ph + '<small>장</small>', (bph != null ? '평소 ' + E.num(bph) + '장 · ' : '') + '안부 전화 ' + calls + '번', photoWarn) +
+      '</div>' + (photoWarn ? '<p class="gl-note">' + IC.warn + '보내 주시던 사진이 평소의 절반 아래로 줄었어요</p>' : '') + '</section>';
+  }
+
+  // 요일별 한 줄: 식사 세 칸 · 걸음 막대 · 그날 사진
+  function lifeCard(el, W) {
+    var m = W.m, t = S().today, posts = weekPosts(el, W), fs = E.flag(W, 'streak'), fsd = fs ? fs.dates : [];
+    var maxS = Math.max.apply(null, m.per.map(function (p) { return p ? E.stepsKm(p.walkKm) : 0; }).concat([1400]));
+    var rows = m.dates.map(function (d, i) {
+      var p = m.per[i], dp = posts.filter(function (x) { return String(x.at).indexOf(d) === 0; });
+      var meals = E.MEALS.map(function (k) { var s = mealState(el, d, k, p); return '<i class="ml ' + s.s + '" title="' + E.MEAL_NAME[k] + '">' + (s.s === 'photo' ? IC.cam : E.MEAL_NAME[k].charAt(0)) + '</i>'; }).join('');
+      var walk;
+      if (!p) walk = '<span class="lt-none">' + (d > t ? '' : '기록 전') + '</span>';
+      else if (p.gap) walk = '<span class="lt-none">위치 기록 없음 · 외출로 세지 않음</span>';
+      else {
+        var sp = E.stepsKm(p.walkKm), places = Object.keys(p.places).map(function (k) { return E.TYPES[k]; }).join('·');
+        walk = '<span class="lt-walk"><span class="lt-bar"><i style="width:' + (sp ? Math.max(6, pct(sp, maxS)) : 0) + '%"></i></span><span class="lt-w">' + (sp ? sp.toLocaleString() + '걸음' : '외출 없음') + (places ? ' · ' + places : '') + '</span></span>';
+      }
+      var last = dp[dp.length - 1];
+      var th = last ? '<button type="button" class="lt-ph" data-act="snap" data-post="' + esc(last.id) + '" aria-label="' + E.DOW[i] + '요일 사진 ' + dp.length + '장 보기">' + mediaTag(last.media, last.kind, '', '') + (dp.length > 1 ? '<b>' + dp.length + '</b>' : '') + '</button>' : '<span class="lt-ph empty"></span>';
+      return '<div class="lt-row' + (d === t ? ' today' : '') + (fsd.indexOf(d) >= 0 ? ' warn' : '') + '"><span class="lt-d"><b>' + E.DOW[i] + '</b>' + E.md(d) + '</span><span class="lt-m">' + meals + '</span>' + walk + th + '</div>';
+    }).join('');
+    return '<section class="card"><div class="c-top"><h2 class="c-title">' + wkWord(W) + ' 생활표</h2><span class="c-date">' + range(W) + '</span></div><div class="lt">' + rows + '</div>' +
+      '<p class="lt-legend"><i class="ml ok">아</i>먹었어요 <i class="ml senior">점</i>경로당 <i class="ml photo">' + IC.cam + '</i>밥상 사진 <i class="ml miss">저</i>체크 없음</p></section>';
+  }
+
+  function walkCard(el, W) {
+    var m = W.m, b = W.base, total = E.stepsKm(m.walkKm), avgDay = b ? E.stepsKm(b.walkKm) / 7 : null;
+    var sps = m.per.map(function (p) { return p && !p.gap ? E.stepsKm(p.walkKm) : null; });
+    var max = Math.max.apply(null, sps.map(function (s) { return s || 0; }).concat([avgDay || 0, 1400]));
+    var bars = sps.map(function (s, i) { return '<div class="wk-col"><span class="wk-v">' + (s ? (s >= 1000 ? (s / 1000).toFixed(1) + '천' : s) : '') + '</span><i class="' + (s == null ? 'na' : s ? '' : 'zero') + '" style="height:' + (s ? Math.max(5, Math.round(72 * s / max)) : 3) + 'px"></i><b>' + E.DOW[i] + '</b></div>'; }).join('');
+    var line = avgDay ? '<span class="wk-avg" style="bottom:' + (24 + Math.round(72 * avgDay / max)) + 'px"></span>' : '';
+    var best = null;
+    m.dates.forEach(function (d, i) { var day = (el.days || {})[d]; if (!m.per[i] || m.per[i].gap || !day) return; (day.v || []).forEach(function (v) { if (v.p === 'home' || !E.TYPES[v.p]) return; var k = E.visitKm(el.layout, v); if (!best || k > best.k) best = { k: k, p: v.p, d: i }; }); });
+    var bstW = b ? E.stepsKm(b.walkKm * m.locDays / 7) : null, diff = bstW ? Math.round((total - bstW) / bstW * 100) : null;
+    var badge = diff == null ? '' : diff <= -30 ? '<span class="badge warn">' + IC.warn + '평소보다 ' + (-diff) + '% 적어요</span>' : diff >= 10 ? '<span class="badge accent">평소보다 ' + diff + '% 많아요</span>' : '<span class="badge accent">' + IC.check + '평소와 비슷해요</span>';
+    var photos = weekPosts(el, W).filter(function (p) { return p.where === 'out' && !p.meal; });
+    return '<section class="card"><div class="c-top"><h2 class="c-title">' + wkWord(W) + ' 마실 기록</h2><span class="c-note">다녀온 거리로 추정한 걸음</span></div>' +
+      '<p class="big"><span class="big-num">' + total.toLocaleString() + '</span><span class="big-unit">걸음</span></p>' + badge +
+      '<div class="wk">' + line + bars + '</div>' + (avgDay ? '<p class="wk-legend"><i></i>평소 하루 ' + (Math.round(avgDay / 100) * 100).toLocaleString() + '걸음</p>' : '') +
+      (best ? '<p class="c-p">가장 멀리 간 곳: <b>' + E.TYPES[best.p] + ' ' + E.km(best.k) + '</b> (' + E.DOW[best.d] + ')</p>' : '<p class="c-p">' + wkWord(W) + '에는 바깥 기록이 없어요</p>') +
+      (photos.length ? '<div class="ths">' + photos.slice(-4).reverse().map(function (p) { return thumbBtn(p, postLabel(p)); }).join('') + '</div>' : '') +
+      '<p class="c-note">어르신이 밖에서 찍은 사진이 그대로 마실 기록이 돼요. 실제 서비스에서는 휴대폰 걸음 수와 함께 봐요.</p></section>';
+  }
+
+  function mealCard(el, W) {
+    var m = W.m, b = W.base, photos = weekPosts(el, W).filter(function (p) { return p.meal; }), miss = missedMeals(el, W);
+    var bt = avgMealTime(el, [W.monday], 'b'), bbt = b ? avgMealTime(el, b.mondays, 'b') : null, late = bt != null && bbt != null && bt - bbt >= 45;
+    var bph = b ? b.mondays.reduce(function (n, mon) { var to = E.addDays(mon, 6); return n + vals(el.posts).filter(function (p) { var d = String(p.at).split(' ')[0]; return p.meal && d >= mon && d <= to; }).length; }, 0) / b.mondays.length : null;
+    var li = [];
+    li.push([miss.length >= 3, miss.length ? '체크 없는 끼니: ' + miss.join(', ') : '빠진 끼니 없이 챙겨 드셨어요']);
+    if (bt != null) li.push([late, '아침은 평균 ' + E.hm(bt) + '에 드셨어요' + (bbt != null ? ' (평소 ' + E.hm(bbt) + ')' : '')]);
+    if (m.seniorLunch) li.push([false, '경로당에서 다른 분들과 점심을 ' + m.seniorLunch + '번 드셨어요']);
+    li.push([bph != null && bph >= 2 && photos.length <= bph * 0.5, '밥상 사진 ' + photos.length + '장' + (bph != null ? ' (평소 ' + E.num(bph) + '장)' : '') + (photos.length ? ' · 반찬을 함께 봐 주세요' : '')]);
+    return '<section class="card"><div class="c-top"><h2 class="c-title">' + wkWord(W) + ' 밥상 일기</h2><span class="c-note">식사 체크 ' + m.meals + '/' + m.mealSlots + '끼</span></div>' +
+      (photos.length ? '<div class="ths three">' + photos.slice(-6).reverse().map(function (p) { return thumbBtn(p, postLabel(p)); }).join('') + '</div>' : '<div class="empty-box"><b>아직 밥상 사진이 없어요</b><span>밥때 집에서 사진을 찍으시면 “밥상 사진인가요?”로 식사 체크와 함께 여기에 모여요.</span></div>') +
+      '<ul class="ins">' + li.map(function (x) { return '<li class="' + (x[0] ? 'warn' : '') + '">' + (x[0] ? IC.warn : IC.check) + '<span>' + esc(x[1]) + '</span></li>'; }).join('') + '</ul></section>';
+  }
+
   function summaryCard(el, W) {
     var m = W.m, b = W.base, lp = E.longestPlace(m), fo = E.flag(W, 'out'), fm = E.flag(W, 'meals');
     function cell(l, v, s, warn) { return '<div class="sum"><p class="sum-l">' + l + '</p><p class="sum-v' + (warn ? ' warn' : '') + '">' + v + '</p><p class="sum-s">' + s + '</p></div>'; }
@@ -1588,12 +1804,18 @@ var Engine = (function () {
       body = '<div class="e-stats">' +
         '<div class="e-stat"><span class="lab">다녀온 날</span><span class="val">' + m.outDays + '<small>일</small></span>' + (b ? '<span class="sub">평소 ' + E.num(b.outDays * m.locDays / 7) + '일</span>' : '') + '</div>' +
         '<div class="e-stat"><span class="lab">식사</span><span class="val">' + m.meals + '<small>끼</small></span>' + (b ? '<span class="sub">평소 ' + E.num(b.meals * m.elapsed / 7) + '끼</span>' : '') + '</div>' +
-        '<div class="e-stat"><span class="lab">도장</span><span class="val">' + m.stamps + '<small>개</small></span><span class="sub">' + (m.elapsed * 4) + '개 중</span></div>' +
+        '<div class="e-stat"><span class="lab">걸음</span><span class="val">' + (E.stepsKm(m.walkKm) / 1000).toFixed(1) + '<small>천</small></span>' + (b ? '<span class="sub">평소 ' + (E.stepsKm(b.walkKm * m.locDays / 7) / 1000).toFixed(1) + '천</span>' : '') + '</div>' +
         '<div class="e-stat"><span class="lab">제일 오래 있던 곳</span><span class="val txt">' + (lp ? E.TYPES[lp.p] : '집') + '</span></div></div>' +
         '<div class="e-told"><p class="who">이번 주 미션</p><p class="what">' + wm.label + ' · ' + wm.count + '/' + wm.target + '</p><div class="e-bar"><i style="width:' + pct(wm.count, wm.target) + '%"></i></div></div>' +
         '<div class="e-told"><p class="who">' + esc(seersText(el)) + '도 같은 내용을 봐요</p>' + (W.learning ? '<p class="what">평소 모습을 배우는 중이에요</p>' : hl ? '<p class="what warn">' + esc(hl.title) + '</p>' : '<p class="what">평소와 비슷한 한 주였어요</p>') + '</div>';
     }
-    return '<div class="e-page">' + eHead('이번 주 나의 마실', 'more') + body + '<button type="button" class="btn e-second" data-act="e-nav" data-to="people">같이 보는 사람</button></div>';
+    // 이번 주 사진첩: 어르신이 찍은 사진이 한 주의 기록으로 돌아온다
+    var mon = E.mondayOf(st.today), album = vals(el.posts).filter(function (p) { return String(p.at).split(' ')[0] >= mon && p.kind !== 'video'; }).sort(byAt).reverse().slice(0, 6);
+    var albumHTML = album.length ? '<div class="e-told"><p class="who">이번 주 사진첩 · ' + album.length + '장</p><div class="e-album">' + album.map(function (p) {
+      var d = String(p.at).split(' ')[0];
+      return '<figure>' + mediaTag(p.media, p.kind, '', '사진') + '<figcaption>' + E.DOW[E.dow(d)] + ' ' + (p.meal ? E.MEAL_NAME[p.meal] : p.where === 'out' ? '마실' : '집') + '</figcaption></figure>';
+    }).join('') + '</div></div>' : '';
+    return '<div class="e-page">' + eHead('이번 주 나의 마실', 'more') + body + albumHTML + '<button type="button" class="btn e-second" data-act="e-nav" data-to="people">같이 보는 사람</button></div>';
   }
   // 어르신이 직접 보는 '같이 보는 사람': 관리하는 가족은 글로만, 함께 보는 가족은 눌러서 뺄 수 있다
   function ePeople(el) {
@@ -1700,7 +1922,8 @@ var Engine = (function () {
     if (Object.keys(dp).length) { ep.days = {}; ep.days[t] = dp; }
     update(patchElder(el.id, ep));
     eflow = null; enav = { screen: 'home', id: null }; render(); goTop();
-    if (where === 'out') celebrate({ title: '마실 다녀오셨네요!', sub: kmv ? '집에서 ' + E.km(kmv) + ' · 약 ' + E.steps(kmv).toLocaleString() + '걸음' : '바깥나들이를 기록했어요', next: '사진도 ' + to + '께 보냈어요', speak: '마실 다녀오셨네요. 잘하셨어요' });
+    var wkOut = vals((S().elders[el.id] || el).posts).filter(function (p) { return p.where === 'out' && !p.meal && String(p.at).split(' ')[0] >= E.mondayOf(t); }).length;
+    if (where === 'out') celebrate({ title: '마실 다녀오셨네요!', sub: kmv ? '집에서 ' + E.km(kmv) + ' · 약 ' + E.steps(kmv).toLocaleString() + '걸음' : '바깥나들이를 기록했어요', next: '이번 주 마실 사진 ' + wkOut + '장째 · ' + to + '께 보냈어요', speak: '마실 다녀오셨네요. 잘하셨어요' });
     else if (meal) celebrate({ title: '잘 드셨어요!', sub: '밥상 사진을 ' + to + '께 보냈어요', next: nextText(S().elders[el.id] || el), speak: '잘 드셨어요' });
     else celebrate({ title: '사진을 보냈어요', sub: to + '이 곧 보실 거예요', speak: '사진을 보냈어요' });
   }
@@ -1735,8 +1958,11 @@ var Engine = (function () {
     if (sheet.type === 'snap') {
       var el2 = curElder(), p = el2 && (el2.posts || {})[sheet.post]; if (!p) return null;
       var d = String(p.at).split(' ');
-      return { title: '사진 찍은 곳', body: mediaTag(p.media, p.kind, 'sheet-media', '마실 사진') + '<p class="c-p">' + dayLabel(d[0]) + ' ' + esc(d[1] || '') + (p.km != null ? ' · 집에서 ' + E.km(p.km) + ' · 약 ' + E.steps(p.km).toLocaleString() + '걸음 (추정)' : '') + '</p>' +
-        '<p class="c-note">어르신이 사진을 찍을 때만 위치를 읽고, 가족에게는 집에서의 거리와 방향만 보내요.</p>' };
+      var stitle = p.meal ? E.MEAL_NAME[p.meal] + ' 밥상' + (p.where === 'out' ? ' (경로당)' : '') : p.where === 'out' ? '마실 사진' : '집에서 찍은 사진';
+      return { title: stitle, body: mediaTag(p.media, p.kind, 'sheet-media', stitle) + '<p class="c-p">' + dayLabel(d[0]) + ' ' + esc(d[1] || '') + (p.km != null ? ' · 집에서 ' + E.km(p.km) + ' · 약 ' + E.steps(p.km).toLocaleString() + '걸음 (추정)' : '') + (p.meal ? ' · 식사 체크와 함께 들어왔어요' : '') + '</p>' +
+        (p.ai ? '<p class="c-p" style="color:var(--accent)">AI 참고: ' + esc(p.ai) + '</p>' : '') +
+        '<button type="button" class="btn block" data-act="reply" data-id="' + el2.id + '">' + IC.cam + '이 사진에 답장하기</button>' +
+        '<p class="c-note">어르신이 사진을 찍을 때만 위치를 읽고, 가족에게는 집에서의 거리와 방향만 보내요. 사진 속 위치 정보는 지우고 보내요.</p>' };
     }
     if (sheet.type === 'visit') {
       var sat = nextWeekday(st.today, 5), sun = E.addDays(sat, 1), cur = (st.schedules || {})[sheet.id] || {};
