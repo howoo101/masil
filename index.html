@@ -1,0 +1,2124 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>남양주 기억마실</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#06090f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link id="webfonts" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap">
+<style>
+/* 다크 단일 테마. 강조색은 시그널 블루 하나, 경고만 노랑. 그림자 없음.
+   화면 구조: 기기(PC는 아이폰 프레임, 폰은 전체 화면) 안에 상단 헤더 · 스크롤 영역 · 하단 탭바 · 시트 층 · 완료 축하 층 */
+:root{
+  color-scheme:dark;
+  --bg:#06090f;--card:#0c1016;--line:#202733;--inset:#10151d;--raise:#151b24;
+  --text:#e2ecef;--text-2:#b9c4cd;--muted:#8294a1;
+  --accent:#38bdf8;--accent-weak:rgba(56,189,248,.14);--accent-line:rgba(56,189,248,.55);--on-accent:#06090f;
+  --warn:#fbbf24;--warn-weak:rgba(251,191,36,.13);--warn-line:rgba(251,191,36,.45);
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --sat:0px;--sab:0px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere;-webkit-tap-highlight-color:transparent}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,p,ul,ol,dl,dd,figure{margin:0}
+ul,ol{list-style:none;padding:0}
+a{color:inherit}
+img,video{max-width:100%}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* 무대와 기기 */
+.stage{min-height:100%}
+html[data-frame="pc"] .stage{display:grid;justify-items:center;align-content:center;gap:12px;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+html[data-frame="pc"] .dwrap{position:relative;width:calc(417px * var(--fs,1));height:calc(876px * var(--fs,1))}
+html[data-frame="pc"] .device{position:absolute;top:0;left:0;width:417px;height:876px;transform:scale(var(--fs,1));transform-origin:0 0;border:12px solid #000;border-radius:62px;outline:3px solid #262d38;background:var(--bg);overflow:hidden;--sat:54px;--sab:28px}
+html[data-frame="phone"] .stage{position:fixed;inset:0}
+html[data-frame="phone"] .dwrap{position:absolute;inset:0}
+html[data-frame="phone"] .device{position:absolute;inset:0;background:var(--bg);--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+html[data-frame="phone"] .statusbar,html[data-frame="phone"] .homebar,html[data-frame="phone"] .stage-cap{display:none}
+.statusbar{position:absolute;top:0;left:0;right:0;height:var(--sat);z-index:40;display:flex;align-items:center;justify-content:space-between;padding:6px 30px 0 40px;background:var(--bg);color:var(--text);font:600 16px/1 var(--font)}
+.sb-time{font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.island{position:absolute;top:11px;left:50%;width:124px;height:36px;margin-left:-62px;border-radius:20px;background:#000}
+.sb-icons{display:flex;align-items:center;gap:7px}
+.sb-icons svg{display:block}
+.homebar{position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:#e2ecef;z-index:45;pointer-events:none}
+.stage-cap{font-size:12.5px;color:var(--muted);text-align:center}
+.viewport{position:absolute;top:var(--sat);left:0;right:0;bottom:0;overflow:hidden;background:var(--bg)}
+
+/* 헤더 · 스크롤 · 탭바 */
+.appbar{position:absolute;top:0;left:0;right:0;z-index:10;height:56px;display:flex;align-items:center;gap:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(6px,env(safe-area-inset-right,0px));background:var(--bg);border-bottom:1px solid var(--line);transition:transform .22s ease}
+.appbar.hide{transform:translateY(-101%)}
+.viewport.no-appbar .appbar{display:none}
+.viewport.elder .appbar{height:64px}
+.ab-brand{display:flex;align-items:center;gap:8px;min-width:0;font-weight:700;font-size:18px}
+.viewport.elder .ab-brand{font-size:28px}
+.ab-brand .logo{width:30px;height:30px;color:var(--text)}
+.viewport.elder .ab-brand .logo{width:40px;height:40px}
+.ab-title{font-size:17px;font-weight:700;margin-right:auto;min-width:0}
+.scroller{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-top:56px;padding-bottom:calc(var(--sab) + 28px)}
+.viewport.no-appbar .scroller{padding-top:0}
+.viewport.elder .scroller{padding-top:64px}
+.viewport.has-tabbar .scroller{padding-bottom:calc(64px + var(--sab) + 20px)}
+.tabbar{position:absolute;left:0;right:0;bottom:0;z-index:10;display:none;grid-template-columns:repeat(4,minmax(0,1fr));height:calc(64px + var(--sab));padding-bottom:var(--sab);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);background:var(--bg);border-top:1px solid var(--line)}
+.viewport.has-tabbar .tabbar{display:grid}
+.tab{position:relative;display:grid;justify-items:center;align-content:center;gap:3px;min-height:48px;border:0;background:none;color:var(--muted);font-size:11.5px;font-weight:500}
+.tab svg{width:24px;height:24px}
+.tab[aria-current="page"]{color:var(--accent)}
+.tab-dot{position:absolute;top:6px;left:calc(50% + 6px);min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--warn);color:var(--bg);font:700 10.5px/17px var(--mono);text-align:center}
+
+/* 공통 조각 */
+.page{display:grid;gap:12px;max-width:560px;margin:0 auto;padding-block:14px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:12px;min-width:0;align-content:start}
+.c-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 10px}
+.c-label{font-size:14px;font-weight:500;color:var(--text-2)}
+.c-title{font-size:16px;font-weight:700}
+.c-date{font:500 12.5px var(--mono);color:var(--muted)}
+.c-h{font-size:19px;font-weight:700;line-height:1.4}
+.c-p{font-size:14.5px;color:var(--text-2)}
+.c-note{font-size:12.5px;color:var(--muted)}
+.foot{font-size:12px;color:var(--muted);text-align:center;padding:6px 0 2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:500;font-size:15px;line-height:1.35;text-align:center;text-decoration:none}
+.btn:hover{border-color:#2e3848}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+.btn.primary:hover{background:#5ccbfa}
+.btn.quiet{background:transparent}
+.btn.block{display:flex;width:100%}
+.btn.small{min-height:44px;padding:8px 12px;font-size:14px}
+.btn.confirm{border-color:var(--warn-line);background:var(--warn-weak);color:var(--warn);font-weight:700}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn svg{width:18px;height:18px;flex:none}
+.icon-btn{width:44px;height:44px;flex:none;display:grid;place-items:center;padding:0;border:0;border-radius:12px;background:transparent;color:var(--muted)}
+.icon-btn:hover{color:var(--text);background:var(--inset)}
+.icon-btn svg{width:22px;height:22px}
+.badge{display:inline-flex;align-items:center;gap:5px;max-width:100%;padding:5px 10px;border-radius:999px;background:var(--inset);color:var(--text-2);font-size:13px;font-weight:700;line-height:1.35;justify-self:start}
+.badge svg{width:15px;height:15px;flex:none}
+.badge.warn{background:var(--warn-weak);color:var(--warn)}
+.badge.accent{background:var(--accent-weak);color:var(--accent)}
+.av{display:inline-grid;place-items:center;flex:none;border-radius:50%;background:var(--raise);border:1px solid var(--line);color:var(--text-2);font-weight:700;object-fit:cover;overflow:hidden;line-height:1}
+.code{font:700 30px/1.2 var(--mono);letter-spacing:.08em;text-align:center;padding:14px 10px;border-radius:12px;background:var(--inset);border:1px dashed var(--line)}
+
+/* 프로필 줄 */
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:stretch}
+.carousel{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:16px;min-width:0}
+.carousel::-webkit-scrollbar{display:none}
+.pcard{flex:0 0 100%;scroll-snap-align:start;display:grid;grid-template-columns:48px minmax(0,1fr);gap:10px;align-items:center;min-height:76px;padding:10px 12px;border-radius:16px;border:1px solid var(--line);background:var(--card);text-align:left;min-width:0}
+.pcard.add{grid-template-columns:24px minmax(0,1fr);color:var(--accent);border-style:dashed;font-weight:700}
+.pcard.add svg{width:22px;height:22px}
+.pinfo{display:grid;gap:1px;min-width:0}
+.pinfo b{font-size:16px;font-weight:700;line-height:1.3}
+.pinfo span{font-size:13px;color:var(--text-2);line-height:1.35}
+.pinfo .pst{justify-self:start;margin-top:3px;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700;background:var(--inset);color:var(--text-2)}
+.pinfo .pst.warn{background:var(--warn-weak);color:var(--warn)}
+.wsel{position:relative;display:block}
+.wsel select{appearance:none;-webkit-appearance:none;width:100px;height:100%;min-height:76px;padding:0 28px 0 12px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:14px;font-weight:700}
+.wsel svg{position:absolute;right:8px;top:50%;width:16px;height:16px;margin-top:-8px;pointer-events:none;color:var(--muted)}
+.pdots{display:flex;justify-content:center;margin-top:-6px}
+.pdot{width:30px;height:28px;display:grid;place-items:center;padding:0;border:0;background:none}
+.pdot i{width:6px;height:6px;border-radius:3px;background:#2c3542}
+.pdot.on i{width:18px;background:var(--accent)}
+
+/* 리포트 */
+.verdict{gap:10px}
+.verdict.watch{border-color:var(--warn-line)}
+.verdict.persist{border-color:var(--warn)}
+.v-top{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.v-when{font:500 12px var(--mono);color:var(--muted);margin-left:auto}
+.v-title{font-size:21px;font-weight:700;line-height:1.4}
+.v-why{font-size:14px;color:var(--text-2)}
+.v-act{font-size:15.5px;font-weight:700}
+.v-row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:8px}
+.v-calls{font-size:12.5px;color:var(--text-2)}
+.topics{display:grid;gap:4px;padding:12px 14px;border-radius:12px;background:var(--inset)}
+.topics b{font-size:12.5px;color:var(--accent);font-weight:700}
+.topics p{font-size:14px;line-height:1.5}
+.big{display:flex;align-items:baseline;gap:6px;margin-top:-2px}
+.big-num{font:700 60px/1 var(--mono);letter-spacing:-.03em}
+.big-unit{font:500 22px var(--mono);color:var(--text-2)}
+.sumcard{grid-template-columns:repeat(3,minmax(0,1fr));gap:0;padding:14px 4px}
+.sum{display:grid;gap:4px;align-content:start;padding:3px 10px 2px;border-left:1px solid var(--line);min-width:0}
+.sum:first-child{border-left:0}
+.sum-l{font-size:12.5px;color:var(--text-2);line-height:1.5}
+.sum-v{display:flex;align-items:baseline;flex-wrap:wrap;column-gap:1px;line-height:1.15}
+.sum-v b{font:700 26px/1.1 var(--mono)}
+.sum-v b.txt{font:700 19px/1.25 var(--font)}
+.sum-v small{font:500 13px var(--mono);color:var(--text-2)}
+.sum-v.warn b{color:var(--warn)}
+.sum-s{font-size:12px;color:var(--muted);line-height:1.35}
+.banner{display:grid;gap:2px;padding:12px 14px;border-radius:14px;border:1px solid var(--warn-line);background:var(--warn-weak)}
+.banner b{color:var(--warn);font-size:15px}
+.banner span{font-size:13px;color:var(--text-2)}
+.goods{display:grid;gap:8px}
+.goods li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;align-items:start;font-size:14.5px}
+.goods li svg{width:18px;height:18px;color:var(--accent);margin-top:3px}
+.wm{display:grid;gap:6px}
+.wm-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px 8px;font-size:13.5px;color:var(--text-2)}
+.wm-top b{font:700 13.5px var(--mono);color:var(--text)}
+.bar{height:8px;border-radius:4px;background:var(--inset);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px;background:var(--accent)}
+.posts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.post{display:grid;gap:6px;min-width:0;align-content:start}
+.ph{position:relative;aspect-ratio:1/1;max-width:100%;border-radius:12px;overflow:hidden;background:var(--inset);border:1px solid var(--line)}
+.ph img,.ph video{display:block;width:100%;height:100%;object-fit:cover;background:#000}
+.ph .tag{position:absolute;left:6px;top:6px;max-width:calc(100% - 12px);padding:2px 8px;border-radius:999px;background:rgba(6,9,15,.8);color:var(--text);font-size:11.5px;font-weight:700}
+.post .cap{font-size:12.5px;color:var(--text-2);line-height:1.4}
+.post .ai{font-size:12px;color:var(--accent);line-height:1.4}
+.post .btn{min-height:44px;font-size:13px;padding:6px 10px}
+.empty-box{display:grid;gap:4px;padding:16px;border-radius:12px;background:var(--inset);text-align:center}
+.empty-box b{font-size:14.5px}
+.empty-box span{font-size:12.5px;color:var(--text-2)}
+.sent{font-size:12.5px;color:var(--text-2)}
+.qline{display:grid;grid-template-columns:20px minmax(0,1fr);gap:8px;font-size:13.5px;color:var(--text-2);line-height:1.5}
+.qline svg{width:18px;height:18px;margin-top:2px}
+.qline.ok svg{color:var(--accent)}
+.qline.gap svg{color:var(--warn)}
+.spark{display:grid;grid-template-columns:64px repeat(var(--n),minmax(0,1fr));column-gap:6px;row-gap:6px;align-items:end}
+.spark .lab{font-size:12.5px;color:var(--text-2);align-self:center;line-height:1.35}
+.spark .col{display:grid;justify-items:center;align-content:end;gap:3px;height:74px;min-width:0}
+.spark .col i{display:block;width:100%;max-width:28px;border-radius:5px 5px 2px 2px;background:var(--accent-weak);border:1px solid var(--accent-line)}
+.spark .col.cur i{background:var(--accent);border-color:var(--accent)}
+.spark .col b{font:600 11px var(--mono);color:var(--text-2)}
+.spark .wk{font:500 10.5px var(--mono);color:var(--muted);text-align:center}
+.mapwrap{position:relative;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#080c12}
+.map{display:block;width:100%;height:auto}
+.m-cont{fill:none;stroke:#141c26;stroke-width:1.2}
+.m-field{fill:#0b1118;stroke:#121922}
+.m-water{fill:none;stroke:#0d2231;stroke-width:10;stroke-linecap:round}
+.m-road{fill:none;stroke:#18202a;stroke-linecap:round}
+.m-rail{fill:none;stroke:#1c2430;stroke-width:4}
+.m-rail2{fill:none;stroke:#080c12;stroke-width:2;stroke-dasharray:5 5}
+.m-median{fill:none;stroke:#222b37;stroke-width:1;stroke-dasharray:6 6}
+.m-block{fill:#0f151d;stroke:#161e28}
+.m-house{fill:#131a23}
+.m-grid{stroke:#0e141c;stroke-width:1}
+.lv1{fill:rgba(56,189,248,.16)}.lv2{fill:rgba(56,189,248,.28)}.lv3{fill:rgba(56,189,248,.44)}.lv4{fill:rgba(56,189,248,.64)}.lv5{fill:rgba(56,189,248,.88)}
+.m-base{fill:none;stroke:#8294a1;stroke-width:1.6}
+.m-week{fill:none;stroke:var(--accent);stroke-width:2.6}
+.m-meal{fill:#ffffff;stroke:#06090f;stroke-width:2}
+.m-vis{fill:#8294a1;stroke:#06090f;stroke-width:2}
+.m-miss{fill:#080c12;stroke:#8294a1;stroke-width:1.8}
+.m-snap{fill:#080c12;stroke:var(--accent);stroke-width:2.4}
+.m-lab{font:600 11.5px var(--font);fill:var(--text);paint-order:stroke;stroke:#080c12;stroke-width:4px;stroke-linejoin:round}
+.m-sub{font:500 10px var(--font);fill:var(--muted);paint-order:stroke;stroke:#080c12;stroke-width:4px;stroke-linejoin:round}
+.m-rlab{font:600 10.5px var(--mono);paint-order:stroke;stroke:#080c12;stroke-width:4px;stroke-linejoin:round}
+.m-rlab.b{fill:#8294a1}.m-rlab.w{fill:var(--accent)}
+.ptap{cursor:pointer;outline:none}
+.ptap circle{fill:transparent;stroke:transparent;stroke-width:2}
+.ptap:hover circle,.ptap:focus-visible circle{stroke:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--text-2)}
+.legend li{display:inline-flex;align-items:center;gap:6px}
+.ramp{display:inline-flex;gap:2px}
+.ramp i{width:9px;height:9px;border-radius:2px}
+.ramp .r1{background:rgba(56,189,248,.16)}.ramp .r3{background:rgba(56,189,248,.44)}.ramp .r5{background:rgba(56,189,248,.88)}
+.sw{width:14px;height:14px;flex:none}
+.sw-line{width:16px;height:0;border-top:2px solid #8294a1}
+.sw-line.w{border-top:2.5px solid var(--accent)}
+.lock{border-style:dashed}
+
+/* 알림 상세 */
+.ad-head{display:grid;gap:8px;padding:4px 2px 2px}
+.ad-who{font-size:13.5px;color:var(--text-2)}
+.ad-title{font-size:22px;font-weight:700;line-height:1.4}
+.ad-why{font-size:14px;color:var(--text-2)}
+.al-badges{display:flex;flex-wrap:wrap;gap:6px}
+.cmp{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) minmax(0,1fr);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.cmp>div{padding:10px;border-top:1px solid var(--line);min-width:0;font-size:14px}
+.cmp>.h{border-top:0;background:var(--inset);font-size:12.5px;color:var(--text-2);font-weight:700;line-height:1.35}
+.cmp>.h small{display:block;font:500 11px var(--mono);color:var(--muted)}
+.cmp>.l{color:var(--text-2);font-size:13px;line-height:1.35}
+.cmp>.v{font:600 14px/1.35 var(--font)}
+.cmp>.v.warn{color:var(--warn)}
+.cmp>.v small{display:block;font-size:11.5px;font-weight:500;color:inherit;opacity:.85}
+.strips{display:grid;gap:8px}
+.strip{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:center}
+.strip>span{font-size:12.5px;color:var(--text-2)}
+.st-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.st-days i{display:grid;place-items:center;height:30px;border-radius:7px;border:1px solid var(--line);font:500 11.5px var(--font);font-style:normal;color:var(--muted)}
+.st-days i.out{background:var(--accent-weak);border-color:var(--accent-line);color:var(--accent)}
+.st-days i.flag{border-color:var(--warn);color:var(--warn)}
+.st-days i.gap{border-style:dashed}
+.st-days i.none{opacity:.35}
+.act-note{font-size:12.5px;color:var(--muted);text-align:center}
+.sched{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;background:var(--accent-weak);color:var(--accent);font-weight:700;font-size:14.5px}
+.facts{display:grid;gap:8px}
+.facts div{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;padding:10px 12px;border-radius:10px;background:var(--inset)}
+.facts dt{font-size:12.5px;color:var(--muted)}
+.facts dd{font-size:14px;font-weight:600}
+.check{display:grid;gap:8px}
+.check li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 10px;border-radius:12px;background:var(--inset)}
+.tick{width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:transparent;display:grid;place-items:center;padding:0;color:var(--on-accent)}
+.tick svg{width:22px;height:22px;opacity:0}
+.tick[aria-pressed="true"]{background:var(--accent);border-color:var(--accent)}
+.tick[aria-pressed="true"] svg{opacity:1}
+.ck-m{display:grid;gap:1px;min-width:0}
+.ck-m b{font-size:14.5px}
+.ck-m span{font-size:12.5px;color:var(--text-2)}
+.thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--line)}
+
+/* 알림 · 가족 · 설정 */
+.sec-h{font-size:13px;font-weight:700;color:var(--text-2);padding:6px 2px 0}
+.alist{display:grid;gap:8px}
+.arow{display:grid;grid-template-columns:36px minmax(0,1fr) 20px;gap:10px;align-items:center;width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:var(--card);text-align:left}
+.arow.todo{border-color:var(--warn-line)}
+.arow-m{display:grid;gap:3px;min-width:0}
+.arow-who{font-size:12.5px;color:var(--text-2)}
+.arow-t{font-size:15px;font-weight:700;line-height:1.4}
+.arow-s{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.arow>svg{width:20px;height:20px;color:var(--muted)}
+.empty{padding:28px 16px;text-align:center;color:var(--muted);font-size:14px}
+.mlist{display:grid}
+.mrow{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.mrow:first-child{border-top:0;padding-top:0}
+.mrow-m{display:grid;gap:1px;min-width:0}
+.mrow-m b{font-size:15px}
+.mrow-m span{font-size:12.5px;color:var(--text-2)}
+.mrow-m .mrow-tag{display:flex;margin-top:4px}
+.memo{display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:start;padding:10px;border-radius:12px;background:var(--inset)}
+.memo .ph{width:72px}
+.memo-m{display:grid;gap:5px;min-width:0}
+.memo-m b{font-size:14px;line-height:1.45}
+.memo-m span{font-size:12.5px;color:var(--text-2)}
+.memo-m video{display:block;width:100%;max-height:220px;border-radius:8px;background:#000}
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.plan{display:grid;gap:3px;align-content:start;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--inset);min-width:0}
+.plan.on{border-color:var(--accent-line);background:var(--accent-weak)}
+.plan-n{font:700 11.5px var(--mono);letter-spacing:.08em;color:var(--accent)}
+.plan-p{font-size:17px;font-weight:700}
+.plan-d{font-size:12.5px;color:var(--text-2);line-height:1.4}
+.plan-now{font-size:12px;font-weight:700;color:var(--accent)}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+
+/* 시트 */
+.layer{position:absolute;inset:0;z-index:20;display:none}
+.layer.open{display:block}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.62)}
+.sheet{position:absolute;left:0;right:0;bottom:0;max-height:90%;overflow-y:auto;overscroll-behavior:contain;background:var(--card);border-top:1px solid var(--line);border-radius:20px 20px 0 0;display:grid;gap:14px;align-content:start;padding-block:0 calc(var(--sab) + 20px);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+.sh-head{position:sticky;top:0;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 0 4px;background:var(--card)}
+.sh-title{font-size:18px;font-weight:700;min-width:0}
+.sh-body{display:grid;gap:14px;padding-right:6px}
+.field{display:grid;gap:6px}
+.field>label,.field>.lab{font-size:13.5px;font-weight:500;color:var(--text-2)}
+.input,.select{width:100%;height:50px;border-radius:12px;border:1px solid var(--line);background:var(--inset);color:var(--text);padding:0 14px;font-size:16px}
+.select{appearance:none;-webkit-appearance:none}
+.input:focus,.select:focus{outline:none;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chipbtn{min-height:40px;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text-2);font-size:14px;text-align:left}
+.chipbtn[aria-pressed="true"]{border-color:var(--accent);color:var(--accent);background:var(--accent-weak)}
+.photo-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.okline{font-size:13.5px;color:var(--accent);font-weight:700}
+.sheet-media{display:block;width:100%;max-height:300px;object-fit:cover;border-radius:12px;border:1px solid var(--line);background:#000}
+.slots{display:grid;grid-template-columns:44px repeat(7,minmax(0,1fr));gap:4px;font-size:12px}
+.slots .hd{text-align:center;color:var(--text-2);font-weight:700}
+.slots .rl{color:var(--text-2);align-self:center;font-size:12px}
+.slots i{height:30px;border-radius:6px;background:var(--inset);border:1px solid var(--line)}
+.slots i.on{background:rgba(56,189,248,.7);border-color:var(--accent)}
+.pay-box{display:grid;gap:6px;padding:14px;border-radius:12px;background:var(--inset);border:1px solid var(--line)}
+.pay-box ul{display:grid;gap:4px;font-size:13.5px;color:var(--text-2)}
+.pay-box li{display:flex;gap:6px;align-items:center}
+.pay-box li svg{width:15px;height:15px;color:var(--accent)}
+.pay-m{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:12px;border:1px solid var(--line);font-size:14px}
+.pay-m b{font-family:var(--mono);font-weight:500}
+
+/* 로딩 · 역할 선택 */
+.splash{position:absolute;inset:0;z-index:50;display:grid;place-items:center;align-content:center;gap:16px;background:var(--bg);transition:opacity .45s ease}
+.splash.out{opacity:0;pointer-events:none}
+.splash .logo{width:104px;height:104px;color:var(--text)}
+.sp-name{font-size:30px;font-weight:700;letter-spacing:.02em}
+.sp-sub{font-size:14px;color:var(--muted);margin-top:-8px}
+.role-page{min-height:100%;display:grid;align-content:center;gap:28px;max-width:440px;margin:0 auto;padding-block:40px 20px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.role-top{display:grid;justify-items:center;gap:10px;text-align:center}
+.role-top .logo{width:80px;height:80px;color:var(--text)}
+.role-top h1{font-size:28px;font-weight:700}
+.role-top p{font-size:14px;color:var(--muted)}
+.role-btns{display:grid;gap:12px}
+.role-btn{display:grid;justify-items:start;gap:2px;min-height:84px;padding:14px 18px;text-align:left;border-radius:16px}
+.role-btn b{font-size:20px}
+.role-btn span{font-size:14px;font-weight:500;opacity:.85}
+
+/* 어르신 화면: 글자 28px 이상 · 지금 할 일 하나 · 큰 단추 · 한 화면에 단추 3개 이하 */
+.viewport.elder{font-size:28px}
+.e-page{display:grid;gap:18px;max-width:560px;margin:0 auto;padding-block:16px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));font-size:28px;line-height:1.45}
+.e-greet{font-size:30px;font-weight:700;line-height:1.35}
+.e-greet span{display:block;font-size:28px;font-weight:500;color:var(--muted)}
+.e-card{display:grid;gap:16px;justify-items:center;text-align:center;padding:22px 16px;border-radius:24px;border:1px solid var(--line);background:var(--card);min-width:0}
+.e-card.now{border-color:var(--accent-line)}
+.e-ico{width:104px;height:104px;color:var(--accent)}
+.e-q{font-size:40px;font-weight:700;line-height:1.3}
+.e-sub{font-size:28px;color:var(--text-2);line-height:1.4}
+.btn.e-main{width:100%;min-height:120px;border-radius:22px;font-size:36px;font-weight:700;padding:12px 16px}
+.btn.e-second{width:100%;min-height:88px;border-radius:20px;font-size:30px;font-weight:700;padding:10px 16px}
+.btn.e-main svg,.btn.e-second svg{width:34px;height:34px}
+.stamps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:14px 8px 16px;border-radius:20px;border:1px solid var(--line);background:var(--card)}
+.stamps-h{grid-column:1/-1;font-size:28px;font-weight:700;padding:0 8px 6px}
+.stamp{display:grid;justify-items:center;gap:6px;min-width:0}
+.stamp i{width:52px;height:52px;border-radius:50%;border:3px dashed #2f3946;display:grid;place-items:center;color:var(--on-accent)}
+.stamp.on i{border:0;background:var(--accent)}
+.stamp i svg{width:30px;height:30px}
+.stamp span{font-size:28px;color:var(--text-2);line-height:1.5}
+.e-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.e-head h1{font-size:34px;font-weight:700;line-height:1.3;min-width:0}
+.icon-btn.e-back{width:56px;height:56px}
+.icon-btn.e-back svg{width:30px;height:30px}
+.e-media{display:block;width:100%;max-height:46vh;object-fit:cover;border-radius:18px;border:1px solid var(--line);background:#000}
+.e-wait{display:grid;justify-items:center;gap:18px;padding:48px 0;text-align:center}
+.e-wait .spin{width:56px;height:56px;border-radius:50%;border:5px solid var(--line);border-top-color:var(--accent);animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.e-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.e-stat{display:grid;gap:4px;align-content:start;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--card);min-width:0}
+.e-stat .lab{font-size:28px;color:var(--text-2);line-height:1.3}
+.e-stat .val{font:700 40px/1.15 var(--mono)}
+.e-stat .val small{font:700 28px var(--font);margin-left:2px}
+.e-stat .val.txt{font:700 32px/1.25 var(--font)}
+.e-stat .sub{font-size:28px;color:var(--muted);line-height:1.3}
+.e-told{display:grid;gap:6px;padding:16px;border-radius:16px;border:1px solid var(--line);background:var(--card)}
+.e-told .who{font-size:28px;color:var(--text-2)}
+.e-told .what{font-size:30px;font-weight:700;line-height:1.4}
+.e-told .what.warn{color:var(--warn)}
+.e-bar{height:16px;border-radius:8px;background:var(--inset);overflow:hidden}
+.e-bar i{display:block;height:100%;background:var(--accent);border-radius:8px}
+.e-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:96px;padding:12px 16px;border-radius:20px;border:1px solid var(--line);background:var(--card);color:inherit;text-align:left}
+.e-row-t{display:grid;min-width:0}
+.e-row-t b{font-size:30px}
+.e-row-t span{font-size:28px;color:var(--accent)}
+.e-row-t span.off{color:var(--warn)}
+.e-row>svg{width:32px;height:32px;flex:none;color:var(--muted)}
+.e-switch{position:relative;flex:none;width:92px;height:56px;border-radius:28px;background:var(--line)}
+.e-switch span{position:absolute;top:6px;left:6px;width:44px;height:44px;border-radius:50%;background:#e2ecef;transition:transform .18s}
+.e-row[aria-checked="true"] .e-switch{background:var(--accent)}
+.e-row[aria-checked="true"] .e-switch span{transform:translateX(36px)}
+.e-note{font-size:28px;color:var(--muted);line-height:1.4}
+.e-flow{position:relative;display:grid;gap:20px;padding:22px 16px 18px;border-radius:20px;border:1px solid var(--line);background:var(--card)}
+.e-flow .e-back{position:absolute;top:8px;right:8px}
+.e-kicker{font-size:28px;font-weight:700;color:var(--accent)}
+.e-title{font-size:34px;font-weight:700;line-height:1.3;padding-right:48px}
+.e-p{font-size:28px;color:var(--text-2);line-height:1.45}
+.e-code{display:grid;gap:4px;justify-items:center;padding:16px;border-radius:16px;background:var(--inset);border:1px dashed var(--line)}
+.e-code span{font-size:28px;color:var(--text-2)}
+.e-code b{font:700 40px/1.2 var(--mono);letter-spacing:.08em}
+.pic{display:grid;grid-template-columns:64px minmax(0,1fr);gap:14px;align-items:center;padding:14px;border-radius:16px;border:1px solid var(--line);background:var(--inset)}
+.pic svg{width:64px;height:64px}
+.pic.yes svg{color:var(--accent)}
+.pic.no svg{color:var(--muted)}
+.pic b{display:block;font-size:30px;line-height:1.35}
+.pic span{display:block;font-size:28px;color:var(--text-2);line-height:1.35}
+.preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pv{display:grid;justify-items:center;gap:6px;padding:12px 8px;border-radius:12px;background:var(--inset);text-align:center;min-width:0}
+.pv svg{width:40px;height:40px}
+.pv.yes svg{color:var(--accent)}
+.pv.no svg{color:var(--muted)}
+.pv b{font-size:13.5px}
+.pv span{font-size:12px;color:var(--text-2)}
+
+/* 완료 축하 */
+.celebrate{position:absolute;inset:0;z-index:35;display:grid;justify-items:center;align-content:center;gap:14px;padding-block:24px;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));background:rgba(6,9,15,.97);text-align:center}
+.celebrate .e-ico{width:150px;height:150px}
+.cel-t{font-size:44px;font-weight:700;line-height:1.25}
+.cel-s{font-size:28px;color:var(--text-2);line-height:1.4}
+.cel-n{font-size:28px;color:var(--accent);line-height:1.4}
+.celebrate .btn{max-width:420px}
+
+.toast{position:absolute;left:16px;right:16px;bottom:calc(var(--sab) + 18px);z-index:40;padding:12px 16px;border-radius:12px;background:var(--text);color:var(--bg);font-size:15px;font-weight:600;line-height:1.4;text-align:center}
+.viewport.has-tabbar .toast{bottom:calc(64px + var(--sab) + 12px)}
+.viewport.elder .toast{font-size:28px;padding:16px}
+.toast.show{animation:toast-in .2s ease-out}
+@keyframes toast-in{from{opacity:0;transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+
+<script>
+(function(){var h=(location.hash||'').slice(1);var f=(h==='pc'||h==='phone')?h:((window.innerWidth>=760&&window.innerHeight>=560)?'pc':'phone');document.documentElement.setAttribute('data-frame',f);})();
+</script>
+<div class="stage" id="stage">
+  <div class="dwrap" id="dwrap">
+    <div class="device" id="device">
+      <div class="statusbar" aria-hidden="true">
+        <span class="sb-time" id="sb-time">9:41</span>
+        <span class="island"></span>
+        <span class="sb-icons">
+          <svg width="18" height="13" viewBox="0 0 18 13" fill="#e2ecef"><path d="M9 2.2c2.6 0 5 1 6.8 2.7l1.3-1.4C14.9 1.4 12.1.2 9 .2S3.1 1.4.9 3.5l1.3 1.4C4 3.2 6.4 2.2 9 2.2zm0 4c1.5 0 2.9.6 4 1.5l1.3-1.4C12.9 5 11 4.2 9 4.2S5.1 5 3.7 6.3L5 7.7c1.1-.9 2.5-1.5 4-1.5zm0 4c-.5 0-1 .2-1.3.5L9 12.2l1.3-1.5c-.3-.3-.8-.5-1.3-.5z"/></svg>
+          <svg width="28" height="13" viewBox="0 0 28 13"><rect x=".6" y=".6" width="23.4" height="11.8" rx="3.4" fill="none" stroke="#e2ecef" stroke-opacity=".5" stroke-width="1.2"/><rect x="2.4" y="2.4" width="17" height="8.2" rx="2" fill="#e2ecef"/><path d="M25.6 4.4v4.2c.9-.3 1.5-1.1 1.5-2.1s-.6-1.8-1.5-2.1z" fill="#e2ecef" fill-opacity=".5"/></svg>
+        </span>
+      </div>
+      <div class="viewport no-appbar" id="viewport">
+        <header class="appbar" id="appbar"></header>
+        <main class="scroller" id="scroller"></main>
+        <nav class="tabbar" id="tabbar" aria-label="보호자 메뉴"></nav>
+        <div class="layer" id="layer"></div>
+        <div class="celebrate" id="celebrate" role="status" aria-live="assertive" hidden></div>
+        <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+        <div class="splash" id="splash" role="img" aria-label="기억마실">
+          <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><g transform="translate(0 -5)" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 46H28c9 0 15-4 30-11"/><path d="M13 46V35.5L20.5 29 28 35.5V46"/></g><circle cx="43.6" cy="36.9" r="3.2" fill="#38bdf8"/></svg>
+          <p class="sp-name">기억마실</p>
+          <p class="sp-sub">남양주 · 부모님의 한 주를 읽어요</p>
+        </div>
+      </div>
+      <div class="homebar" aria-hidden="true"></div>
+    </div>
+  </div>
+  <p class="stage-cap">시연용 아이폰 화면 · 휴대폰에서는 주소 끝에 #phone 을 붙여 열어요</p>
+</div>
+<input type="file" id="picker" class="sr" tabindex="-1" aria-hidden="true">
+
+<script id="engine">
+/* 기억마실 엔진: 화면과 무관한 순수 함수.
+   테스트 데이터 · 주간 지표 · 평소 2주 기준선 · 변화 알림 · 하루 미션과 도장 */
+var Engine = (function () {
+  'use strict';
+  var TODAY = '2026-11-22';
+  var TYPES = { home: '집', senior: '경로당', clinic: '보건지소', mart: '마트', market: '오일장', walk: '산책로', snap: '사진 찍은 곳' };
+  var PLACE_ORDER = ['senior', 'clinic', 'mart', 'market', 'walk'];
+  // 정확한 좌표 대신 "집에서 몇 km, 어느 쪽"만 둔다. [거리 km, 방향 °(동쪽 0, 반시계), 이름표 위치]
+  var LAYOUTS = {
+    sudong:  { senior: [0.45, 40, 'r'], walk: [0.7, 140, 'l'], clinic: [0.85, 215, 'l'], mart: [1.2, -55, 'b'], market: [1.8, -22, 't'] },
+    hwado:   { senior: [0.35, 60, 'r'], walk: [0.8, 160, 'l'], clinic: [0.6, 230, 'l'], mart: [0.5, -25, 'r'], market: [1.4, -100, 'b'] },
+    jinjeop: { senior: [0.6, 120, 'l'], walk: [1.1, 65, 'r'], clinic: [0.9, 205, 'l'], mart: [0.4, -15, 'r'], market: [1.6, -115, 'b'] }
+  };
+  var MEALS = ['b', 'l', 'd'];
+  var MEAL_NAME = { b: '아침', l: '점심', d: '저녁' };
+  var MEAL_WIN = { b: [300, 600], l: [660, 840], d: [1020, 1200] };
+  var MEAL_TIME = { b: 490, l: 730, d: 1100 };
+  // 하루 미션 4개와 시작 시각(분). 마실은 오후 2시부터 권한다
+  var MISSIONS = [{ k: 'b', start: 300, name: '아침', label: '아침 드시기' }, { k: 'l', start: 660, name: '점심', label: '점심 드시기' }, { k: 'w', start: 840, name: '마실', label: '마실 다녀오기' }, { k: 'd', start: 1020, name: '저녁', label: '저녁 드시기' }];
+  var PHOTO_MEAL = { b: [300, 630], l: [630, 900], d: [960, 1320] };
+  var SLOTS = [['아침', 360, 600], ['낮', 600, 840], ['오후', 840, 1080], ['저녁', 1080, 1320]];
+  var RULES = { streakDays: 2, radiusDrop: 0.25, mealDrop: 0.2, outDaysWarn: 2, outDaysInfo: 1, persistWeeks: 2, learnWeeks: 2, homeKm: 0.15, stepsPerKm: 1400 };
+  var DOW = ['월', '화', '수', '목', '금', '토', '일'];
+  var COUNT_WORD = { 2: '이틀', 3: '사흘', 4: '나흘', 5: '닷새', 6: '엿새', 7: '일주일 내내' };
+
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function parseD(s) { var a = s.split('-'); return Date.UTC(+a[0], +a[1] - 1, +a[2]); }
+  function fmtD(t) { var d = new Date(t); return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()); }
+  function addDays(s, n) { return fmtD(parseD(s) + n * 864e5); }
+  function dow(s) { return (new Date(parseD(s)).getUTCDay() + 6) % 7; }
+  function mondayOf(s) { return addDays(s, -dow(s)); }
+  function daysBetween(a, b) { return Math.round((parseD(b) - parseD(a)) / 864e5); }
+  function md(s) { var a = s.split('-'); return (+a[1]) + '.' + (+a[2]); }
+  function toMin(t) { var a = String(t).split(':'); return (+a[0]) * 60 + (+a[1]); }
+  function hm(min) { min = Math.max(0, Math.round(min)); return pad(Math.floor(min / 60)) + ':' + pad(min % 60); }
+  function num(x) { return Math.abs(x - Math.round(x)) < 0.05 ? String(Math.round(x)) : x.toFixed(1); }
+  function km(x) { return (Math.round(x * 10) / 10).toFixed(1) + 'km'; }
+  function dur(min) { var h = Math.floor(min / 60), m = Math.round(min % 60); return (h ? h + '시간' : '') + (h && m ? ' ' : '') + (m || !h ? m + '분' : ''); }
+  function clone(o) { return JSON.parse(JSON.stringify(o)); }
+  function isObj(v) { return v && typeof v === 'object' && !Array.isArray(v); }
+  // db의 update와 같은 규칙: 객체는 재귀로 합치고 배열과 값은 통째로 바꾼다
+  function merge(t, p) { Object.keys(p).forEach(function (k) { var v = p[k]; if (isObj(v) && isObj(t[k])) merge(t[k], v); else t[k] = v === undefined ? v : clone(v); }); return t; }
+  function placeKm(layout, p) { if (p === 'home' || p === 'snap') return 0; var L = LAYOUTS[layout] || LAYOUTS.sudong; return L[p] ? L[p][0] : 0; }
+  function visitKm(layout, v) { return v.km != null ? v.km : placeKm(layout, v.p); }
+  function steps(k) { return Math.round(2 * k * RULES.stepsPerKm / 100) * 100; }
+
+  /* ---------- 테스트 데이터: 하루 = [식사, 외출, 'gap'(위치 기록 빈 날)]. 식사 b 아침 · l 점심(집) · L 점심(경로당) · d 저녁 ---------- */
+  var A1 = [['bLd', 'senior 10:30-13:40'], ['bld', 'walk 07:00-07:50; mart 15:00-15:50'], ['bLd', 'senior 10:40-13:30; clinic 14:20-15:10'], ['bld', 'market 09:30-11:40'], ['bLd', 'senior 10:30-13:30'], ['bld', 'walk 07:10-08:00'], ['bl', '']];
+  var A2 = [['bLd', 'senior 10:30-13:30; mart 16:00-16:40'], ['bld', 'market 09:00-11:20'], ['bLd', 'senior 10:30-13:40'], ['bd', ''], ['bLd', 'senior 10:40-13:30; clinic 14:00-14:50'], ['bld', 'walk 07:00-07:40'], ['bld', 'walk 16:00-16:50']];
+  var A3 = [['bLd', 'senior 10:30-13:30'], ['bld', 'walk 07:00-07:50'], ['bLd', 'senior 10:40-13:30; mart 15:30-16:10'], ['bld', 'clinic 10:00-10:50'], ['bld', 'market 09:20-11:30'], ['bLd', 'senior 10:30-13:20'], ['bl', '']];
+  var A4 = [['bLd', 'senior 10:40-13:20'], ['bLd', 'senior 10:50-13:10; clinic 14:00-14:40'], ['bLd', 'senior 11:00-13:00'], ['bld', ''], ['bd', ''], ['bld', 'mart 15:10-15:50'], ['', 'walk 07:00-07:40']];
+  var B1 = [['bLd', 'senior 10:00-15:00'], ['bld', 'walk 06:30-07:30; mart 16:00-16:40'], ['bLd', 'senior 10:00-15:00'], ['bld', 'market 09:00-11:30'], ['bLd', 'senior 10:00-14:30'], ['bld', 'walk 06:40-07:40'], ['bld', '']];
+  var B2 = [['bLd', 'senior 10:00-15:00; mart 16:00-16:30'], ['bld', 'walk 06:30-07:20'], ['bLd', 'senior 10:00-15:00'], ['bld', 'clinic 10:00-10:50'], ['bLd', 'senior 10:00-14:40'], ['bld', 'market 09:10-11:20'], ['bld', '']];
+  var B3 = [['bLd', 'senior 10:00-14:00'], ['bld', ''], ['bLd', 'senior 10:30-13:30'], ['bld', 'clinic 10:00-10:40'], ['bld', ''], ['bld', 'walk 07:00-07:40'], ['bld', '']];
+  var B4 = [['bLd', 'senior 10:30-13:30'], ['bld', ''], ['bld', 'clinic 10:00-10:40'], ['bld', ''], ['bd', ''], ['bld', 'walk 07:10-07:40'], ['', '']];
+  var C1 = [['bld', 'walk 07:00-08:10'], ['bLd', 'senior 10:30-13:30; mart 16:00-16:30'], ['bld', 'walk 07:10-08:00'], ['bLd', 'senior 10:30-13:20'], ['bld', 'market 09:30-11:40'], ['bld', 'clinic 10:00-10:40; walk 16:00-16:50'], ['bld', '']];
+  var C2 = [['bld', 'walk 07:00-08:00; mart 15:00-15:30'], ['bLd', 'senior 10:30-13:30'], ['bld', 'walk 07:00-07:50'], ['bLd', 'senior 10:40-13:20'], ['bld', 'clinic 10:00-10:40'], ['bld', 'market 09:20-11:30'], ['bld', '']];
+  var C3 = [['bld', 'walk 07:00-08:00'], ['bLd', 'senior 10:30-13:30; mart 16:00-16:30'], ['bld', 'walk 07:10-08:00'], ['bLd', 'senior 10:30-13:30'], ['bld', 'market 09:30-11:30'], ['bld', 'clinic 10:00-10:40'], ['bld', 'walk 16:00-16:40']];
+  var C4 = [['bld', 'walk 07:00-08:00'], ['bLd', 'senior 10:30-13:30'], ['bld', 'walk 07:00-07:50; mart 15:30-16:00'], ['bld', '', 'gap'], ['bld', 'market 09:20-11:30'], ['bld', 'clinic 10:00-10:40'], ['', 'walk 07:00-07:40']];
+  var SEED_ELDERS = [
+    { id: 'e1', name: '이정숙', short: '정숙', age: 78, call: '어머니', rel: '딸', area: '수동면', living: '혼자 사심', phone: '010-0000-1078', layout: 'sudong', code: '318274', weeks: [A1, A2, A3, A4] },
+    { id: 'e2', name: '박영호', short: '영호', age: 81, call: '시아버지', rel: '며느리', area: '화도읍', living: '부부 함께 사심', phone: '010-0000-2081', layout: 'hwado', code: '527190', weeks: [B1, B2, B3, B4] },
+    { id: 'e3', name: '이정순', short: '정순', age: 74, call: '이모', rel: '조카', area: '진접읍', living: '혼자 사심', phone: '010-0000-3074', layout: 'jinjeop', code: '640385', weeks: [C1, C2, C3, C4] }
+  ];
+  var SEED_SINCE = '2026-10-26';
+
+  function makeDay(spec, n) {
+    var jitter = ((n * 7) % 5) * 5 - 10, m = { b: false, l: false, d: false };
+    spec[0].split('').forEach(function (c) {
+      var k = c.toLowerCase(), atSenior = c === 'L';
+      m[k] = { t: hm(MEAL_TIME[k] + (atSenior ? -10 : jitter)), p: atSenior ? 'senior' : 'home' };
+    });
+    var v = spec[1] ? spec[1].split(';').map(function (s) { var a = s.trim().split(/\s+/), r = a[1].split('-'); return { p: a[0], s: r[0], e: r[1] }; }) : [];
+    var day = { m: m, v: v };
+    if (spec[2] === 'gap') day.q = 'gap';
+    return day;
+  }
+
+  function buildSeed() {
+    var elders = {}, order = [];
+    SEED_ELDERS.forEach(function (s) {
+      var days = {}, n = 0;
+      s.weeks.forEach(function (wk) { wk.forEach(function (spec) { days[addDays(SEED_SINCE, n)] = makeDay(spec, n); n++; }); });
+      elders[s.id] = { id: s.id, name: s.name, short: s.short, age: s.age, area: s.area, living: s.living, phone: s.phone, layout: s.layout, since: SEED_SINCE, photo: null,
+        consent: { status: 'agreed', at: SEED_SINCE + ' 10:12', code: s.code }, paused: { on: false, at: null }, days: days, posts: {}, inbox: {}, memories: {}, calls: {},
+        circle: { g1: { role: 'main', call: s.call, rel: s.rel, since: SEED_SINCE, status: 'joined', ack: true } } };
+      order.push(s.id);
+    });
+    // 돌봄 가족은 어르신마다 따로: 민수 님은 어머니(이정숙)만, 준혁 님은 아버지(박영호)만 함께 본다
+    elders.e1.circle.f1 = { role: 'family', call: '어머니', rel: '아들', since: '2026-11-02', status: 'joined', ack: true };
+    elders.e2.circle.f2 = { role: 'family', call: '아버지', rel: '아들', since: '2026-11-03', status: 'joined', ack: true };
+    elders.e1.calls = { k1: { id: 'k1', by: '김민수', at: '2026-11-17 20:10' } };
+    return { v: 4, today: TODAY, plan: 'plus',
+      people: { g1: { id: 'g1', name: '김미경', short: '미경', area: '서울 강동구' }, f1: { id: 'f1', name: '김민수', short: '민수', area: '경기 수원시' }, f2: { id: 'f2', name: '박준혁', short: '준혁', area: '서울 강동구' } },
+      elders: elders, order: order,
+      alerts: { 'e2:2026-11-09': { confirmedAt: '2026-11-15 20:10', by: '미경' } },
+      schedules: {} };
+  }
+
+  /* ---------- 지표 ---------- */
+  function dayMetrics(day, layout) {
+    var vs = (day && day.v) || [], ms = (day && day.m) || {}, gap = !!(day && day.q === 'gap');
+    var r = { gap: gap, out: false, outMin: 0, maxKm: 0, places: {}, placeMin: {}, meals: 0, inferred: 0, inferredKeys: [], seniorLunch: 0, mealPlaces: {}, photoOut: 0, walkKm: 0 };
+    if (!gap) vs.forEach(function (v) {
+      if (!TYPES[v.p] || v.p === 'home') return;
+      var d = Math.max(0, toMin(v.e) - toMin(v.s)), k = visitKm(layout, v);
+      r.out = true; r.outMin += d; r.maxKm = Math.max(r.maxKm, k); r.walkKm += 2 * k;
+      r.places[v.p] = (r.places[v.p] || 0) + 1; r.placeMin[v.p] = (r.placeMin[v.p] || 0) + d;
+      if (v.src === 'photo') r.photoOut++;
+    });
+    MEALS.forEach(function (k) {
+      var m = ms[k];
+      if (m) { var at = m.p || 'home'; r.meals++; r.mealPlaces[at] = (r.mealPlaces[at] || 0) + 1; if (k === 'l' && at === 'senior') r.seniorLunch++; return; }
+      var w = MEAL_WIN[k];
+      var hit = !gap && vs.some(function (v) { return v.p === 'senior' && Math.min(toMin(v.e), w[1]) - Math.max(toMin(v.s), w[0]) >= 30; });
+      if (hit) { r.inferred++; r.inferredKeys.push(k); }
+    });
+    r.walk = r.out || !!(day && day.w);
+    r.stamps = r.meals + (r.walk ? 1 : 0);
+    return r;
+  }
+
+  function weekMetrics(el, monday, today) {
+    var since = el.since || today, dates = [], per = [], elapsed = 0;
+    for (var i = 0; i < 7; i++) {
+      var d = addDays(monday, i); dates.push(d);
+      if (d <= today && d >= since) { elapsed++; per.push(dayMetrics((el.days || {})[d], el.layout)); } else per.push(null);
+    }
+    var w = { monday: monday, dates: dates, per: per, elapsed: elapsed, gaps: 0, gapDates: [], locDays: 0, outDays: 0, outRate: 0, radius: 0, meals: 0, mealSlots: elapsed * 3, inferred: 0, seniorLunch: 0, outMin: 0, places: {}, placeMin: {}, mealPlaces: {}, photoOut: 0, walkKm: 0, stamps: 0, streak: { len: 0, dates: [] } };
+    var run = [];
+    function closeRun() { if (run.length && run.length >= w.streak.len) w.streak = { len: run.length, dates: run.slice() }; run = []; }
+    function add(key, src) { Object.keys(src).forEach(function (k) { w[key][k] = (w[key][k] || 0) + src[k]; }); }
+    per.forEach(function (p, i) {
+      if (!p) return;
+      w.meals += p.meals; w.inferred += p.inferred; w.seniorLunch += p.seniorLunch; w.stamps += p.stamps; add('mealPlaces', p.mealPlaces);
+      if (p.gap) { w.gaps++; w.gapDates.push(dates[i]); closeRun(); return; }   // 기록이 빈 날은 '외출 없음'으로 세지 않는다
+      if (p.out) { w.outDays++; closeRun(); } else run.push(dates[i]);
+      w.radius = Math.max(w.radius, p.maxKm); w.outMin += p.outMin; w.photoOut += p.photoOut; w.walkKm += p.walkKm;
+      add('places', p.places); add('placeMin', p.placeMin);
+    });
+    closeRun();
+    w.locDays = elapsed - w.gaps;
+    w.outRate = w.locDays ? w.outDays / w.locDays * 7 : 0;
+    return w;
+  }
+
+  function longestPlace(m) { var best = null; Object.keys(m.placeMin).forEach(function (p) { if (!best || m.placeMin[p] > best.min) best = { p: p, min: m.placeMin[p] }; }); return best; }
+
+  function baseline(ms) {
+    function avg(f) { return ms.reduce(function (a, m) { return a + f(m); }, 0) / ms.length; }
+    return {
+      mondays: ms.map(function (m) { return m.monday; }), weeks: ms,
+      outDays: avg(function (m) { return m.outRate; }),
+      radius: avg(function (m) { return m.radius; }),
+      meals: avg(function (m) { return m.meals; }),
+      streakMax: Math.max.apply(null, ms.map(function (m) { return m.streak.len; })),
+      regular: PLACE_ORDER.filter(function (p) { return ms.every(function (m) { return m.places[p]; }); })
+    };
+  }
+
+  function dayList(dates) { return dates.map(function (d) { return DOW[dow(d)]; }).join('·'); }
+
+  function compare(m, b, wk) {
+    var f = [], scale = m.elapsed / 7, lscale = m.locDays / 7;
+    var ob = b.outDays * lscale, od = ob - m.outDays;
+    if (od >= RULES.outDaysWarn - 0.01) f.push({ id: 'out', level: 'warn', title: '외출한 날이 평소보다 ' + Math.round(od) + '일 적어요', detail: '평소 ' + num(ob) + '일 나가셨는데 ' + wk + '는 ' + m.outDays + '일이에요' });
+    else if (od >= RULES.outDaysInfo - 0.01) f.push({ id: 'out', level: 'info', title: '외출한 날이 평소보다 ' + Math.round(od) + '일 적어요', detail: '평소 ' + num(ob) + '일, ' + wk + ' ' + m.outDays + '일' });
+    if (m.streak.len >= RULES.streakDays && m.streak.len > b.streakMax) {
+      f.push({ id: 'streak', level: 'warn', dates: m.streak.dates, title: dayList(m.streak.dates) + ' ' + (COUNT_WORD[m.streak.len] || m.streak.len + '일') + ' 외출이 없었어요',
+        detail: '평소 2주에는 외출 없는 날이 ' + (b.streakMax <= 1 ? '하루를 넘긴 적이 없었어요' : b.streakMax + '일까지였어요') });
+    }
+    if (m.locDays >= 5 && b.radius > 0) {
+      var drop = (b.radius - m.radius) / b.radius;
+      if (drop >= RULES.radiusDrop) f.push({ id: 'radius', level: 'warn', pct: Math.round(drop * 100), title: '활동 반경이 평소보다 ' + Math.round(drop * 100) + '% 좁아요', detail: '평소 ' + km(b.radius) + '에서 ' + wk + ' ' + km(m.radius) + '로 줄었어요' });
+    }
+    var mb = b.meals * scale;
+    if (mb > 0 && (mb - m.meals) / mb >= RULES.mealDrop) f.push({ id: 'meals', level: 'warn', title: '식사 체크가 평소보다 ' + Math.round(mb - m.meals) + '끼 적어요', detail: '평소 ' + num(mb) + '끼, ' + wk + ' ' + m.meals + '끼' });
+    if (m.locDays >= 5) {
+      var missed = b.regular.filter(function (p) { return !m.places[p]; });
+      if (missed.length) f.push({ id: 'missed', level: 'info', places: missed, title: '늘 가시던 ' + missed.map(function (p) { return TYPES[p]; }).join('·') + '에 ' + wk + '엔 가지 않으셨어요' });
+    }
+    return f;
+  }
+
+  /* 주 단위 분석. 처음 2주는 기준선 학습, 그 뒤로는 알림 없던 최근 2주를 "평소"로 삼는다 */
+  function analyze(el, today) {
+    var since = el.since || today, first = mondayOf(since), last = mondayOf(today), out = [], normal = [], streakWeeks = 0, i = 0;
+    for (var mon = first; mon <= last; mon = addDays(mon, 7), i++) {
+      var m = weekMetrics(el, mon, today), full = m.elapsed === 7;
+      var r = { monday: mon, sunday: addDays(mon, 6), index: i, isCurrent: mon === last, m: m, flags: [], flagged: false, streakWeeks: 0 };
+      var bw = normal.slice(-RULES.learnWeeks);
+      if (bw.length < RULES.learnWeeks) {
+        r.learning = true; r.learnIdx = Math.min(RULES.learnWeeks, normal.length + 1);
+        if (full) normal.push(m);
+        streakWeeks = 0;
+      } else {
+        r.base = baseline(bw);
+        r.flags = compare(m, r.base, r.isCurrent ? '이번 주' : '그 주');
+        r.flagged = r.flags.some(function (f) { return f.level === 'warn'; });
+        streakWeeks = r.flagged ? streakWeeks + 1 : 0;
+        r.streakWeeks = streakWeeks;
+        if (!r.flagged && full) normal.push(m);
+      }
+      out.push(r);
+    }
+    return out;
+  }
+
+  function headline(W) {
+    if (!W || !W.flags) return null;
+    var order = ['out', 'streak', 'radius', 'meals'];
+    for (var i = 0; i < order.length; i++) for (var j = 0; j < W.flags.length; j++) if (W.flags[j].id === order[i] && W.flags[j].level === 'warn') return W.flags[j];
+    return null;
+  }
+  function flag(W, id) { return ((W && W.flags) || []).filter(function (f) { return f.id === id; })[0] || null; }
+  // 판정 3단계 (+처음 2주)
+  function level(W) { if (W.learning) return 'learn'; if (!W.flagged) return 'calm'; return W.streakWeeks >= RULES.persistWeeks ? 'persist' : 'watch'; }
+
+  // 이번 주 좋았던 일
+  function highlights(W) {
+    var m = W.m, out = [];
+    if (m.seniorLunch) out.push('경로당에서 점심을 ' + m.seniorLunch + '번 드셨어요');
+    if (m.places.market) out.push('오일장에 다녀오셨어요');
+    if (m.places.clinic) out.push('보건지소에 다녀오셨어요');
+    if (m.photoOut) out.push('사진으로 남긴 마실이 ' + m.photoOut + '번 있어요');
+    if (m.walkKm >= 1) out.push('바깥에서 걸은 거리가 약 ' + num(m.walkKm) + 'km예요 (집에서 다녀온 거리로 추정)');
+    if (!out.length && m.meals) out.push('식사 체크를 ' + m.meals + '번 하셨어요');
+    return out.slice(0, 4);
+  }
+  // 대화 소재: 좋은 이야기로 열고, 변화가 있으면 편하게 여쭙는다
+  function topics(W) {
+    var m = W.m, t = [];
+    if (m.places.market) t.push('오일장에서 뭘 사셨는지 여쭤보세요');
+    else if (m.seniorLunch) t.push('경로당 점심 메뉴가 뭐였는지 여쭤보세요');
+    else if (m.places.clinic) t.push('보건지소에서 들은 이야기를 여쭤보세요');
+    else t.push('이번 주 드신 것 중 맛있었던 걸 여쭤보세요');
+    if (headline(W)) {
+      var s = flag(W, 'streak'), hl = headline(W);
+      if (s) t.push(dayList(s.dates) + '에는 집에서 뭐 하셨는지 편하게 여쭤보세요');
+      else if (hl.id === 'meals') t.push('요즘 입맛은 괜찮으신지 여쭤보세요');
+      else t.push('요즘 다리나 몸이 불편한 데는 없는지 편하게 여쭤보세요');
+    }
+    return t;
+  }
+  function weeklyMission(W) {
+    var m = W.m, reg = W.base ? W.base.regular : [];
+    if (reg.indexOf('senior') >= 0 || m.places.senior) return { label: '경로당 세 번 가기', count: Math.min(3, m.places.senior || 0), target: 3 };
+    return { label: '닷새 이상 바깥나들이', count: Math.min(5, m.outDays), target: 5 };
+  }
+
+  /* ---------- 하루 미션 ---------- */
+  function missionState(day) {
+    var m = (day && day.m) || {};
+    var w = !!(day && day.w) || !!(day && day.q !== 'gap' && (day.v || []).some(function (v) { return v.p !== 'home'; }));
+    return { b: !!m.b, l: !!m.l, d: !!m.d, w: w };
+  }
+  // 지금 할 일: 시작 시각이 지난 미션 중 가장 최근 것, 없으면 null
+  function currentMission(day, nowM) { var st = missionState(day), cand = null; MISSIONS.forEach(function (ms) { if (!st[ms.k] && ms.start <= nowM) cand = ms; }); return cand; }
+  function nextMission(day, nowM) { var st = missionState(day); for (var i = 0; i < MISSIONS.length; i++) if (!st[MISSIONS[i].k] && MISSIONS[i].start > nowM) return MISSIONS[i]; return null; }
+  // 지금이 밥때이고 아직 체크하지 않은 끼니 (집에서 찍은 사진을 밥상 사진으로 받을지)
+  function photoMealKey(day, nowM) { var m = (day && day.m) || {}, keys = ['b', 'l', 'd']; for (var i = 0; i < keys.length; i++) { var w = PHOTO_MEAL[keys[i]]; if (nowM >= w[0] && nowM < w[1] && !m[keys[i]]) return keys[i]; } return null; }
+
+  // 식사를 누른 순간 어디였는지: 경로당에 있었거나 막 다녀왔으면 경로당, 아니면 집
+  function placeAt(day, min) {
+    var vs = (day && day.v) || [];
+    for (var i = 0; i < vs.length; i++) { var v = vs[i]; if (v.p === 'senior' && min >= toMin(v.s) && min <= toMin(v.e) + 60) return v.p; }
+    return 'home';
+  }
+  // 그 장소에 머문 요일 × 시간대 (주소나 좌표 없이)
+  function placeSlots(el, monday, today, p) {
+    var grid = [], visits = 0, minutes = 0;
+    for (var i = 0; i < 7; i++) {
+      var d = addDays(monday, i), row = [false, false, false, false], day = (el.days || {})[d] || {};
+      if (d <= today && day.q !== 'gap') (day.v || []).forEach(function (v) {
+        if (v.p !== p) return;
+        var s = toMin(v.s), e = toMin(v.e); visits++; minutes += Math.max(0, e - s);
+        SLOTS.forEach(function (sl, k) { if (Math.min(e, sl[2]) - Math.max(s, sl[1]) >= 15) row[k] = true; });
+      });
+      grid.push(row);
+    }
+    return { grid: grid, visits: visits, minutes: minutes };
+  }
+
+  return { TODAY: TODAY, TYPES: TYPES, PLACE_ORDER: PLACE_ORDER, LAYOUTS: LAYOUTS, MEALS: MEALS, MEAL_NAME: MEAL_NAME, MISSIONS: MISSIONS, SLOTS: SLOTS, RULES: RULES, DOW: DOW,
+    buildSeed: buildSeed, analyze: analyze, weekMetrics: weekMetrics, dayMetrics: dayMetrics, longestPlace: longestPlace, headline: headline, flag: flag, level: level,
+    highlights: highlights, topics: topics, weeklyMission: weeklyMission, missionState: missionState, currentMission: currentMission, nextMission: nextMission, photoMealKey: photoMealKey,
+    placeAt: placeAt, placeSlots: placeSlots, placeKm: placeKm, visitKm: visitKm, steps: steps, dayList: dayList,
+    merge: merge, clone: clone, addDays: addDays, mondayOf: mondayOf, dow: dow, daysBetween: daysBetween, md: md, toMin: toMin, hm: hm, num: num, km: km, dur: dur };
+})();
+</script>
+
+<script id="app">
+(function () {
+  'use strict';
+  var E = window.Engine;
+  var KEY_STATE = 'giokmasil.v4.state', KEY_UI = 'giokmasil.v4.ui', KEY_HOME = 'giokmasil.homes', DOC_PATH = 'v4/state';
+  var CALL_CENTER = '1899-9988';
+  var AREAS = ['수동면', '화도읍', '진접읍', '와부읍', '진건읍', '오남읍', '퇴계원읍', '별내면', '조안면', '호평동', '평내동', '금곡동', '양정동', '다산1동', '다산2동', '별내동'];
+  // 관할 치매안심센터. tel이 비어 있으면 치매상담콜센터(1899-9988)로 연결한다. 직통 번호를 확인하면 여기에 넣는다.
+  var CENTERS = { '화도읍': { name: '남양주시 동부보건소 치매안심센터', hours: '평일 오전 9시 ~ 오후 5시', how: '전화로 예약한 뒤 방문 · 검사 약 15분', tel: '' } };
+  var CENTER_DEFAULT = { name: '주소지 관할 치매안심센터 (남양주시)', hours: '평일 운영 · 시간은 전화로 확인', how: '전화로 예약한 뒤 방문 · 검사 약 15분', tel: '' };
+  var REL_ELDER = ['어머니', '아버지', '시어머니', '시아버지', '장모님', '장인어른'];
+  var REL_MEMBER = ['딸', '아들', '며느리', '사위', '손주', '조카'];
+  var CALL_CHIPS = REL_ELDER.concat(['할머니', '할아버지']);
+  var MEMORY_Q = ['이 사진 어디서 찍으셨어요?', '이때 기억나세요?', '같이 계신 분은 누구예요?'];
+
+  var SV = 'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+  var IC = {
+    back: '<svg ' + SV + '><path d="M15 5l-7 7 7 7"/></svg>',
+    close: '<svg ' + SV + '><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></svg>',
+    check: '<svg ' + SV + ' stroke-width="2.6"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    right: '<svg ' + SV + '><path d="M9 5l7 7-7 7"/></svg>',
+    down: '<svg ' + SV + '><path d="M6 9l6 6 6-6"/></svg>',
+    phone: '<svg ' + SV + '><path d="M5.5 4h3l1.8 4.6-2.2 1.4a11 11 0 005.4 5.4l1.4-2.2L19.5 15v3a2 2 0 01-2.1 2A15.5 15.5 0 013.5 6.1 2 2 0 015.5 4z"/></svg>',
+    cal: '<svg ' + SV + '><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg>',
+    lock: '<svg ' + SV + '><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg>',
+    plus: '<svg ' + SV + '><path d="M12 5v14M5 12h14"/></svg>',
+    warn: '<svg ' + SV + '><path d="M12 4.5l8.5 15h-17z"/><path d="M12 10v4M12 17v.01"/></svg>',
+    dl: '<svg ' + SV + '><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>',
+    cam: '<svg ' + SV + '><path d="M4 8.5A2.5 2.5 0 016.5 6H8l1.5-2h5L16 6h1.5A2.5 2.5 0 0120 8.5v8a2.5 2.5 0 01-2.5 2.5h-11A2.5 2.5 0 014 16.5z"/><circle cx="12" cy="12.5" r="3.5"/></svg>',
+    heart: '<svg ' + SV + '><path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0112 7.4 4.3 4.3 0 0119.5 10c0 5.4-7.5 10-7.5 10z"/></svg>',
+    home: '<svg ' + SV + '><path d="M4 11l8-6 8 6v9H4z"/><path d="M10 20v-5h4v5"/></svg>',
+    tabReport: '<svg ' + SV + '><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8.5 16v-3M12 16V8.5M15.5 16v-5"/></svg>',
+    tabBell: '<svg ' + SV + '><path d="M6 16v-5a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/></svg>',
+    tabFamily: '<svg ' + SV + '><circle cx="9" cy="8" r="3"/><path d="M3.5 19a5.5 5.5 0 0111 0"/><circle cx="17" cy="9" r="2.4"/><path d="M15.6 14.1A4.5 4.5 0 0121 19"/></svg>',
+    tabSet: '<svg ' + SV + '><path d="M4 7h9M18 7h2M4 17h3M11 17h9"/><circle cx="15.5" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></svg>'
+  };
+  var PSV = 'viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+  var PIC = {
+    place: '<svg ' + PSV + '><path d="M6 52h52"/><path d="M10 52V33l11-9 11 9v19"/><path d="M18 52v-9h6v9"/><path d="M38 52V26h18v26"/><path d="M43 33h8M43 40h8M43 47h8"/></svg>',
+    meal: '<svg ' + PSV + '><path d="M10 34h44a22 22 0 01-44 0z"/><path d="M24 56h16"/><path d="M23 20l6 6 12-12"/></svg>',
+    photo: '<svg ' + PSV + '><path d="M8 22a5 5 0 015-5h5l3-5h22l3 5h5a5 5 0 015 5v24a5 5 0 01-5 5H13a5 5 0 01-5-5z"/><circle cx="32" cy="33" r="9"/></svg>',
+    live: '<svg ' + PSV + '><path d="M32 56S16 41 16 28a16 16 0 0132 0c0 13-16 28-16 28z"/><circle cx="32" cy="28" r="5"/><path d="M10 10l44 44"/></svg>',
+    addr: '<svg ' + PSV + '><rect x="9" y="16" width="46" height="32" rx="4"/><path d="M17 26h20M17 33h28M17 40h14"/><path d="M10 10l44 44"/></svg>'
+  };
+  var MSV = 'class="e-ico" viewBox="0 0 104 104" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+  var MICO = {
+    bowl: '<svg ' + MSV + '><path d="M16 50h72a36 36 0 01-72 0z"/><path d="M38 94h28"/><path d="M40 16c-5 6 5 10 0 18M52 12c-5 6 5 10 0 18M64 16c-5 6 5 10 0 18"/></svg>',
+    walk: '<svg ' + MSV + '><path d="M8 80h40c14 0 24-6 48-18"/><path d="M18 80V60l12-10 12 10v20"/><circle cx="72" cy="70" r="6" fill="currentColor"/></svg>',
+    heart: '<svg ' + MSV + '><path d="M52 88S14 64 14 38a19 19 0 0138-6 19 19 0 0138 6c0 26-38 50-38 50z"/></svg>',
+    letter: '<svg ' + MSV + '><rect x="14" y="24" width="76" height="56" rx="6"/><path d="M16 28l36 28 36-28"/></svg>',
+    memory: '<svg ' + MSV + '><rect x="16" y="18" width="72" height="68" rx="4"/><path d="M16 70l20-20 16 14 12-10 24 18"/><circle cx="66" cy="38" r="7"/></svg>',
+    people: '<svg ' + MSV + '><circle cx="40" cy="38" r="13"/><path d="M16 86a24 24 0 0148 0"/><circle cx="72" cy="42" r="10"/><path d="M66 63a19 19 0 0124 23"/></svg>',
+    stamp: '<svg class="e-ico" viewBox="0 0 104 104" aria-hidden="true"><circle cx="52" cy="52" r="46" fill="none" stroke="currentColor" stroke-width="4" stroke-dasharray="6 7"/><circle cx="52" cy="52" r="34" fill="currentColor"/><path d="M36 53l11 11 22-24" fill="none" stroke="#06090f" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  function logoSVG() {
+    return '<svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><g transform="translate(0 -5)" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 46H28c9 0 15-4 30-11"/><path d="M13 46V35.5L20.5 29 28 35.5V46"/></g><circle cx="43.6" cy="36.9" r="3.2" fill="#38bdf8"/></svg>';
+  }
+
+  /* 동네 지도 그림 (외부 지도 없이 SVG로만) */
+  var MAPS = {
+    sudong: {
+      cont: ['M-10 34 C 30 18, 70 26, 104 -10', 'M-10 58 C 40 40, 92 46, 132 -10', 'M-10 82 C 46 62, 110 66, 156 -10', 'M262 370 C 280 330, 320 312, 370 318', 'M236 370 C 258 318, 316 290, 370 294', 'M300 -10 C 312 30, 340 46, 370 44'],
+      fields: [[26, 226, 58, 38], [96, 232, 46, 30], [232, 204, 64, 32], [262, 248, 46, 28], [54, 132, 46, 28], [222, 58, 56, 30], [40, 282, 40, 26]],
+      water: ['M-10 92 C 60 120, 110 80, 170 104 S 290 150, 370 118'],
+      roads: [['M-10 196 C 70 188, 130 200, 180 182 S 290 150, 370 160', 7], ['M188 -10 C 178 70, 186 130, 180 182 S 160 290, 150 370', 5], ['M40 312 C 90 280, 140 288, 196 256 S 300 240, 370 252', 3]],
+      houses: [[146, 150, 12, 9], [196, 166, 11, 9], [204, 198, 12, 9], [158, 204, 11, 9], [118, 186, 10, 8], [226, 176, 10, 8], [252, 140, 10, 8]]
+    },
+    hwado: {
+      water: ['M302 -10 C 288 80, 322 160, 306 370'],
+      rail: 'M-10 118 C 100 128, 220 110, 370 96',
+      roads: [['M-10 200 C 120 196, 240 204, 370 198', 8], ['M176 -10 C 178 100, 182 220, 186 370', 6], ['M30 370 C 96 292, 132 250, 178 204', 4], ['M186 268 C 230 262, 280 270, 370 262', 4]],
+      blocks: [[20, 138, 40, 46], [68, 140, 40, 44], [116, 140, 46, 44], [196, 140, 40, 44], [244, 138, 40, 46], [20, 214, 40, 40], [68, 214, 40, 40], [200, 216, 38, 42], [246, 214, 40, 40], [200, 284, 40, 40], [246, 286, 40, 38], [110, 214, 46, 30], [20, 30, 50, 60], [80, 34, 60, 52], [200, 30, 70, 50]]
+    },
+    jinjeop: {
+      cont: ['M240 -10 C 250 40, 300 70, 370 66', 'M262 -10 C 270 26, 310 46, 370 44', 'M286 -10 C 292 14, 322 26, 370 22', 'M214 -10 C 226 56, 290 96, 370 92', 'M190 -10 C 204 70, 280 122, 370 120'],
+      blocks: [[24, 200, 40, 58], [74, 200, 40, 58], [24, 268, 40, 50], [74, 268, 40, 50], [124, 202, 34, 54], [222, 188, 44, 36], [274, 188, 44, 36], [222, 232, 44, 36]],
+      water: ['M-10 334 C 80 310, 160 350, 240 324 S 330 308, 370 318'],
+      roads: [['M-10 172 L 370 166', 10], ['M196 370 C 200 290, 192 226, 188 170 S 170 60, 160 -10', 5], ['M-10 120 C 60 126, 110 120, 150 106', 3]],
+      median: 'M-10 172 L 370 166'
+    }
+  };
+
+  /* ---------- 상태 ---------- */
+  var store = { mode: 'boot', state: null, ref: null, chain: Promise.resolve(), loading: true };
+  var ui = loadUI();                 // 이 기기: 역할, 보고 있는 어르신, 소리 안내
+  var homes = loadHomes();           // 이 기기: 어르신별 집 위치 (공유하지 않는다)
+  var nav = { tab: 'report', detail: null };
+  var enav = { screen: 'home', id: null };
+  var eflow = null;                  // 어르신 사진 흐름
+  var sheet = null, form = {}, weekSel = {}, elderStep = 0, confirmKey = null, composing = false, lastAct = null, pickCtx = null;
+  var caps = { downloads: null, assets: null, sample: null, sampleImg: false };
+  var viewerAvailable = !!(window.claude && typeof window.claude.use === 'function');
+  var siteMode = !viewerAvailable && /^https?:$/.test(location.protocol);   // GitHub Pages 같은 일반 웹사이트
+
+  function loadUI() { var d = { role: null, elderId: 'e1', voice: true, viewer: 'g1' }; try { var u = JSON.parse(localStorage.getItem(KEY_UI) || 'null'); if (u && typeof u === 'object') { d.role = u.role || null; d.elderId = u.elderId || 'e1'; d.voice = u.voice !== false; d.viewer = u.viewer || 'g1'; } } catch (e) { /* 기본값 */ } return d; }
+  function saveUI() { try { localStorage.setItem(KEY_UI, JSON.stringify(ui)); } catch (e) { /* 무시 */ } }
+  function loadHomes() { try { return JSON.parse(localStorage.getItem(KEY_HOME) || '{}') || {}; } catch (e) { return {}; } }
+  function saveHomes() { try { localStorage.setItem(KEY_HOME, JSON.stringify(homes)); } catch (e) { /* 무시 */ } }
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function nowMin() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
+  function nowHM() { return E.hm(nowMin()); }
+  function S() { return store.state; }
+  function stamp() { return S().today + ' ' + nowHM(); }
+  function fmtStamp(s) { if (!s) return ''; var p = String(s).split(' '); return E.md(p[0]) + (p[1] ? ' ' + p[1] : ''); }
+  function fmtCode(c) { c = String(c || ''); return c.slice(0, 3) + ' ' + c.slice(3); }
+  function newCode() { return String(100000 + Math.floor(Math.random() * 900000)); }
+  function newId(p) { return p + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36); }
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function range(W) { return E.md(W.monday) + ' – ' + E.md(W.sunday); }
+  function wkWord(W) { return W.isCurrent ? '이번 주' : '그 주'; }
+  function dayLabel(d) { return E.md(d) + ' (' + E.DOW[E.dow(d)] + ')'; }
+  function dateLabel(t) { return (+t.slice(5, 7)) + '월 ' + (+t.slice(8, 10)) + '일 ' + E.DOW[E.dow(t)] + '요일'; }
+  function timeLabel(min) { var h = Math.floor(min / 60), m = min % 60; return (h < 12 ? '오전 ' : '오후 ') + ((h % 12) || 12) + '시' + (m ? ' ' + m + '분' : ''); }
+  function pct(a, b) { return b ? Math.max(0, Math.min(100, Math.round(a / b * 100))) : 0; }
+  function plus() { return S().plan !== 'free'; }
+  function vals(o) { return Object.keys(o || {}).map(function (k) { return o[k]; }); }
+  function byAt(a, b) { return a.at < b.at ? -1 : a.at > b.at ? 1 : 0; }
+
+  function orderedElders() { var st = S(); return (st.order || []).map(function (id) { return st.elders[id]; }).filter(Boolean); }
+  /* 돌봄 가족: 어르신마다 주보호자 1명 + 함께 보는 가족 여러 명. 보호자는 자기가 속한 어르신만 본다 */
+  function person(id) { return ((S() || {}).people || {})[id] || { id: id, name: '가족', short: '가족' }; }
+  function me() { return person(ui.viewer); }
+  function members(el) {
+    var c = (el && el.circle) || {};
+    return Object.keys(c).filter(function (k) { return c[k]; }).map(function (k) { return Object.assign({ pid: k }, c[k], { p: person(k) }); })
+      .sort(function (a, b) { return ((a.role === 'main' ? 0 : 1) - (b.role === 'main' ? 0 : 1)) || (a.since < b.since ? -1 : a.since > b.since ? 1 : 0); });
+  }
+  function memberOf(el, pid) { return ((el && el.circle) || {})[pid || ui.viewer] || null; }
+  function canSee(el, pid) { var m = memberOf(el, pid); return !!(m && (m.role === 'main' || m.status === 'joined')); }
+  function isMain(el, pid) { var m = memberOf(el, pid); return !!(m && m.role === 'main'); }
+  function mainOf(el) { return members(el).filter(function (m) { return m.role === 'main'; })[0] || null; }
+  function callOf(el) { var m = memberOf(el); return (m && m.call) || '어르신'; }
+  function seers(el) { return members(el).filter(function (m) { return m.role === 'main' || m.status === 'joined'; }); }
+  // 어르신 화면용 "미경 님·민수 님" (3명부터 "미경 님 외 2명")
+  function seersText(el) { var n = seers(el).map(function (m) { return m.p.short + ' 님'; }); return !n.length ? '가족' : n.length > 2 ? n[0] + ' 외 ' + (n.length - 1) + '명' : n.join('·'); }
+  function relText(m) { return m.rel || (m.role === 'main' ? '주보호자' : '가족'); }
+  function newJoin(el) { return members(el).filter(function (m) { return m.role !== 'main' && m.status === 'joined' && !m.ack; })[0] || null; }   // 어르신이 아직 모르는 새 가족
+  function personByName(name) { var pp = (S() || {}).people || {}; return Object.keys(pp).map(function (k) { return pp[k]; }).filter(function (p) { return p && p.name === name; })[0] || null; }
+  function viewers() {   // 시연용 '보는 사람' 목록: 어느 어르신이든 함께 보고 있는 사람
+    var st = S(), ids = [];
+    orderedElders().forEach(function (el) { seers(el).forEach(function (m) { if (ids.indexOf(m.pid) < 0) ids.push(m.pid); }); });
+    if (ids.indexOf(ui.viewer) < 0 && (st.people || {})[ui.viewer]) ids.unshift(ui.viewer);
+    return ids.map(person);
+  }
+  function visibleElders() { return orderedElders().filter(function (el) { return canSee(el); }); }
+  function curElder() {
+    var st = S(); if (!st) return null;
+    var list = ui.role === 'guardian' ? visibleElders() : orderedElders(), el = st.elders[ui.elderId];
+    if (!el || list.indexOf(el) < 0) { var first = list[0] || null; if (first && first.id !== ui.elderId) { ui.elderId = first.id; saveUI(); } return first; }
+    return el;
+  }
+  function isAgreed(el) { return el && el.consent && el.consent.status === 'agreed'; }
+  function hasHistory(el) { return el && E.daysBetween(el.since || S().today, S().today) >= 7; }
+  function weekIndex(el, A) { var w = weekSel[el.id]; return (w == null || w >= A.length) ? A.length - 1 : Math.max(0, w); }
+  function inWeek(at, W) { var d = String(at).split(' ')[0]; return d >= W.monday && d <= W.sunday; }
+  function inboxUnseen(el) { return vals(el.inbox).filter(function (m) { return !m.seenAt; }).sort(byAt); }
+  function memoryOpen(el) { return vals(el.memories).filter(function (m) { return !m.answer; }).sort(byAt)[0] || null; }
+  function lastSent(el, kinds) { return vals(el.inbox).filter(function (m) { return kinds.indexOf(m.kind) >= 0; }).sort(byAt).pop() || null; }
+  function alertList() {
+    var st = S(), out = [];
+    visibleElders().forEach(function (el) {
+      if (!isAgreed(el) || !hasHistory(el)) return;
+      E.analyze(el, st.today).forEach(function (W) {
+        if (!W.flagged) return;
+        var id = el.id + ':' + W.monday, a = (st.alerts || {})[id];
+        out.push({ id: id, el: el, W: W, hl: E.headline(W), done: !!(a && a.confirmedAt), at: a && a.confirmedAt, by: a && a.by });
+      });
+    });
+    return out.sort(function (a, b) { return a.W.monday < b.W.monday ? 1 : a.W.monday > b.W.monday ? -1 : 0; });
+  }
+  function findAlert(id) { return alertList().filter(function (a) { return a.id === id; })[0] || null; }
+
+  /* ---------- 저장소: 링크 소유자는 claude db(여러 기기 실시간), 그 밖에는 이 기기 ---------- */
+  function lsGet() { try { var s = localStorage.getItem(KEY_STATE); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+  function lsSet(st) { try { localStorage.setItem(KEY_STATE, JSON.stringify(st)); } catch (e) { toast('이 기기 저장 공간이 부족해요. 테스트 초기화를 눌러 주세요'); } }
+  function startLocal() {
+    store.mode = 'local'; store.ref = null; store.loading = false;
+    var saved = lsGet();
+    apply(saved && saved.v === 4 && saved.elders ? saved : E.buildSeed());
+  }
+  async function connect() {
+    if (!viewerAvailable) return false;
+    var db = null, owner = false;
+    try { db = await window.claude.use('db'); } catch (e) { db = null; }
+    try { var user = await window.claude.use('user'); owner = user ? !!(await user.isOwner()) : false; } catch (e) { owner = false; }
+    try { caps.downloads = await window.claude.use('downloads'); } catch (e) { caps.downloads = null; }
+    try { caps.sample = await window.claude.use('sample'); if (caps.sample) { var lim = await caps.sample.limits().catch(function () { return null; }); caps.sampleImg = !!(lim && lim.images); } } catch (e) { caps.sample = null; }
+    if (!db || !owner) return false;
+    try { caps.assets = await window.claude.use('assets'); } catch (e) { caps.assets = null; }
+    store.ref = db.doc(DOC_PATH); store.mode = 'db';
+    var timer = setTimeout(function () { if (store.loading) { toast('공유 기록 연결이 늦어 이 기기 데이터로 열어요'); startLocal(); } }, 10000);
+    store.unsub = store.ref.onSnapshot(function (snap) {
+      if (store.mode !== 'db') return;
+      if (!snap.metadata.fromCache) clearTimeout(timer);
+      if (snap.exists) { store.loading = false; apply(E.clone(snap.data())); }
+      else if (!snap.metadata.fromCache) { store.loading = false; store.mode = 'db-empty'; store.state = null; render(); }
+    }, function () { clearTimeout(timer); if (store.mode === 'db' || store.mode === 'db-empty') { toast('공유 기록에 연결하지 못해 이 기기에만 저장해요'); startLocal(); } });
+    return true;
+  }
+  function enqueue(fn) {
+    var run = async function () {
+      try { await fn(); }
+      catch (e) {
+        if (e && e.code === 'unavailable') { await sleep(500 + Math.random() * 700); try { await fn(); return; } catch (e2) { e = e2; } }
+        toast(e && e.code === 'quota_exceeded' ? '저장 공간이 가득 찼어요. 테스트 초기화를 눌러 주세요' : '저장하지 못했어요. 잠시 뒤 다시 눌러 주세요');
+      }
+    };
+    store.chain = store.chain.then(run, run);
+  }
+  function update(patch) {
+    if (store.mode === 'local') { var next = E.merge(E.clone(S()), patch); lsSet(next); apply(next); return; }
+    if (store.mode === 'db' && store.ref) enqueue(function () { return store.ref.update(patch); });
+  }
+  function replaceAll(full) {
+    if (store.mode === 'local') { lsSet(full); apply(full); return; }
+    if ((store.mode === 'db' || store.mode === 'db-empty') && store.ref) { if (store.mode === 'db-empty') { store.mode = 'db'; store.loading = true; } enqueue(function () { return store.ref.set(full); }); }
+  }
+  window.addEventListener('storage', function (e) { if (store.mode === 'local' && e.key === KEY_STATE && e.newValue) { try { apply(JSON.parse(e.newValue)); } catch (err) { /* 무시 */ } } });
+  function patchElder(id, p) { var o = { elders: {} }; o.elders[id] = p; return o; }
+  // 입력 중인 시트는 다시 그리지 않는다 (한글 조합 보호). 결과 화면·보기 시트만 새 상태로 다시 그린다
+  function apply(next) { store.state = next; render(); if (sheet && (sheet.type === 'place' || sheet.type === 'snap' || sheet.type === 'member' || sheet.step === 'done')) renderSheet(); }
+
+  /* ---------- 사진·영상 보관: 공유 모드는 artifact 자산, 그 밖에는 이 기기(IndexedDB) ---------- */
+  var mediaCache = {}, idb = null;
+  function idbOpen() { return new Promise(function (res, rej) { if (!window.indexedDB) { rej(new Error('no idb')); return; } var r = indexedDB.open('giokmasil-media', 1); r.onupgradeneeded = function () { r.result.createObjectStore('m'); }; r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
+  async function idbDo(mode, fn) { idb = idb || await idbOpen(); return new Promise(function (res, rej) { var tx = idb.transaction('m', mode), rq = fn(tx.objectStore('m')); tx.oncomplete = function () { res(rq && rq.result); }; tx.onerror = function () { rej(tx.error); }; }); }
+  function idbPut(id, blob) { return idbDo('readwrite', function (s) { return s.put(blob, id); }); }
+  function idbGet(id) { return idbDo('readonly', function (s) { return s.get(id); }); }
+  function idbClear() { return idbDo('readwrite', function (s) { return s.clear(); }).catch(function () { /* 없어도 됨 */ }); }
+  function blobToDataURL(b) { return new Promise(function (res, rej) { var r = new FileReader(); r.onload = function () { res(r.result); }; r.onerror = rej; r.readAsDataURL(b); }); }
+  function mediaURL(ref) { if (!ref) return ''; if (ref.indexOf('u:') === 0 || ref.indexOf('d:') === 0) return ref.slice(2); return mediaCache[ref] || ''; }
+  function srcAttr(ref) { var u = mediaURL(ref); return u ? ' src="' + esc(u) + '"' : ''; }
+  async function mediaPut(blob) {
+    if (store.mode === 'db' && caps.assets) { var r = await caps.assets.upload(blob); return 'u:' + r.url; }
+    try { var id = newId('m'); await idbPut(id, blob); var ref = 'l:' + id; mediaCache[ref] = URL.createObjectURL(blob); return ref; }
+    catch (e) { if (/^image\//.test(blob.type) && blob.size < 450000) return 'd:' + await blobToDataURL(blob); throw e; }
+  }
+  async function mediaBlob(ref) { if (ref.indexOf('l:') === 0) return idbGet(ref.slice(2)); var r = await fetch(mediaURL(ref)); return r.blob(); }
+  function hydrateMedia() {
+    document.querySelectorAll('[data-media]').forEach(function (el) {
+      var ref = el.getAttribute('data-media'), u = mediaURL(ref);
+      if (u) { if (el.getAttribute('src') !== u) el.setAttribute('src', u); return; }
+      if (ref.indexOf('l:') === 0) idbGet(ref.slice(2)).then(function (b) { if (!b) return; mediaCache[ref] = mediaCache[ref] || URL.createObjectURL(b); el.setAttribute('src', mediaCache[ref]); }).catch(function () { /* 사진 없음 */ });
+    });
+  }
+  function mediaTag(ref, kind, cls, alt) {
+    if (kind === 'video') return '<video class="' + (cls || '') + '" data-media="' + esc(ref) + '"' + srcAttr(ref) + ' controls playsinline preload="metadata"></video>';
+    return '<img class="' + (cls || '') + '" data-media="' + esc(ref) + '"' + srcAttr(ref) + ' alt="' + esc(alt || '사진') + '">';
+  }
+  function downscale(file, max, q) {
+    return new Promise(function (res, rej) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () {
+        var s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight)), w = Math.max(1, Math.round(img.naturalWidth * s)), h = Math.max(1, Math.round(img.naturalHeight * s)), c = document.createElement('canvas');
+        c.width = w; c.height = h; c.getContext('2d').drawImage(img, 0, 0, w, h); URL.revokeObjectURL(url);
+        c.toBlob(function (b) { if (b) res(b); else rej(new Error('blob')); }, 'image/jpeg', q || 0.82);   // 다시 저장하면서 사진 속 위치 정보(EXIF)도 지워진다
+      };
+      img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('img')); };
+      img.src = url;
+    });
+  }
+  async function prepMedia(file) {
+    if (/^video\//.test(file.type)) { if (file.size > 20 * 1024 * 1024) throw { code: 'too_big' }; return { blob: file, kind: 'video' }; }
+    return { blob: await downscale(file, 1280, 0.82), kind: 'photo' };
+  }
+
+  /* ---------- 위치: 사진 속 GPS → 휴대폰 현재 위치 → 어르신께 묻기 ---------- */
+  function exifGPS(buf) {
+    try {
+      var v = new DataView(buf); if (v.byteLength < 12 || v.getUint16(0) !== 0xFFD8) return null;
+      var off = 2;
+      while (off + 4 < v.byteLength) {
+        var mk = v.getUint16(off), size = v.getUint16(off + 2);
+        if (mk === 0xFFE1 && v.getUint32(off + 4) === 0x45786966) return tiffGPS(v, off + 10);
+        if ((mk & 0xFF00) !== 0xFF00 || size < 2) break;
+        off += 2 + size;
+      }
+    } catch (e) { /* 위치 없음 */ }
+    return null;
+  }
+  function tiffGPS(v, t) {
+    var le = v.getUint16(t) === 0x4949;
+    function u16(o) { return v.getUint16(t + o, le); }
+    function u32(o) { return v.getUint32(t + o, le); }
+    var ifd0 = u32(4), n = u16(ifd0), gps = 0, i;
+    for (i = 0; i < n; i++) { var e = ifd0 + 2 + i * 12; if (u16(e) === 0x8825) gps = u32(e + 8); }
+    if (!gps) return null;
+    var g = {}, m = u16(gps);
+    for (i = 0; i < m; i++) {
+      var e2 = gps + 2 + i * 12, tag = u16(e2), type = u16(e2 + 2), cnt = u32(e2 + 4);
+      if (tag === 1 || tag === 3) g[tag] = String.fromCharCode(v.getUint8(t + e2 + 8));
+      if ((tag === 2 || tag === 4) && type === 5 && cnt === 3) { var p = u32(e2 + 8), val = 0; for (var k = 0; k < 3; k++) { var a = u32(p + k * 8), b = u32(p + k * 8 + 4); val += (b ? a / b : 0) / Math.pow(60, k); } g[tag] = val; }
+    }
+    if (g[2] == null || g[4] == null) return null;
+    var lat = g[2] * (g[1] === 'S' ? -1 : 1), lon = g[4] * (g[3] === 'W' ? -1 : 1);
+    return (isFinite(lat) && isFinite(lon) && !(lat === 0 && lon === 0)) ? { lat: lat, lon: lon } : null;
+  }
+  async function photoPos(file) { if (/^image\/jpe?g/.test(file.type) || /\.jpe?g$/i.test(file.name || '')) { try { return exifGPS(await file.slice(0, 262144).arrayBuffer()); } catch (e) { return null; } } return null; }
+  function currentPos(ms) {
+    return new Promise(function (res) {
+      if (!navigator.geolocation) { res(null); return; }
+      var done = false, t = setTimeout(function () { if (!done) { done = true; res(null); } }, ms);
+      try { navigator.geolocation.getCurrentPosition(function (p) { if (done) return; done = true; clearTimeout(t); res({ lat: p.coords.latitude, lon: p.coords.longitude }); }, function () { if (done) return; done = true; clearTimeout(t); res(null); }, { enableHighAccuracy: true, timeout: ms, maximumAge: 60000 }); }
+      catch (e) { clearTimeout(t); res(null); }
+    });
+  }
+  function distKm(a, b) { var r = Math.PI / 180, dLat = (b.lat - a.lat) * r, dLon = (b.lon - a.lon) * r, h = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(a.lat * r) * Math.cos(b.lat * r) * Math.pow(Math.sin(dLon / 2), 2); return 2 * 6371 * Math.asin(Math.sqrt(h)); }
+  function bearing(a, b) { var r = Math.PI / 180, y = Math.sin((b.lon - a.lon) * r) * Math.cos(b.lat * r), x = Math.cos(a.lat * r) * Math.sin(b.lat * r) - Math.sin(a.lat * r) * Math.cos(b.lat * r) * Math.cos((b.lon - a.lon) * r); var compass = (Math.atan2(y, x) / r + 360) % 360; return (90 - compass + 360) % 360; }
+  function saveHome(id, pos) { homes[id] = { lat: +pos.lat.toFixed(6), lon: +pos.lon.toFixed(6), at: S().today + ' ' + nowHM() }; saveHomes(); }
+
+  /* ---------- 소리 · 진동 · 읽어 주기 (어르신 화면) ---------- */
+  var audioCtx = null;
+  function chime() {
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var t0 = audioCtx.currentTime;
+      [[659.25, 0], [880, 0.15]].forEach(function (n) { var o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = 'sine'; o.frequency.value = n[0]; g.gain.setValueAtTime(0.0001, t0 + n[1]); g.gain.exponentialRampToValueAtTime(0.16, t0 + n[1] + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + n[1] + 0.4); o.connect(g); g.connect(audioCtx.destination); o.start(t0 + n[1]); o.stop(t0 + n[1] + 0.45); });
+    } catch (e) { /* 소리 없이 */ }
+  }
+  function say(text) {
+    if (!ui.voice || !('speechSynthesis' in window)) return;
+    try { speechSynthesis.cancel(); var u = new SpeechSynthesisUtterance(text); u.lang = 'ko-KR'; u.rate = 0.92; var v = speechSynthesis.getVoices().filter(function (x) { return /^ko/i.test(x.lang); })[0]; if (v) u.voice = v; speechSynthesis.speak(u); } catch (e) { /* 무시 */ }
+  }
+  function buzz() { try { if (navigator.vibrate && navigator.userActivation && navigator.userActivation.hasBeenActive) navigator.vibrate(70); } catch (e) { /* 무시 */ } }
+  var celTimer = null;
+  function celebrate(o) {
+    var el = $('#celebrate');
+    el.innerHTML = MICO.stamp + '<p class="cel-t">' + esc(o.title) + '</p>' + (o.sub ? '<p class="cel-s">' + esc(o.sub) + '</p>' : '') + (o.next ? '<p class="cel-n">' + esc(o.next) + '</p>' : '') +
+      (o.undo ? '<button type="button" class="btn e-second" data-act="undo">잘못 눌렀어요</button>' : '');
+    el.hidden = false; chime(); buzz(); say(o.speak || o.title);
+    clearTimeout(celTimer); celTimer = setTimeout(hideCelebrate, o.undo ? 6000 : 3800);
+  }
+  function hideCelebrate() { var el = $('#celebrate'); el.hidden = true; el.innerHTML = ''; lastAct = null; }
+
+  /* ---------- 화면 틀 ---------- */
+  function render() {
+    var vp = $('#viewport'), sc = $('#scroller'), top = sc.scrollTop;
+    var role = store.state ? ui.role : null;
+    vp.classList.toggle('no-appbar', !role);
+    vp.classList.toggle('elder', role === 'elder');
+    vp.classList.toggle('has-tabbar', role === 'guardian');
+    $('#appbar').innerHTML = appbarHTML();
+    sc.innerHTML = pageHTML();
+    $('#tabbar').innerHTML = tabbarHTML();
+    sc.scrollTop = top;
+    bindCarousel(); hydrateMedia();
+  }
+  function goTop() { $('#scroller').scrollTop = 0; $('#appbar').classList.remove('hide'); }
+  function appbarHTML() {
+    if (!store.state || !ui.role) return '';
+    if (ui.role === 'elder') return '<div class="ab-brand">' + logoSVG() + '<span>기억마실</span></div>';
+    if (nav.detail) return '<h1 class="ab-title">알림 상세</h1><button type="button" class="icon-btn" data-act="back" aria-label="뒤로">' + IC.back + '</button>';
+    var t = { alerts: '알림', family: '가족', settings: '설정' }[nav.tab];
+    return t ? '<h1 class="ab-title">' + t + '</h1>' : '<div class="ab-brand">' + logoSVG() + '<span>기억마실</span></div>';
+  }
+  function tabbarHTML() {
+    if (!store.state || ui.role !== 'guardian') return '';
+    var n = alertList().filter(function (a) { return !a.done; }).length;
+    return [['report', '리포트', IC.tabReport], ['alerts', '알림', IC.tabBell], ['family', '가족', IC.tabFamily], ['settings', '설정', IC.tabSet]].map(function (t) {
+      return '<button type="button" class="tab" data-act="tab" data-tab="' + t[0] + '"' + (nav.tab === t[0] ? ' aria-current="page"' : '') + '>' + t[2] + '<span>' + t[1] + '</span>' +
+        (t[0] === 'alerts' && n ? '<b class="tab-dot" aria-label="확인할 알림 ' + n + '개">' + n + '</b>' : '') + '</button>';
+    }).join('');
+  }
+  function pageHTML() {
+    if (!store.state) {
+      if (store.mode === 'db-empty') return '<div class="page"><section class="card"><h2 class="c-h">아직 공유 데이터가 없어요</h2><p class="c-p">테스트 데이터를 넣으면 바로 시연할 수 있어요.</p><button type="button" class="btn primary block" data-act="seed">테스트 데이터 넣기</button></section></div>';
+      return '';
+    }
+    if (!ui.role) return rolePage();
+    if (ui.role === 'elder') return elderPage();
+    if (nav.detail) return alertDetailPage(nav.detail.id);
+    if (nav.tab === 'alerts') return alertsPage();
+    if (nav.tab === 'family') return familyPage();
+    if (nav.tab === 'settings') return settingsPage();
+    return reportPage();
+  }
+  function rolePage() {
+    var el = curElder();
+    return '<div class="role-page"><div class="role-top">' + logoSVG() + '<h1>기억마실</h1><p>남양주 · 시연용 화면이에요</p></div>' +
+      '<div class="role-btns"><button type="button" class="btn primary role-btn" data-act="role" data-role="guardian"><b>보호자로 보기</b><span>주간 리포트 · 변화 알림 · 사진</span></button>' +
+      '<button type="button" class="btn role-btn" data-act="role" data-role="elder"><b>어르신으로 보기</b><span>' + (el ? esc(el.short) + ' 님 휴대폰 · 오늘 할 일' : '오늘 할 일') + '</span></button></div>' +
+      '<p class="c-note" style="text-align:center">설정에서 언제든 바꿀 수 있어요</p></div>';
+  }
+
+  /* ---------- 보호자: 리포트 ---------- */
+  function avatar(el, size) {
+    if (el.photo) return '<img class="av" src="' + esc(el.photo) + '" alt="" width="' + size + '" height="' + size + '" style="width:' + size + 'px;height:' + size + 'px">';
+    var g = el.short || String(el.name || '').slice(-2);
+    return '<span class="av" aria-hidden="true" style="width:' + size + 'px;height:' + size + 'px;font-size:' + Math.round(size * 0.3) + 'px">' + esc(g) + '</span>';
+  }
+  function elderState(el) {
+    var cs = el.consent.status;
+    if (cs === 'pending') return { t: '동의 대기 중', c: 'warn' };
+    if (cs === 'declined' || cs === 'withdrawn') return { t: '기록 멈춤', c: '' };
+    if (el.paused && el.paused.on) return { t: '기록 일시 중지', c: 'warn' };
+    return null;
+  }
+  function profileRow(cur, A) {
+    var els = visibleElders();
+    var cards = els.map(function (el) {
+      var s = elderState(el);
+      return '<button type="button" class="pcard" data-act="pick" data-id="' + el.id + '"' + (el.id === cur.id ? ' aria-current="true"' : '') + '>' + avatar(el, 48) +
+        '<span class="pinfo"><b>' + esc(el.name) + (el.age ? ' · ' + esc(el.age) + '세' : '') + '</b><span>' + esc(callOf(el)) + ' · ' + esc(el.area) + (el.living ? ' · ' + esc(el.living) : '') + '</span>' +
+        (s ? '<span class="pst ' + s.c + '">' + s.t + '</span>' : '') + '</span></button>';
+    }).join('') + '<button type="button" class="pcard add" data-act="add-elder">' + IC.plus + '<span>어르신 연결하기</span></button>';
+    var sel = '';
+    if (A) {
+      var cur2 = weekIndex(cur, A), n = A.length, names = ['이번 주', '지난주', '2주 전', '3주 전', '4주 전', '5주 전', '6주 전', '7주 전'];
+      var opts = A.map(function (w, i) { return i; }).reverse().map(function (i) { var ago = n - 1 - i; return '<option value="' + i + '"' + (i === cur2 ? ' selected' : '') + '>' + (names[ago] || ago + '주 전') + '</option>'; }).join('');
+      sel = '<label class="wsel"><span class="sr">주차 선택</span><select id="week-sel">' + opts + '</select>' + IC.down + '</label>';
+    }
+    var dots = els.length > 1 ? '<div class="pdots" role="group" aria-label="어르신 바꾸기">' + els.map(function (el) {
+      return '<button type="button" class="pdot' + (el.id === cur.id ? ' on' : '') + '" data-act="pick" data-id="' + el.id + '" aria-label="' + esc(el.name) + ' 리포트 보기"><i></i></button>';
+    }).join('') + '</div>' : '';
+    return '<div class="prow"' + (A ? '' : ' style="grid-template-columns:minmax(0,1fr)"') + '><div class="carousel" id="carousel">' + cards + '</div>' + sel + '</div>' + dots;
+  }
+
+  function reportPage() {
+    var st = S(), el = curElder();
+    if (!el) return '<div class="page"><button type="button" class="btn primary block" data-act="add-elder">어르신 연결하기</button></div>';
+    var active = isAgreed(el) && hasHistory(el), A = active ? E.analyze(el, st.today) : null, W = A ? A[weekIndex(el, A)] : null;
+    var h = '<div class="page">' + profileRow(el, A), cs = el.consent.status;
+    if (cs === 'pending') h += pendingCard(el);
+    else if (cs === 'declined' || cs === 'withdrawn') h += stoppedCard(el);
+    else {
+      if (el.paused && el.paused.on) h += '<div class="banner" role="status"><b>기록 일시 중지</b><span>' + esc(el.short) + ' 님이 ' + esc(fmtStamp(el.paused.at)) + '부터 위치 기록을 잠시 꺼 두셨어요. 식사 체크와 사진은 그대로 받아요.</span></div>';
+      if (!A) h += learningCard(el) + postsCard(el, null);
+      else h += verdictCard(el, W) + radiusCard(el, W) + (plus() ? mapCard(el, W) : lockCard()) + summaryCard(el, W) + goodCard(el, W) + postsCard(el, W) + trendCard(el, A, W);
+    }
+    return h + '<p class="foot">등장인물과 기록은 모두 테스트용 예시예요</p></div>';
+  }
+
+  // 판정 → 근거 → 행동
+  function verdictCard(el, W) {
+    var st = S(), lv = E.level(W), hl = E.headline(W), id = el.id + ':' + W.monday, a = (st.alerts || {})[id], done = !!(a && a.confirmedAt);
+    var badge = lv === 'learn' ? '<span class="badge">처음 2주</span>' : lv === 'calm' ? '<span class="badge accent">' + IC.check + '평소와 같아요</span>' : lv === 'watch' ? '<span class="badge warn">' + IC.warn + '살펴볼 변화</span>' : '<span class="badge warn">' + IC.warn + '2주째 이어진 변화</span>';
+    var title = lv === 'learn' ? '평소 모습을 배우는 기간이에요' : hl ? hl.title : wkWord(W) + '는 평소와 비슷하게 지내셨어요';
+    var why = lv === 'learn' ? '셋째 주부터 평소와 달라진 점을 알려 드려요' : hl ? (hl.detail || '') : '평소 2주(' + E.md(W.base.mondays[0]) + '–' + E.md(E.addDays(W.base.mondays[1], 6)) + ')와 비교했어요';
+    var act = lv === 'persist' ? '안부 전화를 드리고, 치매안심센터 무료 선별검사를 함께 알아보세요' : lv === 'watch' ? '이번 주말에 안부 전화를 권해요' : '';
+    var calls = vals(el.calls).filter(function (c) { return inWeek(c.at, W); }).sort(byAt);
+    var tp = lv === 'learn' ? [] : E.topics(W);
+    return '<section class="card verdict ' + lv + '"><div class="v-top">' + badge + (done ? '<span class="badge">확인했어요</span>' : '') + '<span class="v-when">' + range(W) + '</span></div>' +
+      '<h2 class="v-title">' + esc(title) + '</h2>' + (why ? '<p class="v-why">' + esc(why) + '</p>' : '') + (act ? '<p class="v-act">' + act + '</p>' : '') +
+      '<div class="v-row"><a class="btn primary" href="tel:' + esc(el.phone.replace(/-/g, '')) + '">' + IC.phone + '안부 전화하기</a><button type="button" class="btn" data-act="log-call" data-id="' + el.id + '">통화했어요</button></div>' +
+      '<p class="v-calls">' + (calls.length ? wkWord(W) + ' 안부 전화: ' + calls.map(function (c) { return esc(String(c.by).slice(-2)) + ' (' + E.DOW[E.dow(c.at.split(' ')[0])] + ')'; }).join(', ') : wkWord(W) + '에 기록된 안부 전화가 아직 없어요') + '</p>' +
+      (tp.length ? '<div class="topics"><b>대화 소재</b>' + tp.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') + '</div>' : '') +
+      (W.flagged ? '<button type="button" class="btn block quiet" data-act="open-alert" data-id="' + id + '">' + (lv === 'persist' ? '자세히 · 검진 안내 보기' : '평소와 ' + wkWord(W) + ' 자세히 비교') + IC.right + '</button>' : '') + '</section>';
+  }
+  function radiusCard(el, W) {
+    var m = W.m, b = W.base, fr = E.flag(W, 'radius'), badge;
+    if (W.learning) badge = '<span class="badge">평소 기준을 만드는 주예요</span>';
+    else if (fr) badge = '<span class="badge warn">' + IC.warn + '평소 ' + E.km(b.radius) + '보다 ' + fr.pct + '% 줄었어요</span>';
+    else if (m.radius > b.radius * 1.1) badge = '<span class="badge accent">평소 ' + E.km(b.radius) + '보다 넓었어요</span>';
+    else badge = '<span class="badge accent">' + IC.check + '평소 ' + E.km(b.radius) + '와 비슷해요</span>';
+    return '<section class="card"><div class="c-top"><h2 class="c-label">' + wkWord(W) + ' 활동 반경</h2><span class="c-date">' + range(W) + '</span></div>' +
+      '<p class="big"><span class="big-num">' + m.radius.toFixed(1) + '</span><span class="big-unit">km</span></p>' + badge + '</section>';
+  }
+  function summaryCard(el, W) {
+    var m = W.m, b = W.base, lp = E.longestPlace(m), fo = E.flag(W, 'out'), fm = E.flag(W, 'meals');
+    function cell(l, v, s, warn) { return '<div class="sum"><p class="sum-l">' + l + '</p><p class="sum-v' + (warn ? ' warn' : '') + '">' + v + '</p><p class="sum-s">' + s + '</p></div>'; }
+    return '<section class="card sumcard" aria-label="' + wkWord(W) + ' 요약">' +
+      cell('외출한 날', '<b>' + m.outDays + '</b><small>/' + m.locDays + '일</small>', b ? '평소 ' + E.num(b.outDays * m.locDays / 7) + '일' : '기준 만드는 중', fo && fo.level === 'warn') +
+      cell('식사 체크', '<b>' + m.meals + '</b><small>/' + m.mealSlots + '끼</small>', b ? '평소 ' + E.num(b.meals * m.elapsed / 7) + '끼' : '경로당 점심 ' + m.seniorLunch + '회', !!fm) +
+      cell('가장 오래 머문 곳', '<b class="txt">' + (lp ? E.TYPES[lp.p] : '집') + '</b>', lp ? E.dur(lp.min) : '외출 없음', false) + '</section>';
+  }
+  function goodCard(el, W) {
+    var hs = E.highlights(W), wm = E.weeklyMission(W), m = W.m, maxSt = m.elapsed * 4, lp = lastSent(el, ['praise']);
+    return '<section class="card"><div class="c-top"><h2 class="c-title">' + wkWord(W) + ' 좋았던 일</h2><span class="c-note">어르신 화면에도 보여요</span></div>' +
+      (hs.length ? '<ul class="goods">' + hs.map(function (x) { return '<li>' + IC.check + '<span>' + esc(x) + '</span></li>'; }).join('') + '</ul>' : '') +
+      '<div class="wm"><div class="wm-top"><span>하루 할 일 도장 (식사 3번 · 마실 1번)</span><b>' + m.stamps + ' / ' + maxSt + '</b></div><div class="bar"><i style="width:' + pct(m.stamps, maxSt) + '%"></i></div></div>' +
+      '<div class="wm"><div class="wm-top"><span>' + wkWord(W) + ' 미션 · ' + wm.label + '</span><b>' + wm.count + ' / ' + wm.target + '</b></div><div class="bar"><i style="width:' + pct(wm.count, wm.target) + '%"></i></div></div>' +
+      '<button type="button" class="btn block" data-act="praise" data-id="' + el.id + '">' + IC.heart + '잘하셨어요 보내기</button>' +
+      (lp ? '<p class="sent">' + esc(fmtStamp(lp.at)) + (lp.from ? ' ' + esc(lp.from) + ' 님이' : '') + ' 보낸 칭찬 · ' + (lp.seenAt ? '어르신이 보셨어요' : '아직 안 보셨어요') + '</p>' : '') + '</section>';
+  }
+  function postsCard(el, W) {
+    var posts = vals(el.posts).filter(function (p) { return W ? inWeek(p.at, W) : true; }).sort(byAt).reverse();
+    var grid = posts.length ? '<div class="posts">' + posts.map(function (p) { return postHTML(el, p); }).join('') + '</div>'
+      : '<div class="empty-box"><b>아직 받은 사진이 없어요</b><span>어르신 화면에서 ‘사진·영상 찍기’를 누르면 여기로 와요. 밖에서 찍은 사진은 마실로 기록돼요.</span></div>';
+    var lr = lastSent(el, ['photo', 'video']);
+    return '<section class="card"><div class="c-top"><h2 class="c-title">' + (W ? wkWord(W) + ' 받은 사진' : '받은 사진') + '</h2><span class="c-note">' + posts.length + '개</span></div>' + grid +
+      '<button type="button" class="btn block" data-act="reply" data-id="' + el.id + '">' + IC.cam + '사진·영상으로 답장하기</button>' +
+      (lr ? '<p class="sent">' + esc(fmtStamp(lr.at)) + (lr.from ? ' ' + esc(lr.from) + ' 님이' : '') + ' 보낸 ' + (lr.kind === 'video' ? '영상' : '사진') + ' · ' + (lr.seenAt ? '어르신이 보셨어요' : '아직 안 보셨어요') + '</p>' : '') + '</section>';
+  }
+  function postHTML(el, p) {
+    var tag = p.meal ? E.MEAL_NAME[p.meal] + ' 밥상' : p.where === 'out' ? '마실' : '집에서';
+    var d = String(p.at).split(' '), cap = E.DOW[E.dow(d[0])] + ' ' + (d[1] || '') + (p.where === 'out' ? (p.km != null ? ' · 집에서 ' + E.km(p.km) + ' · 약 ' + E.steps(p.km).toLocaleString() + '걸음' : ' · 밖에서') : '');
+    var ai = p.ai ? '<p class="ai">AI 참고: ' + esc(p.ai) + '</p>' : (p.meal && p.kind !== 'video' && caps.sampleImg ? '<button type="button" class="btn small" data-act="ai-meal" data-el="' + el.id + '" data-id="' + p.id + '">AI로 밥상 읽기</button>' : '');
+    return '<figure class="post"><div class="ph">' + mediaTag(p.media, p.kind, '', tag + ' 사진') + '<span class="tag">' + tag + '</span></div><figcaption class="cap">' + esc(cap) + '</figcaption>' + ai + '</figure>';
+  }
+  function trendCard(el, A, W) {
+    var weeks = A.slice(Math.max(0, A.length - 8)), n = weeks.length, maxR = Math.max.apply(null, weeks.map(function (w) { return w.m.radius; }).concat([0.1]));
+    function col(w, v, max, label) { return '<div class="col' + (w === W ? ' cur' : '') + '"><b>' + label + '</b><i style="height:' + Math.max(4, Math.round(52 * v / max)) + 'px"></i></div>'; }
+    var rows = '<span class="lab">외출한 날</span>' + weeks.map(function (w) { return col(w, w.m.outDays, 7, w.m.outDays + '일'); }).join('') +
+      '<span class="lab">활동 반경</span>' + weeks.map(function (w) { return col(w, w.m.radius, maxR, w.m.radius.toFixed(1)); }).join('') +
+      '<span></span>' + weeks.map(function (w) { return '<span class="wk">' + E.md(w.monday) + '</span>'; }).join('');
+    var q = W.m.gaps ? '<p class="qline gap">' + IC.warn + '<span>' + W.m.gapDates.map(function (d) { return E.DOW[E.dow(d)]; }).join('·') + '요일은 위치 기록이 비어 있어요. 휴대폰이 꺼져 있었거나 집에 두고 나가셨을 수 있어서 ‘외출 없음’으로 세지 않았어요.</span></p>'
+      : '<p class="qline ok">' + IC.check + '<span>기록 상태 정상 · ' + wkWord(W) + '에 위치 기록이 빈 날이 없어요</span></p>';
+    return '<section class="card"><div class="c-top"><h2 class="c-title">기록과 흐름</h2><span class="c-note">최근 ' + n + '주</span></div>' + q + '<div class="spark" style="--n:' + n + '">' + rows + '</div></section>';
+  }
+  function lockCard() {
+    return '<section class="card lock"><span class="badge">' + IC.lock + '플러스 기능</span><p class="c-h">히트맵 지도는 플러스에서 볼 수 있어요</p><p class="c-p">요금제는 설정 맨 아래에서 바꿀 수 있어요.</p></section>';
+  }
+  function pendingCard(el) {
+    return '<section class="card"><span class="badge warn">동의 대기 중</span><h2 class="c-h">' + esc(el.short || el.name) + ' 님의 동의를 기다리고 있어요</h2>' +
+      '<p class="c-p">어르신 휴대폰에서 기억마실을 열고 이 초대 코드를 넣으면 동의 화면이 나와요. 동의하시기 전에는 아무것도 기록하지 않아요.</p>' +
+      '<div class="code" aria-label="초대 코드">' + fmtCode(el.consent.code) + '</div>' +
+      '<button type="button" class="btn block" data-act="copy" data-text="' + esc(el.consent.code) + '">초대 코드 복사</button>' +
+      '<button type="button" class="btn primary block" data-act="as-elder" data-id="' + el.id + '">어르신 화면에서 동의해 보기</button></section>' +
+      '<section class="card"><h2 class="c-title">어르신 폰에 이렇게 안내돼요</h2><div class="preview">' +
+      pv('yes', PIC.place, '장소 종류', '집 · 경로당 · 마트') + pv('yes', PIC.meal, '식사 체크', '버튼 한 번') + pv('yes', PIC.photo, '사진 찍은 곳', '집에서 거리만') + pv('no', PIC.live, '실시간 위치', '보지 않아요') + '</div></section>';
+  }
+  function pv(k, svg, b, s) { return '<div class="pv ' + k + '">' + svg + '<b>' + (k === 'yes' ? '기록: ' : '안 함: ') + b + '</b><span>' + s + '</span></div>'; }
+  function stoppedCard(el) {
+    var w = el.consent.status === 'withdrawn';
+    return '<section class="card"><span class="badge">' + (w ? '동의 철회됨' : '동의 안 함') + '</span><h2 class="c-h">기록과 리포트를 멈췄어요</h2>' +
+      '<p class="c-p">' + (w ? '동의가 철회되어 새 기록을 받지 않고, 지난 리포트도 보여 드리지 않아요.' : esc(el.short || el.name) + ' 님이 ‘다음에 할게요’를 고르셨어요. 직접 설명드린 뒤 다시 초대해 보세요.') + '</p>' +
+      '<button type="button" class="btn primary block" data-act="reinvite" data-id="' + el.id + '">다시 초대하기</button></section>';
+  }
+  function learningCard(el) {
+    var st = S(), day = (el.days || {})[st.today] || {}, n = E.daysBetween(el.since || st.today, st.today) + 1, ms = E.missionState(day);
+    var done = E.MISSIONS.filter(function (x) { return ms[x.k]; }).map(function (x) { return x.name; });
+    return '<section class="card"><span class="badge accent">기록 ' + n + '일째</span><h2 class="c-h">평소 모습을 배우는 중이에요</h2>' +
+      '<p class="c-p">처음 2주의 기록이 기준선이 돼요. 그 뒤로 평소와 달라진 점만 주간 리포트로 알려 드려요.</p>' +
+      '<p class="c-p">' + (done.length ? '오늘 한 일: ' + done.join(', ') : '오늘 들어온 기록은 아직 없어요') + (homes[el.id] ? ' · 집 위치가 정해져 있어요' : ' · 집 위치를 정하면 밖에서 찍은 사진이 마실로 기록돼요') + '</p></section>';
+  }
+
+  /* 히트맵 지도 */
+  function mapSVG(el, W) {
+    var C = 180, K = 80, CELL = 20, N = 17, MID = 8, st = S(), lay = E.LAYOUTS[el.layout] || E.LAYOUTS.sudong, mp = MAPS[el.layout] || MAPS.sudong;
+    function polar(kmv, deg) { var r = deg * Math.PI / 180, k = Math.min(kmv, 2.1); return [C + k * Math.cos(r) * K, C - k * Math.sin(r) * K]; }
+    function pos(p) { if (p === 'home') return [C, C]; return polar(lay[p][0], lay[p][1]); }
+    function cellIdx(x, y) { var i = Math.round((x - C) / CELL) + MID, j = Math.round((y - C) / CELL) + MID; return (i < 0 || j < 0 || i >= N || j >= N) ? -1 : j * N + i; }
+    var grid = [], i, homeCell = cellIdx(C, C), visited = {}, mealAt = {}, snaps = [];
+    for (i = 0; i < N * N; i++) grid.push(0);
+    W.m.dates.forEach(function (d) {
+      if (d > st.today || d < (el.since || d)) return;
+      var day = el.days[d] || {}, out = 0;
+      if (day.q !== 'gap') (day.v || []).forEach(function (v) {
+        var xy;
+        if (v.p === 'snap') { if (v.km == null || v.deg == null) return; xy = polar(v.km, v.deg); snaps.push({ xy: xy, v: v }); }
+        else if (lay[v.p]) { xy = pos(v.p); visited[v.p] = true; }
+        else return;
+        var dmin = Math.max(0, E.toMin(v.e) - E.toMin(v.s)), end = cellIdx(xy[0], xy[1]);
+        out += dmin; if (end >= 0) grid[end] += dmin;
+        var steps = Math.ceil(Math.hypot(xy[0] - C, xy[1] - C) / 8), seen = {};
+        for (var s = 1; s < steps; s++) { var c = cellIdx(C + (xy[0] - C) * s / steps, C + (xy[1] - C) * s / steps); if (c >= 0 && c !== end && c !== homeCell && !seen[c]) { seen[c] = 1; grid[c] += 14; } }
+      });
+      E.MEALS.forEach(function (k) { var mm = day.m && day.m[k]; if (mm) mealAt[mm.p || 'home'] = (mealAt[mm.p || 'home'] || 0) + 1; });
+      grid[homeCell] += Math.max(0, 960 - out) * 0.25;
+    });
+    var g2 = grid.slice();
+    for (var y = 0; y < N; y++) for (var x = 0; x < N; x++) {
+      var val = grid[y * N + x]; if (!val) continue;
+      [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (o) { var a = x + o[0], b = y + o[1]; if (a >= 0 && b >= 0 && a < N && b < N) g2[b * N + a] += val * 0.22; });
+    }
+    var vmax = 0; g2.forEach(function (v, k) { if (k !== homeCell && v > vmax) vmax = v; });
+    var cells = '', lines = '';
+    g2.forEach(function (v, k) {
+      if (v <= 0.5 || !vmax) return;
+      var lv = k === homeCell ? 5 : Math.max(1, Math.min(5, 1 + Math.floor(4 * Math.sqrt(v / vmax))));
+      cells += '<rect class="lv' + lv + '" x="' + (C + (k % N - MID) * CELL - 8.5) + '" y="' + (C + (Math.floor(k / N) - MID) * CELL - 8.5) + '" width="17" height="17" rx="3"/>';
+    });
+    for (i = 0; i <= N; i++) { var gp = C + (i - MID) * CELL - 10; lines += '<line x1="' + gp + '" y1="0" x2="' + gp + '" y2="360"/><line x1="0" y1="' + gp + '" x2="360" y2="' + gp + '"/>'; }
+    var base = '';
+    (mp.cont || []).forEach(function (d) { base += '<path class="m-cont" d="' + d + '"/>'; });
+    (mp.fields || []).forEach(function (r) { base += '<rect class="m-field" x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="4"/>'; });
+    (mp.water || []).forEach(function (d) { base += '<path class="m-water" d="' + d + '"/>'; });
+    (mp.blocks || []).forEach(function (r) { base += '<rect class="m-block" x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="3"/>'; });
+    (mp.roads || []).forEach(function (r) { base += '<path class="m-road" d="' + r[0] + '" stroke-width="' + r[1] + '"/>'; });
+    if (mp.median) base += '<path class="m-median" d="' + mp.median + '"/>';
+    if (mp.rail) base += '<path class="m-rail" d="' + mp.rail + '"/><path class="m-rail2" d="' + mp.rail + '"/>';
+    (mp.houses || []).forEach(function (r) { base += '<rect class="m-house" x="' + r[0] + '" y="' + r[1] + '" width="' + r[2] + '" height="' + r[3] + '" rx="2"/>'; });
+    var rB = W.base ? W.base.radius : 0, rW = Math.min(W.m.radius, 2.2), circ = '', rlab = '', wk = wkWord(W);
+    if (rB) circ += '<circle class="m-base" cx="' + C + '" cy="' + C + '" r="' + rB * K + '"/>';
+    if (rW) circ += '<circle class="m-week" cx="' + C + '" cy="' + C + '" r="' + rW * K + '"/>';
+    if (rB && rW && Math.abs(rB - rW) * K < 16) rlab += '<text class="m-rlab w" x="' + C + '" y="' + (C - Math.max(rB, rW) * K - 6) + '" text-anchor="middle">평소·' + wk + ' ' + E.km(W.m.radius) + '</text>';
+    else {
+      if (rB) rlab += '<text class="m-rlab b" x="' + C + '" y="' + (C - rB * K - 6) + '" text-anchor="middle">평소 ' + E.km(rB) + '</text>';
+      if (rW) rlab += '<text class="m-rlab w" x="' + C + '" y="' + Math.max(12, C - rW * K - 6) + '" text-anchor="middle">' + wk + ' ' + E.km(W.m.radius) + '</text>';
+    }
+    var marks = '', labs = '', taps = '';
+    function label(dir, xy, name, sub) {
+      var x = xy[0], yy = xy[1], an = 'middle', nx = x, ny, sy;
+      if (dir === 'r') { an = 'start'; nx = x + 12; ny = sub ? yy - 1 : yy + 4; sy = yy + 11; }
+      else if (dir === 'l') { an = 'end'; nx = x - 12; ny = sub ? yy - 1 : yy + 4; sy = yy + 11; }
+      else if (dir === 't') { ny = sub ? yy - 25 : yy - 13; sy = yy - 12; }
+      else { ny = yy + 22; sy = yy + 34; }
+      return '<text class="m-lab" x="' + nx.toFixed(1) + '" y="' + ny.toFixed(1) + '" text-anchor="' + an + '">' + name + '</text>' + (sub ? '<text class="m-sub" x="' + nx.toFixed(1) + '" y="' + sy.toFixed(1) + '" text-anchor="' + an + '">' + sub + '</text>' : '');
+    }
+    E.PLACE_ORDER.forEach(function (p) {
+      var xy = pos(p), v = visited[p], meal = mealAt[p];
+      var cls = meal ? 'm-meal' : v ? 'm-vis' : 'm-miss', r = meal ? 7 : v ? 5 : 5.5;
+      marks += '<circle class="' + cls + '" cx="' + xy[0].toFixed(1) + '" cy="' + xy[1].toFixed(1) + '" r="' + r + '"/>';
+      labs += label(lay[p][2], xy, E.TYPES[p], v ? '' : wk + ' 안 감');
+      taps += '<g class="ptap" data-act="place" data-p="' + p + '" tabindex="0" role="button" aria-label="' + E.TYPES[p] + ': 머문 요일과 시간대 보기"><circle cx="' + xy[0].toFixed(1) + '" cy="' + xy[1].toFixed(1) + '" r="20"/></g>';
+    });
+    snaps.forEach(function (s) {
+      marks += '<circle class="m-snap" cx="' + s.xy[0].toFixed(1) + '" cy="' + s.xy[1].toFixed(1) + '" r="6"/>';
+      labs += '<text class="m-sub" x="' + (s.xy[0] + 10).toFixed(1) + '" y="' + (s.xy[1] + 4).toFixed(1) + '">사진 ' + E.km(s.v.km) + '</text>';
+      if (s.v.post) taps += '<g class="ptap" data-act="snap" data-post="' + esc(s.v.post) + '" tabindex="0" role="button" aria-label="사진 찍은 곳 보기"><circle cx="' + s.xy[0].toFixed(1) + '" cy="' + s.xy[1].toFixed(1) + '" r="18"/></g>';
+    });
+    marks += '<circle class="' + (mealAt.home ? 'm-meal' : 'm-vis') + '" cx="' + C + '" cy="' + C + '" r="7.5"/>';
+    labs += label('b', [C, C], '집', '');
+    var aria = wk + ' 머문 곳 지도. 평소 반경 ' + (rB ? E.km(rB) : '없음') + ', ' + wk + ' 반경 ' + E.km(W.m.radius) + (snaps.length ? ', 사진 찍은 곳 ' + snaps.length + '곳' : '');
+    return { svg: '<svg class="map" viewBox="0 0 360 360" role="img" aria-label="' + esc(aria) + '"><rect width="360" height="360" fill="#080c12"/>' + base +
+      '<g class="m-grid">' + lines + '</g>' + cells + circ + marks + labs + rlab + taps + '</svg>', snaps: snaps.length };
+  }
+  function mapCard(el, W) {
+    var mp = mapSVG(el, W);
+    return '<section class="card"><div class="c-top"><h2 class="c-title">' + wkWord(W) + ' 머문 곳</h2><span class="c-note">장소를 눌러 보세요</span></div>' +
+      '<div class="mapwrap">' + mp.svg + '</div>' +
+      '<ul class="legend"><li><span class="ramp"><i class="r1"></i><i class="r3"></i><i class="r5"></i></span>진할수록 오래 머문 곳</li>' +
+      '<li><svg class="sw" viewBox="0 0 14 14" aria-hidden="true"><circle class="m-meal" cx="7" cy="7" r="5"/></svg>식사 체크한 곳</li>' +
+      '<li><svg class="sw" viewBox="0 0 14 14" aria-hidden="true"><circle class="m-miss" cx="7" cy="7" r="5"/></svg>' + wkWord(W) + ' 안 간 곳</li>' +
+      (mp.snaps ? '<li><svg class="sw" viewBox="0 0 14 14" aria-hidden="true"><circle class="m-snap" cx="7" cy="7" r="4.5"/></svg>사진 찍은 곳</li>' : '') +
+      (W.base ? '<li><span class="sw-line"></span>평소 반경</li>' : '') + '<li><span class="sw-line w"></span>' + wkWord(W) + ' 반경</li></ul></section>';
+  }
+
+  /* ---------- 보호자: 알림 상세 ---------- */
+  function alertDetailPage(id) {
+    var a = findAlert(id);
+    if (!a) return '<div class="page"><p class="empty">이 알림을 찾을 수 없어요</p></div>';
+    var el = a.el, W = a.W, m = W.m, b = W.base, st = S(), wk = wkWord(W);
+    var fl = function (k) { var f = E.flag(W, k); return f ? f.level : ''; };
+    var fs = E.flag(W, 'streak'), fmiss = E.flag(W, 'missed');
+    var rows = [
+      ['외출한 날', E.num(b.outDays * m.locDays / 7) + '일', m.outDays + '일' + (m.gaps ? '<small>기록 빈 날 ' + m.gaps + '일 제외</small>' : ''), fl('out')],
+      ['활동 반경', E.km(b.radius), E.km(m.radius), fl('radius')],
+      ['식사 체크', E.num(b.meals * m.elapsed / 7) + '끼', m.meals + '끼', fl('meals')],
+      ['연속으로 외출 없는 날', b.streakMax <= 1 ? '하루 넘긴 적 없음' : '최대 ' + b.streakMax + '일', m.streak.len ? m.streak.len + '일<small>' + E.dayList(m.streak.dates) + '</small>' : '없음', fs ? 'warn' : ''],
+      ['늘 가던 곳 중 안 간 곳', '없음', fmiss ? fmiss.places.map(function (p) { return E.TYPES[p]; }).join(', ') : '없음', fmiss ? 'info' : '']
+    ];
+    var cmp = '<div class="cmp" role="table" aria-label="평소와 ' + wk + ' 비교"><div class="h" role="columnheader">항목</div><div class="h" role="columnheader">평소 2주<small>' + E.md(b.mondays[0]) + '–' + E.md(E.addDays(b.mondays[1], 6)) + '</small></div><div class="h" role="columnheader">' + wk + '<small>' + range(W) + '</small></div>' +
+      rows.map(function (r) { return '<div class="l" role="cell">' + r[0] + '</div><div class="v" role="cell">' + r[1] + '</div><div class="v' + (r[3] === 'warn' ? ' warn' : '') + '" role="cell">' + r[2] + '</div>'; }).join('') + '</div>';
+    var lastBase = b.weeks[b.weeks.length - 1];
+    function strip(label, wm, flagDates) {
+      return '<div class="strip"><span>' + label + '</span><div class="st-days">' + wm.dates.map(function (d, i) {
+        var p = wm.per[i], cls = !p ? 'none' : p.gap ? 'gap' : p.out ? 'out' : (flagDates.indexOf(d) >= 0 ? 'flag' : '');
+        return '<i class="' + cls + '" title="' + dayLabel(d) + (p ? (p.gap ? ' 기록 없음' : p.out ? ' 외출' : ' 외출 없음') : '') + '">' + E.DOW[i] + '</i>';
+      }).join('') + '</div></div>';
+    }
+    var strips = '<div class="strips" aria-label="요일별 외출">' + strip('평소 (' + E.md(lastBase.monday) + '~)', lastBase, []) + strip(wk, m, fs ? fs.dates : []) + '</div>';
+    var sch = (st.schedules || {})[a.id], hasVisit = sch && sch.day;
+    var visit = hasVisit ? '<div class="sched">' + IC.cal + '<span style="margin-right:auto">' + dayLabel(sch.day) + ' ' + esc(sch.slot) + ' 방문 예정</span><button type="button" class="btn small quiet" data-act="open-visit" data-id="' + a.id + '">바꾸기</button></div>'
+      : '<button type="button" class="btn block" data-act="open-visit" data-id="' + a.id + '">' + IC.cal + '이번 주말 방문 일정 넣기</button>';
+    var h = '<div class="page"><section class="ad-head"><div class="al-badges"><span class="badge warn">' + IC.warn + '변화 알림</span>' + (W.streakWeeks >= 2 ? '<span class="badge warn">2주째 이어진 변화</span>' : '') + '</div>' +
+      '<p class="ad-who">' + esc(callOf(el)) + ' ' + esc(el.name) + ' · ' + range(W) + '</p><h2 class="ad-title">' + esc(a.hl.title) + '</h2>' + (a.hl.detail ? '<p class="ad-why">' + esc(a.hl.detail) + '</p>' : '') + '</section>' +
+      '<section class="card"><h2 class="c-title">무엇이 달라졌나요</h2>' + cmp + strips + '</section>' +
+      '<section class="card"><h2 class="c-title">이렇게 해 보세요</h2>' +
+        '<a class="btn primary block" href="tel:' + esc(el.phone.replace(/-/g, '')) + '">' + IC.phone + '안부 전화하기</a>' +
+        '<p class="act-note">' + esc(callOf(el)) + ' 휴대폰 ' + esc(el.phone) + ' · 테스트용 번호예요</p>' + visit + '</section>' + checklistCard(a.id);
+    if (W.streakWeeks >= 2) h += checkupCard(el);
+    h += a.done ? '<button type="button" class="btn block quiet" disabled>' + IC.check + (a.by && a.by !== me().short ? esc(a.by) + ' 님이 확인했어요' : '확인했어요') + ' · ' + esc(fmtStamp(a.at)) + '</button>'
+      : '<button type="button" class="btn block" data-act="confirm-alert" data-id="' + a.id + '">' + IC.check + '확인했어요</button>';
+    return h + '</div>';
+  }
+  function checklistCard(aid) {
+    var ck = (((S().schedules || {})[aid] || {}).check) || {};
+    var items = [['fridge', '냉장고 속', '식재료가 있는지, 상한 음식은 없는지'], ['meds', '약 봉투', '드실 약이 남아 있는지'], ['safety', '집 안 위험한 곳', '문턱 · 전선 · 미끄러운 바닥']];
+    return '<section class="card"><h2 class="c-title">방문하면 확인할 것</h2><ul class="check">' + items.map(function (it) {
+      var c = ck[it[0]] || {};
+      return '<li><button type="button" class="tick" data-act="tick" data-id="' + aid + '" data-item="' + it[0] + '" aria-pressed="' + !!c.done + '" aria-label="' + it[1] + ' 확인">' + IC.check + '</button>' +
+        '<span class="ck-m"><b>' + it[1] + '</b><span>' + it[2] + '</span></span>' +
+        (c.photo ? mediaTag(c.photo, 'photo', 'thumb', it[1] + ' 사진') : '<button type="button" class="btn small" data-act="ck-photo" data-id="' + aid + '" data-item="' + it[0] + '">' + IC.cam + '사진</button>') + '</li>';
+    }).join('') + '</ul><p class="c-note">사진은 가족끼리만 봐요. 다음 방문 때 비교할 수 있어요.</p></section>';
+  }
+  function checkupCard(el) {
+    var c = CENTERS[el.area] || CENTER_DEFAULT, tel = c.tel || CALL_CENTER;
+    return '<section class="card" style="border-color:var(--warn-line)"><span class="badge warn">검진 안내</span><h2 class="c-h">치매안심센터 무료 선별검사를 권해요</h2>' +
+      '<p class="c-p">같은 변화가 2주 이어졌어요. 병이 있다는 뜻은 아니에요. 가까운 치매안심센터에서 간단한 선별검사로 확인해 볼 수 있어요.</p>' +
+      '<dl class="facts"><div><dt>관할 센터</dt><dd>' + esc(c.name) + '</dd></div><div><dt>운영 시간</dt><dd>' + esc(c.hours) + '</dd></div>' +
+      '<div><dt>방법</dt><dd>' + esc(c.how) + '</dd></div><div><dt>준비물</dt><dd>신분증</dd></div><div><dt>비용</dt><dd>만 60세 이상 선별검사 무료</dd></div></dl>' +
+      '<a class="btn primary block" href="tel:' + tel.replace(/-/g, '') + '">' + IC.phone + (c.tel ? '센터에 전화하기' : '치매상담콜센터 ' + CALL_CENTER + ' 전화하기') + '</a>' +
+      (c.tel ? '' : '<p class="act-note">관할 센터 예약을 안내받을 수 있어요</p>') + '</section>';
+  }
+
+  /* ---------- 보호자: 알림 목록 · 가족 · 설정 ---------- */
+  function alertsPage() {
+    var list = alertList(), todo = list.filter(function (a) { return !a.done; }), done = list.filter(function (a) { return a.done; });
+    function row(a) {
+      return '<button type="button" class="arow' + (a.done ? '' : ' todo') + '" data-act="open-alert" data-id="' + a.id + '">' + avatar(a.el, 36) +
+        '<span class="arow-m"><span class="arow-who">' + esc(callOf(a.el)) + ' ' + esc(a.el.name) + ' · ' + range(a.W) + '</span><span class="arow-t">' + esc(a.hl.title) + '</span>' +
+        '<span class="arow-s">' + (a.done ? '<span class="badge">' + IC.check + (a.by && a.by !== me().short ? esc(a.by) + ' 님 확인 · ' : '확인 완료 · ') + esc(fmtStamp(a.at)) + '</span>' : '<span class="badge warn">확인 필요</span>') + (a.W.streakWeeks >= 2 ? '<span class="badge warn">2주째</span>' : '') + '</span></span>' + IC.right + '</button>';
+    }
+    return '<div class="page"><h2 class="sec-h">확인이 필요해요 (' + todo.length + ')</h2>' + (todo.length ? '<div class="alist">' + todo.map(row).join('') + '</div>' : '<p class="empty">새로 확인할 알림이 없어요</p>') +
+      '<h2 class="sec-h">확인했어요 (' + done.length + ')</h2>' + (done.length ? '<div class="alist">' + done.map(row).join('') + '</div>' : '<p class="empty">아직 없어요</p>') + '</div>';
+  }
+
+  function familyPage() {
+    var st = S(), el = curElder(), monday = E.mondayOf(st.today);
+    if (!el) return '<div class="page"><section class="card"><h2 class="c-h">아직 함께 보는 어르신이 없어요</h2><p class="c-p">어르신을 직접 연결하거나, 가족에게 받은 초대 코드로 함께 볼 수 있어요.</p><button type="button" class="btn primary block" data-act="add-elder">' + IC.plus + '어르신 연결하기</button></section></div>';
+    var iAmMain = isMain(el), mm = mainOf(el);
+    // 어르신마다 따로 있는 돌봄 가족. 주보호자는 초대·빼기, 함께 보는 가족은 스스로 나가기
+    var rows = members(el).map(function (m) {
+      var mine = m.pid === ui.viewer;
+      var sub = m.role === 'main' ? (m.rel ? m.rel + ' · ' : '') + '주보호자' : relText(m) + ' · ' + (m.status === 'joined' ? E.md(m.since) + '부터 함께 봐요' : '초대 코드 ' + fmtCode(m.code));
+      var tag = m.status === 'invited' ? '<span class="badge">수락 대기</span>' : (m.role !== 'main' && !m.ack) ? '<span class="badge accent">어르신께 알리는 중</span>' : '';
+      var act = m.role === 'main' ? '' : iAmMain ? '관리' : mine ? '나가기' : '';
+      return '<li class="mrow">' + avatar({ short: m.p.short }, 40) + '<span class="mrow-m"><b>' + esc(m.p.name) + (mine ? ' (나)' : '') + '</b><span>' + esc(sub) + '</span>' + (tag ? '<span class="mrow-tag">' + tag + '</span>' : '') + '</span>' +
+        (act ? '<button type="button" class="btn small" data-act="open-member" data-id="' + el.id + '" data-pid="' + esc(m.pid) + '">' + act + '</button>' : '') + '</li>';
+    }).join('');
+    var calls = el ? vals(el.calls).filter(function (c) { return String(c.at).split(' ')[0] >= monday; }).sort(byAt) : [];
+    var callsHTML = calls.length ? '<ul class="mlist">' + calls.map(function (c) { return '<li class="mrow">' + avatar({ short: String(c.by).slice(-2) }, 40) + '<span class="mrow-m"><b>' + esc(c.by) + '</b><span>' + dayLabel(c.at.split(' ')[0]) + ' ' + esc(c.at.split(' ')[1] || '') + ' 통화</span></span></li>'; }).join('') + '</ul>'
+      : '<p class="c-p">이번 주에 기록된 안부 전화가 아직 없어요. 리포트의 ‘통화했어요’를 누르면 돌봄 가족이 함께 봐요.</p>';
+    var mems = el ? vals(el.memories).sort(byAt).reverse() : [];
+    var memHTML = mems.length ? '<div class="alist">' + mems.map(function (mm) {
+      var ans = mm.answer, status = !ans ? '<span class="badge">답을 기다리는 중</span>' : ans.skip ? '<span class="badge">다음에 하신대요</span>' : '<span class="badge accent">이야기가 왔어요</span>';
+      return '<div class="memo"><div class="ph">' + mediaTag(mm.media, 'photo', '', '옛날 사진') + '</div><div class="memo-m"><b>' + esc(mm.q) + '</b>' + status +
+        (ans && ans.media ? mediaTag(ans.media, ans.kind || 'video', '', '어르신의 이야기') : '') + '<span>' + esc(fmtStamp(mm.at)) + ' · ' + esc(mm.by) + ' 님이 보냄</span></div></div>';
+    }).join('') + '</div>' : '<p class="c-p">옛날 사진을 올리고 질문을 하나 남기면, 어르신 화면에 하루 한 장씩 보여요. 어르신이 영상으로 이야기를 남기면 여기에 쌓여요.</p>';
+    var who = esc(callOf(el)) + ' ' + esc(el.name);
+    return '<div class="page">' + profileRow(el, null) +
+      '<section class="card"><div class="c-top"><h2 class="c-title">' + esc(callOf(el)) + ' 돌봄 가족</h2><span class="c-note">' + esc(el.name) + ' 님 리포트를 함께 봐요</span></div><ul class="mlist">' + rows + '</ul>' +
+      (iAmMain ? '<button type="button" class="btn block" data-act="open-invite" data-id="' + el.id + '">' + IC.plus + '가족 초대하기</button>'
+        : '<p class="c-note">초대와 빼기는 ' + (mm ? '주보호자 ' + esc(mm.p.name) + ' 님이' : '주보호자가') + ' 해요.</p>') + '</section>' +
+      '<section class="card"><div class="c-top"><h2 class="c-title">이번 주 안부 전화</h2><span class="c-note">' + who + '</span></div>' + callsHTML + '</section>' +
+      '<section class="card"><div class="c-top"><h2 class="c-title">회상 앨범</h2><span class="c-note">' + who + '</span></div>' + memHTML +
+        '<button type="button" class="btn primary block" data-act="open-memory" data-id="' + el.id + '">' + IC.plus + '옛날 사진 올리기</button></section>' +
+      '<p class="c-note">돌봄 가족은 어르신마다 따로예요. 초대받은 어르신의 리포트와 사진만 보이고, 어르신도 화면의 ‘같이 보는 사람’에서 언제든 뺄 수 있어요.</p></div>';
+  }
+
+  function settingsPage() {
+    var st = S(), isPlus = plus(), el = curElder(), vme = me(), mine = visibleElders();
+    var seeList = mine.map(function (e) { return callOf(e) + '(' + e.name + ')'; }).join(', ');
+    var viewerCard = '<section class="card"><h2 class="c-title">보는 사람 <span class="c-note">(시연)</span></h2><div class="chips">' + viewers().map(function (p) {
+      return '<button type="button" class="chipbtn" data-act="viewer" data-id="' + esc(p.id) + '" aria-pressed="' + (p.id === ui.viewer) + '">' + esc(p.name) + '</button>';
+    }).join('') + '</div><p class="c-p">' + esc(vme.name) + ' 님은 ' + (seeList ? esc(seeList) + ' 리포트를 봐요.' : '아직 함께 보는 어르신이 없어요.') + ' 돌봄 가족은 어르신마다 따로라서 초대받은 어르신만 보여요.</p></section>';
+    var consentRows = mine.filter(function (e) { return isMain(e); }).map(function (e) {
+      var c = e.consent, txt, btn = '';
+      if (c.status === 'agreed') { txt = '동의함 · ' + fmtStamp(c.at).split(' ')[0]; var k = 'withdraw:' + e.id; btn = '<button type="button" class="btn small' + (confirmKey === k ? ' confirm' : '') + '" data-act="withdraw" data-id="' + e.id + '">' + (confirmKey === k ? '한 번 더 누르면 철회' : '동의 철회') + '</button>'; }
+      else if (c.status === 'pending') { txt = '동의 대기 중 · 코드 ' + fmtCode(c.code); btn = '<button type="button" class="btn small" data-act="as-elder" data-id="' + e.id + '">어르신 화면</button>'; }
+      else { txt = (c.status === 'withdrawn' ? '동의 철회함' : '동의 안 함') + (c.at ? ' · ' + fmtStamp(c.at).split(' ')[0] : ''); btn = '<button type="button" class="btn small" data-act="reinvite" data-id="' + e.id + '">다시 초대</button>'; }
+      return '<li class="mrow">' + avatar(e, 40) + '<span class="mrow-m"><b>' + esc(e.name) + '</b><span>' + esc(txt) + '</span></span>' + btn + '</li>';
+    }).join('');
+    var hm = el && homes[el.id];
+    var homeCard = el ? '<section class="card"><div class="c-top"><h2 class="c-title">집 위치 (이 기기)</h2><span class="c-note">' + esc(el.name) + '</span></div>' +
+      '<p class="c-p">' + (hm ? '정해져 있어요 · ' + esc(fmtStamp(hm.at)) + '. ' : '아직 정하지 않았어요. ') + '어르신이 밖에서 사진을 찍으면 집과의 거리로 마실이 저절로 기록돼요. 좌표는 이 휴대폰 안에만 두고, 가족에게는 거리만 보내요.</p>' +
+      '<div class="two"><button type="button" class="btn" data-act="home-here" data-id="' + el.id + '">' + IC.home + '지금 위치로</button><button type="button" class="btn" data-act="home-photo" data-id="' + el.id + '">' + IC.cam + '집 사진으로</button></div>' +
+      (hm ? '<button type="button" class="btn block quiet" data-act="home-clear" data-id="' + el.id + '">집 위치 지우기</button>' : '') + '</section>' : '';
+    var offline;
+    if (siteMode) offline = '<p class="c-p">웹사이트로 보고 있어요. 기록과 사진은 이 브라우저에만 저장돼요. 인터넷 없이 쓰려면 HTML 파일 하나로 내려받으세요.</p><a class="btn block" href="kiokmasil-offline.html" download="기억마실-오프라인.html">' + IC.dl + '오프라인 HTML 내려받기</a>';
+    else if (!viewerAvailable) offline = '<p class="c-p">지금 오프라인 HTML 파일로 보고 있어요. 인터넷 없이도 그대로 쓸 수 있어요.</p>';
+    else if (caps.downloads) offline = '<p class="c-p">인터넷 없이 열 수 있는 HTML 파일 하나로 내려받아요.</p><button type="button" class="btn block" data-act="download">' + IC.dl + '오프라인 HTML 내려받기</button>';
+    else offline = '<p class="c-p">이 화면에서는 내려받기를 쓸 수 없어요. 함께 전달된 HTML 파일을 써 주세요.</p>';
+    var mode = store.mode === 'db' ? '여러 기기 실시간 공유 (링크 소유자)' : siteMode ? '이 브라우저에만 저장' : '이 기기에만 저장';
+    return '<div class="page">' +
+      '<section class="card"><h2 class="c-title">내 정보</h2><ul class="mlist"><li class="mrow">' + avatar({ short: vme.short }, 40) + '<span class="mrow-m"><b>' + esc(vme.name) + '</b><span>' + (vme.area ? esc(vme.area) + ' · ' : '') + (mine.length ? '함께 보는 어르신 ' + mine.length + '분' : '함께 보는 어르신 없음') + '</span></span></li></ul></section>' +
+      viewerCard +
+      '<section class="card"><h2 class="c-title">보기 모드</h2><p class="c-p">지금은 보호자 화면이에요. 시연할 때 어르신 화면으로 바꿀 수 있어요.</p><button type="button" class="btn block" data-act="role-reset">역할 바꾸기</button></section>' +
+      '<section class="card"><h2 class="c-title">동의 관리</h2>' + (consentRows ? '<ul class="mlist">' + consentRows + '</ul><p class="c-note">동의를 철회하면 기록과 리포트가 바로 멈춰요. 동의는 주보호자가 관리해요.</p>' : '<p class="c-p">동의와 가족 초대는 어르신마다 주보호자가 관리해요.</p>') + '</section>' + homeCard +
+      '<section class="card"><h2 class="c-title">오프라인 파일</h2>' + offline + '</section>' +
+      '<section class="card"><h2 class="c-title">테스트</h2><p class="c-p">체크한 식사, 사진, 확인한 알림, 동의 상태를 처음으로 되돌려요. 저장 방식: ' + mode + '</p>' +
+        '<button type="button" class="btn block' + (confirmKey === 'reset' ? ' confirm' : '') + '" data-act="reset">' + (confirmKey === 'reset' ? '한 번 더 누르면 초기화돼요' : '테스트 초기화') + '</button></section>' +
+      '<section class="card"><h2 class="c-title">요금제 <span class="c-note">(나중에 다듬을 예정)</span></h2><div class="plans">' +
+        '<div class="plan' + (isPlus ? '' : ' on') + '"><span class="plan-n">FREE</span><span class="plan-p">무료</span><span class="plan-d">주간 요약</span>' + (isPlus ? '' : '<span class="plan-now">사용 중</span>') + '</div>' +
+        '<div class="plan' + (isPlus ? ' on' : '') + '"><span class="plan-n">PLUS</span><span class="plan-p">월 9,900원</span><span class="plan-d">히트맵 · 변화 알림 · 가족 공유 · 검진 안내</span>' + (isPlus ? '<span class="plan-now">사용 중</span>' : '') + '</div></div>' +
+        (isPlus ? '<button type="button" class="btn block" data-act="plan-free">무료로 바꾸기</button>' : '<button type="button" class="btn primary block" data-act="open-pay">플러스 시작하기</button>') + '</section>' +
+      '<p class="foot">등장인물과 기록은 모두 예시예요 · 실제 결제, 전화는 하지 않아요</p></div>';
+  }
+
+  /* ---------- 어르신 화면 ---------- */
+  function elderPage() {
+    var el = curElder(); if (!el) return '<div class="e-page"><p class="e-p">연결된 어르신이 없어요.</p><button type="button" class="btn e-second" data-act="role" data-role="guardian">보호자 화면으로</button></div>';
+    var cs = el.consent.status;
+    if (cs === 'pending') return consentFlow(el);
+    if (cs === 'declined' || cs === 'withdrawn') {
+      return '<div class="e-page"><section class="e-flow"><h1 class="e-title">기록을 멈췄어요</h1><p class="e-p">지금은 아무것도 기록하지 않아요. 마음이 바뀌면 언제든 다시 시작할 수 있어요.</p>' +
+        '<button type="button" class="btn primary e-main" data-act="e-restart" data-id="' + el.id + '">다시 시작하기</button></section>' +
+        '<button type="button" class="btn e-second" data-act="role" data-role="guardian">보호자 화면으로</button></div>';
+    }
+    if (eflow) return ePhotoFlow(el);
+    if (enav.screen === 'more') return eMore(el);
+    if (enav.screen === 'week') return eWeek(el);
+    if (enav.screen === 'settings') return eSettings(el);
+    if (enav.screen === 'homeloc') return eHomeLoc(el);
+    if (enav.screen === 'inbox') return eInbox(el, enav.id);
+    if (enav.screen === 'memory') return eMemory(el, enav.id);
+    if (enav.screen === 'people') return ePeople(el);
+    if (enav.screen === 'member') return eMember(el, enav.id);
+    return eHome(el);
+  }
+  function eHead(title, back) { return '<div class="e-head"><h1>' + title + '</h1><button type="button" class="icon-btn e-back" data-act="e-nav" data-to="' + back + '" aria-label="뒤로">' + IC.back + '</button></div>'; }
+  function eCard(now, ico, q, sub, btns) { return '<section class="e-card' + (now ? ' now' : '') + '">' + ico + '<h2 class="e-q">' + q + '</h2>' + (sub ? '<p class="e-sub">' + sub + '</p>' : '') + (btns || '') + '</section>'; }
+  function stampsHTML(day) {
+    var ms = E.missionState(day), n = E.MISSIONS.filter(function (x) { return ms[x.k]; }).length;
+    return '<div class="stamps" role="img" aria-label="오늘 도장 4개 중 ' + n + '개"><p class="stamps-h">오늘 도장 ' + n + '개</p>' + E.MISSIONS.map(function (x) {
+      return '<div class="stamp' + (ms[x.k] ? ' on' : '') + '"><i>' + (ms[x.k] ? IC.check : '') + '</i><span>' + x.name + '</span></div>';
+    }).join('') + '</div>';
+  }
+  function eHome(el) {
+    var st = S(), t = st.today, day = el.days[t] || {}, nm = nowMin();
+    var greet = nm < 660 ? '좋은 아침이에요' : nm < 1020 ? '좋은 오후예요' : '편안한 저녁 되세요';
+    var unseen = inboxUnseen(el), memo = memoryOpen(el), cur = E.currentMission(day, nm), nj = newJoin(el), card, hidePhoto = false;
+    if (unseen.length) {
+      var msg = unseen[0], what = msg.kind === 'praise' ? '칭찬을 보냈어요' : msg.kind === 'video' ? '영상을 보냈어요' : '사진을 보냈어요';
+      card = eCard('now', msg.kind === 'praise' ? MICO.heart : MICO.letter, esc(msg.from) + ' 님이 ' + what, '', '<button type="button" class="btn primary e-main" data-act="e-open" data-to="inbox" data-id="' + esc(msg.id) + '">보기</button>');
+    } else if (nj) {
+      // 새로 함께 보게 된 가족은 어르신께 먼저 알린다 (싫으시면 바로 뺄 수 있게)
+      hidePhoto = true;
+      card = eCard('now', MICO.people, esc(nj.p.short) + ' 님(' + esc(relText(nj)) + ')도 리포트를 같이 봐요', '싫으시면 빼 드릴게요', '<button type="button" class="btn primary e-main" data-act="e-ack" data-id="' + esc(nj.pid) + '">알겠어요</button><button type="button" class="btn e-second" data-act="e-member" data-id="' + esc(nj.pid) + '" data-from="home">빼 주세요</button>');
+    } else if (cur && cur.k === 'w') {
+      hidePhoto = true;
+      card = eCard('now', MICO.walk, '오늘 마실 다녀오셨어요?', '밖에서 사진을 찍으면 저절로 기록돼요', '<button type="button" class="btn primary e-main" data-act="e-photo">밖에서 사진 찍기</button><button type="button" class="btn e-second" data-act="e-walk">그냥 다녀왔어요</button>');
+    } else if (cur) {
+      card = eCard('now', MICO.bowl, E.MEAL_NAME[cur.k] + ' 드셨어요?', '', '<button type="button" class="btn primary e-main" data-act="e-meal" data-k="' + cur.k + '">네, 먹었어요</button>');
+    } else if (memo) {
+      card = eCard('', MICO.memory, '오늘의 옛날 사진이 왔어요', esc(memo.by) + ' 님이 보냈어요', '<button type="button" class="btn primary e-main" data-act="e-open" data-to="memory" data-id="' + esc(memo.id) + '">보기</button>');
+    } else {
+      var nx = E.nextMission(day, nm), ms = E.missionState(day), all = ms.b && ms.l && ms.w && ms.d;
+      card = eCard('', MICO.stamp, all ? '오늘 할 일을 다 하셨어요!' : '지금은 쉬셔도 돼요', nx ? '다음 할 일: ' + nx.label + ' · ' + timeLabel(nx.start) : esc(seersText(el)) + '이 리포트로 같이 봐요', '');
+    }
+    return '<div class="e-page"><p class="e-greet">' + esc(el.short) + ' 님, ' + greet + '<span>' + dateLabel(t) + '</span></p>' + card + stampsHTML(day) +
+      (hidePhoto ? '' : '<button type="button" class="btn e-second" data-act="e-photo">' + IC.cam + '사진·영상 찍기</button>') +
+      '<button type="button" class="btn e-second" data-act="e-nav" data-to="more">더보기</button></div>';
+  }
+  function eMore(el) {
+    return '<div class="e-page">' + eHead('더보기', 'home') +
+      '<button type="button" class="btn e-second" data-act="e-nav" data-to="week">이번 주 나의 마실</button>' +
+      '<button type="button" class="btn e-second" data-act="e-nav" data-to="settings">설정</button>' +
+      '<button type="button" class="btn e-second" data-act="role" data-role="guardian">보호자 화면으로</button></div>';
+  }
+  function eWeek(el) {
+    var st = S(), body;
+    if (!hasHistory(el)) body = '<div class="e-told"><p class="who">처음 2주는</p><p class="what">평소 모습을 배우는 중이에요</p></div>';
+    else {
+      var A = E.analyze(el, st.today), W = A[A.length - 1], m = W.m, b = W.base, lp = E.longestPlace(m), hl = E.headline(W), wm = E.weeklyMission(W);
+      body = '<div class="e-stats">' +
+        '<div class="e-stat"><span class="lab">다녀온 날</span><span class="val">' + m.outDays + '<small>일</small></span>' + (b ? '<span class="sub">평소 ' + E.num(b.outDays * m.locDays / 7) + '일</span>' : '') + '</div>' +
+        '<div class="e-stat"><span class="lab">식사</span><span class="val">' + m.meals + '<small>끼</small></span>' + (b ? '<span class="sub">평소 ' + E.num(b.meals * m.elapsed / 7) + '끼</span>' : '') + '</div>' +
+        '<div class="e-stat"><span class="lab">도장</span><span class="val">' + m.stamps + '<small>개</small></span><span class="sub">' + (m.elapsed * 4) + '개 중</span></div>' +
+        '<div class="e-stat"><span class="lab">제일 오래 있던 곳</span><span class="val txt">' + (lp ? E.TYPES[lp.p] : '집') + '</span></div></div>' +
+        '<div class="e-told"><p class="who">이번 주 미션</p><p class="what">' + wm.label + ' · ' + wm.count + '/' + wm.target + '</p><div class="e-bar"><i style="width:' + pct(wm.count, wm.target) + '%"></i></div></div>' +
+        '<div class="e-told"><p class="who">' + esc(seersText(el)) + '도 같은 내용을 봐요</p>' + (W.learning ? '<p class="what">평소 모습을 배우는 중이에요</p>' : hl ? '<p class="what warn">' + esc(hl.title) + '</p>' : '<p class="what">평소와 비슷한 한 주였어요</p>') + '</div>';
+    }
+    return '<div class="e-page">' + eHead('이번 주 나의 마실', 'more') + body + '<button type="button" class="btn e-second" data-act="e-nav" data-to="people">같이 보는 사람</button></div>';
+  }
+  // 어르신이 직접 보는 '같이 보는 사람': 관리하는 가족은 글로만, 함께 보는 가족은 눌러서 뺄 수 있다
+  function ePeople(el) {
+    var rows = seers(el).map(function (m) {
+      var txt = '<span class="e-row-t"><b>' + esc(m.p.short) + ' 님</b><span>' + esc(relText(m)) + (m.role === 'main' ? ' · 관리해요' : '') + '</span></span>';
+      return m.role === 'main' ? '<div class="e-row">' + txt + '</div>' : '<button type="button" class="e-row" data-act="e-member" data-id="' + esc(m.pid) + '">' + txt + IC.right + '</button>';
+    }).join('');
+    return '<div class="e-page">' + eHead('같이 보는 사람', 'week') + rows + '<p class="e-note">빼면 그 가족은 리포트를 더 볼 수 없어요.</p></div>';
+  }
+  function eMember(el, pid) {
+    var m = memberOf(el, pid); if (!m || m.role === 'main') return ePeople(el);
+    var p = person(pid);
+    return '<div class="e-page">' + eHead('같이 보는 사람', enav.from || 'people') + '<section class="e-card">' + MICO.people + '<h2 class="e-q">' + esc(p.short) + ' 님을 뺄까요?</h2><p class="e-sub">빼면 ' + esc(p.short) + ' 님은 리포트를 더 볼 수 없어요</p></section>' +
+      '<button type="button" class="btn primary e-main" data-act="e-remove" data-id="' + esc(pid) + '">빼기</button><button type="button" class="btn e-second" data-act="e-keep" data-id="' + esc(pid) + '">그대로 두기</button></div>';
+  }
+  function eSettings(el) {
+    var on = !(el.paused && el.paused.on);
+    return '<div class="e-page">' + eHead('설정', 'more') +
+      '<button type="button" class="e-row" role="switch" aria-checked="' + on + '" data-act="loc"><span class="e-row-t"><b>위치 기록</b><span class="' + (on ? '' : 'off') + '">' + (on ? '켜져 있어요' : '잠시 꺼 두었어요') + '</span></span><span class="e-switch" aria-hidden="true"><span></span></span></button>' +
+      '<button type="button" class="e-row" role="switch" aria-checked="' + !!ui.voice + '" data-act="voice"><span class="e-row-t"><b>소리로 안내</b><span class="' + (ui.voice ? '' : 'off') + '">' + (ui.voice ? '켜져 있어요' : '꺼져 있어요') + '</span></span><span class="e-switch" aria-hidden="true"><span></span></span></button>' +
+      '<button type="button" class="btn e-second" data-act="e-nav" data-to="homeloc">집 위치 다시 정하기</button>' +
+      '<p class="e-note">위치 기록을 끄면 ' + esc(seersText(el)) + ' 화면에 ‘기록 일시 중지’로 보여요.</p></div>';
+  }
+  function eHomeLoc(el) {
+    var hm = homes[el.id];
+    return '<div class="e-page">' + eHead('집 위치', 'settings') +
+      '<p class="e-p">' + (hm ? '집 위치가 정해져 있어요.' : '아직 집 위치가 없어요.') + ' 집 위치는 이 휴대폰 안에만 저장돼요.</p>' +
+      '<button type="button" class="btn primary e-second" data-act="home-here" data-id="' + el.id + '">지금 있는 곳이 집이에요</button>' +
+      '<button type="button" class="btn e-second" data-act="home-photo" data-id="' + el.id + '">집에서 찍은 사진으로</button></div>';
+  }
+  function eInbox(el, id) {
+    var msg = (el.inbox || {})[id]; if (!msg) return eHome(el);
+    var body = msg.kind === 'praise' ? MICO.heart.replace('class="e-ico"', 'class="e-ico" style="width:132px;height:132px"') + '<h2 class="e-q">' + esc(msg.text || '잘하셨어요!') + '</h2>' : mediaTag(msg.media, msg.kind, 'e-media', esc(msg.from) + ' 님이 보낸 사진');
+    return '<div class="e-page">' + eHead(esc(msg.from) + ' 님이 보냈어요', 'home') + '<section class="e-card">' + body + '<p class="e-sub">' + esc(fmtStamp(msg.at)) + '</p></section>' +
+      '<button type="button" class="btn primary e-main" data-act="e-seen" data-id="' + esc(id) + '">고마워요</button></div>';
+  }
+  function eMemory(el, id) {
+    var mm = (el.memories || {})[id]; if (!mm) return eHome(el);
+    return '<div class="e-page">' + eHead('오늘의 옛날 사진', 'home') + mediaTag(mm.media, 'photo', 'e-media', '옛날 사진') + '<h2 class="e-q">' + esc(mm.q) + '</h2>' +
+      '<button type="button" class="btn primary e-main" data-act="e-mem-video" data-id="' + esc(id) + '">영상으로 이야기하기</button>' +
+      '<button type="button" class="btn e-second" data-act="e-mem-skip" data-id="' + esc(id) + '">다음에 할게요</button></div>';
+  }
+  function ePhotoFlow(el) {
+    var f = eflow, prev = f.preview ? (f.isVideo ? '<video class="e-media" src="' + f.preview + '" playsinline muted></video>' : '<img class="e-media" src="' + f.preview + '" alt="방금 찍은 사진">') : '';
+    if (f.step === 'working' || f.step === 'saving') return '<div class="e-page"><div class="e-wait"><div class="spin" aria-hidden="true"></div><p class="e-q">' + (f.step === 'working' ? '사진을 확인하고 있어요' : '보내는 중이에요') + '</p></div></div>';
+    var q, a, b;
+    if (f.step === 'ask-home') { q = '지금 계신 곳이 집인가요?'; a = ['e-ans-home', '네, 여기가 집이에요']; b = ['e-ans-out', '아니요, 밖이에요']; }
+    else if (f.step === 'ask-where') { q = '어디서 찍으셨어요?'; a = ['e-ans-out', '밖에서 찍었어요']; b = ['e-ans-in', '집에서 찍었어요']; }
+    else { q = E.MEAL_NAME[f.meal] + ' 밥상 사진인가요?'; a = ['e-ans-meal', '네, 밥상이에요']; b = ['e-ans-plain', '아니요, 그냥 사진']; }
+    return '<div class="e-page">' + '<div class="e-head"><h1>사진</h1><button type="button" class="icon-btn e-back" data-act="e-cancel" aria-label="그만두기">' + IC.close + '</button></div>' + prev +
+      '<h2 class="e-q">' + q + '</h2><button type="button" class="btn primary e-main" data-act="' + a[0] + '">' + a[1] + '</button><button type="button" class="btn e-second" data-act="' + b[0] + '">' + b[1] + '</button></div>';
+  }
+  function pic(kind, svg, b, s) { return '<div class="pic ' + kind + '">' + svg + '<div><b>' + b + '</b><span>' + s + '</span></div></div>'; }
+  function consentFlow(el) {
+    var mm = mainOf(el), g = mm ? mm.p : { short: '가족' }, s = elderStep, body;
+    var back = s > 0 ? '<button type="button" class="icon-btn e-back" data-act="e-step" data-d="-1" aria-label="이전">' + IC.back + '</button>' : '';
+    var next = '<button type="button" class="btn primary e-main" data-act="e-step" data-d="1">다음</button>';
+    if (s === 0) body = '<p class="e-kicker">초대가 왔어요</p><h1 class="e-title">' + esc(g.short) + ' 님이 기억마실에 초대했어요</h1><div class="e-code"><span>초대 코드</span><b>' + fmtCode(el.consent.code) + '</b></div>' +
+      '<p class="e-p">일주일에 한 번, 식사와 바깥나들이를 정리해서 ' + esc(seersText(el)) + '께 보내 드려요.</p>' + next;
+    else if (s === 1) body = '<h1 class="e-title">이것만 기록해요</h1>' + pic('yes', PIC.meal, '식사했다는 체크', '단추 한 번') + pic('yes', PIC.photo, '사진 찍은 곳', '집에서 얼마나 떨어졌는지만') + next;
+    else if (s === 2) body = '<h1 class="e-title">이건 하지 않아요</h1>' + pic('no', PIC.live, '지금 계신 곳', '실시간으로 보지 않아요') + pic('no', PIC.addr, '정확한 주소', '주소와 좌표는 보내지 않아요') + next;
+    else body = '<h1 class="e-title">' + esc(el.short || el.name) + ' 님도 같은 리포트를 봐요</h1><p class="e-p">위치 기록은 언제든 잠시 끌 수 있어요.</p>' +
+      '<button type="button" class="btn primary e-main" data-act="e-agree" data-id="' + el.id + '">동의하고 시작하기</button><button type="button" class="btn e-second" data-act="e-later" data-id="' + el.id + '">다음에 할게요</button>';
+    return '<div class="e-page"><section class="e-flow" aria-live="polite">' + back + body + '</section></div>';
+  }
+
+  /* ---------- 어르신 사진 흐름: 찍기 → 위치 확인 → (질문) → 보내기 ---------- */
+  async function onElderMedia(file) {
+    var el = curElder(); if (!el) return;
+    var isVideo = /^video\//.test(file.type), paused = !!(el.paused && el.paused.on);
+    eflow = { step: 'working' }; render(); goTop();
+    var pos = null, prep;
+    try { prep = await prepMedia(file); } catch (e) { eflow = null; render(); toast(e && e.code === 'too_big' ? '영상이 너무 길어요. 10초 안쪽으로 찍어 주세요' : '이 사진은 열 수 없어요. 다시 찍어 주세요'); return; }
+    if (!paused) { if (!isVideo) pos = await photoPos(file); if (!pos) pos = await currentPos(4000); }   // 위치 기록을 꺼 두셨으면 위치를 읽지 않는다
+    var ctx = { blob: prep.blob, kind: prep.kind, isVideo: isVideo, preview: URL.createObjectURL(prep.blob), pos: pos, km: null, deg: null };
+    var home = homes[el.id];
+    if (pos && home) {
+      ctx.km = distKm(home, pos); ctx.deg = bearing(home, pos);
+      if (ctx.km >= E.RULES.homeKm) { finishPhoto(ctx, 'out'); return; }
+      atHome(ctx); return;
+    }
+    eflow = Object.assign({ step: pos ? 'ask-home' : 'ask-where' }, ctx); render();
+  }
+  function atHome(ctx) {
+    var el = curElder(), day = el.days[S().today] || {}, mk = ctx.isVideo ? null : E.photoMealKey(day, nowMin());
+    if (mk) { eflow = Object.assign({}, ctx, { step: 'ask-meal', meal: mk }); render(); }
+    else finishPhoto(ctx, 'home');
+  }
+  async function finishPhoto(ctx, where, meal) {
+    var el = curElder(), st = S(), t = st.today, nm = nowMin(), to = seersText(el);
+    eflow = Object.assign({}, ctx, { step: 'saving' }); render();
+    var ref = null;
+    try { ref = await mediaPut(ctx.blob); } catch (e) { ref = null; }
+    if (!ref) { eflow = null; render(); toast('사진을 보내지 못했어요. 다시 해 주세요'); return; }
+    var pid = newId('p'), ep = { posts: {} }, kmv = ctx.km != null ? Math.round(ctx.km * 100) / 100 : null;
+    ep.posts[pid] = { id: pid, at: stamp(), media: ref, kind: ctx.kind, where: where, km: where === 'out' ? kmv : null, meal: meal || null };
+    var day = el.days[t] || {}, dp = {};
+    if (where === 'out') {
+      var mins = kmv ? Math.max(20, Math.min(120, Math.round(2 * kmv / 3.2 * 60))) : 40, vis = (day.v || []).slice();
+      vis.push({ p: 'snap', s: E.hm(Math.max(300, nm - mins)), e: E.hm(nm), km: kmv, deg: ctx.deg != null ? Math.round(ctx.deg) : null, src: 'photo', post: pid });
+      dp.v = vis; dp.w = { t: nowHM() };
+    }
+    if (meal) { dp.m = {}; dp.m[meal] = { t: nowHM(), p: 'home', photo: ref }; }
+    if (Object.keys(dp).length) { ep.days = {}; ep.days[t] = dp; }
+    update(patchElder(el.id, ep));
+    eflow = null; enav = { screen: 'home', id: null }; render(); goTop();
+    if (where === 'out') celebrate({ title: '마실 다녀오셨네요!', sub: kmv ? '집에서 ' + E.km(kmv) + ' · 약 ' + E.steps(kmv).toLocaleString() + '걸음' : '바깥나들이를 기록했어요', next: '사진도 ' + to + '께 보냈어요', speak: '마실 다녀오셨네요. 잘하셨어요' });
+    else if (meal) celebrate({ title: '잘 드셨어요!', sub: '밥상 사진을 ' + to + '께 보냈어요', next: nextText(S().elders[el.id] || el), speak: '잘 드셨어요' });
+    else celebrate({ title: '사진을 보냈어요', sub: to + '이 곧 보실 거예요', speak: '사진을 보냈어요' });
+  }
+  function nextText(el) { var day = el.days[S().today] || {}, nx = E.nextMission(day, nowMin()); return nx ? '다음 할 일: ' + nx.label + ' · ' + timeLabel(nx.start) : ''; }
+
+  /* ---------- 시트 ---------- */
+  function renderSheet() {
+    var layer = $('#layer');
+    if (!sheet) { layer.classList.remove('open'); layer.innerHTML = ''; return; }
+    var t = sheetHTML(); if (!t) { sheet = null; layer.classList.remove('open'); layer.innerHTML = ''; return; }
+    var old = layer.querySelector('.sheet'), top = old ? old.scrollTop : 0;
+    layer.innerHTML = '<div class="scrim" data-act="close-sheet"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-title"><div class="sh-head"><h2 class="sh-title" id="sh-title">' + t.title + '</h2>' +
+      '<button type="button" class="icon-btn" data-act="close-sheet" aria-label="닫기">' + IC.close + '</button></div><div class="sh-body">' + t.body + '</div></div>';
+    layer.classList.add('open');
+    layer.querySelector('.sheet').scrollTop = top;
+    syncForm(); hydrateMedia();
+  }
+  function openSheet(s) { sheet = s; form = {}; renderSheet(); }
+  function closeSheet() { sheet = null; form = {}; renderSheet(); }
+  function nextWeekday(today, wd) { var d = E.addDays(today, 1); while (E.dow(d) !== wd) d = E.addDays(d, 1); return d; }
+  function sheetHTML() {
+    var st = S(); if (!sheet || !st) return null;
+    if (sheet.type === 'place') {
+      var el = curElder(); if (!el || !hasHistory(el)) return null;
+      var A = E.analyze(el, st.today), W = A[weekIndex(el, A)], s = E.placeSlots(el, W.monday, st.today, sheet.p);
+      var baseVisits = W.base ? W.base.mondays.reduce(function (n, mon) { return n + E.placeSlots(el, mon, st.today, sheet.p).visits; }, 0) / W.base.mondays.length : null;
+      var grid = '<div class="slots" role="table" aria-label="요일별 시간대"><span></span>' + E.DOW.map(function (d) { return '<span class="hd">' + d + '</span>'; }).join('') +
+        E.SLOTS.map(function (sl, k) { return '<span class="rl">' + sl[0] + '</span>' + s.grid.map(function (row, i) { return '<i class="' + (row[k] ? 'on' : '') + '" title="' + E.DOW[i] + ' ' + sl[0] + (row[k] ? ' 머묾' : '') + '"></i>'; }).join(''); }).join('') + '</div>';
+      return { title: E.TYPES[sheet.p], body: '<p class="c-p">' + (s.visits ? wkWord(W) + ' ' + s.visits + '번 · 모두 ' + E.dur(s.minutes) : wkWord(W) + '에는 가지 않으셨어요') + (baseVisits != null ? ' · 평소 주 ' + E.num(baseVisits) + '번' : '') + '</p>' + grid +
+        '<p class="c-note">아침 6–10시 · 낮 10–14시 · 오후 14–18시 · 저녁 18–22시. 주소나 좌표는 저장하지 않고 장소 종류와 머문 시간대만 보여 드려요.</p>' };
+    }
+    if (sheet.type === 'snap') {
+      var el2 = curElder(), p = el2 && (el2.posts || {})[sheet.post]; if (!p) return null;
+      var d = String(p.at).split(' ');
+      return { title: '사진 찍은 곳', body: mediaTag(p.media, p.kind, 'sheet-media', '마실 사진') + '<p class="c-p">' + dayLabel(d[0]) + ' ' + esc(d[1] || '') + (p.km != null ? ' · 집에서 ' + E.km(p.km) + ' · 약 ' + E.steps(p.km).toLocaleString() + '걸음 (추정)' : '') + '</p>' +
+        '<p class="c-note">어르신이 사진을 찍을 때만 위치를 읽고, 가족에게는 집에서의 거리와 방향만 보내요.</p>' };
+    }
+    if (sheet.type === 'visit') {
+      var sat = nextWeekday(st.today, 5), sun = E.addDays(sat, 1), cur = (st.schedules || {})[sheet.id] || {};
+      var day = form.day || cur.day || sat, slot = form.slot || cur.slot || '오후';
+      form.day = day; form.slot = slot;
+      var chip = function (field, val, label) { return '<button type="button" class="chipbtn" data-act="pick-chip" data-field="' + field + '" data-val="' + val + '" aria-pressed="' + ((field === 'day' ? day : slot) === val) + '">' + label + '</button>'; };
+      return { title: '이번 주말 방문 일정', body: '<div class="field"><span class="lab">날짜</span><div class="chips">' + chip('day', sat, dayLabel(sat)) + chip('day', sun, dayLabel(sun)) + '</div></div>' +
+        '<div class="field"><span class="lab">시간</span><div class="chips">' + chip('slot', '오전', '오전') + chip('slot', '오후', '오후') + chip('slot', '저녁', '저녁') + '</div></div>' +
+        '<button type="button" class="btn primary block" data-act="save-visit" data-submit>일정 넣기</button><p class="c-note">방문하면 냉장고 속, 약 봉투, 집 안 위험한 곳을 함께 확인해요.</p>' };
+    }
+    if (sheet.type === 'pay') {
+      if (sheet.step === 'done') return { title: '플러스 시작', body: '<p class="c-h">플러스가 시작됐어요</p><button type="button" class="btn primary block" data-act="close-sheet">확인</button>' };
+      var paying = sheet.step === 'paying';
+      return { title: '플러스 결제 (테스트)', body: '<div class="pay-box"><b>기억마실 플러스 · 월 9,900원</b><ul>' + ['히트맵 지도', '변화 알림', '가족 공유', '검진 안내'].map(function (x) { return '<li>' + IC.check + x + '</li>'; }).join('') + '</ul></div>' +
+        '<div class="pay-m"><span>결제 수단</span><b>테스트 카드 •••• 0000</b></div><p class="c-note">시연용 가짜 결제 화면이에요. 실제로 결제되지 않고 카드 정보도 받지 않아요.</p>' +
+        '<button type="button" class="btn primary block" data-act="pay"' + (paying ? ' disabled' : '') + '>' + (paying ? '결제하는 중…' : '9,900원 결제하기') + '</button>' };
+    }
+    if (sheet.type === 'connect') {
+      if (sheet.step === 'done') {
+        var ne = st.elders[sheet.id]; if (!ne) return { title: '초대 코드', body: '<p class="c-p">저장하는 중이에요…</p>' };
+        return { title: '초대 코드가 만들어졌어요', body: '<p class="c-p">' + esc(ne.name) + ' 님 휴대폰에서 기억마실을 열고 이 코드를 넣으면 동의 화면이 나와요.</p><div class="code">' + fmtCode(ne.consent.code) + '</div>' +
+          (homes[ne.id] ? '<p class="okline">' + '집 위치를 이 기기에 저장했어요</p>' : '') +
+          '<button type="button" class="btn block" data-act="copy" data-text="' + esc(ne.consent.code) + '">초대 코드 복사</button><button type="button" class="btn primary block" data-act="as-elder" data-id="' + ne.id + '">어르신 화면에서 동의해 보기</button>' };
+      }
+      return { title: '어르신 연결하기', body:
+        '<div class="field"><label for="f-name">어르신 이름</label><input class="input" id="f-name" data-f="name" autocomplete="off" placeholder="예: 이정숙"></div>' +
+        '<div class="field"><label for="f-rel">관계</label><input class="input" id="f-rel" data-f="relation" autocomplete="off" placeholder="예: 어머니"><div class="chips">' + REL_ELDER.map(function (r) { return '<button type="button" class="chipbtn" data-act="rel-chip" data-target="relation" data-val="' + r + '" aria-pressed="false">' + r + '</button>'; }).join('') + '</div></div>' +
+        '<div class="field"><label for="f-area">사는 동네 (읍·면·동)</label><select class="select" id="f-area" data-f="area"><option value="">선택해 주세요</option>' + AREAS.map(function (a) { return '<option>' + a + '</option>'; }).join('') + '</select></div>' +
+        '<div class="field"><label for="f-age">나이 (선택)</label><input class="input" id="f-age" data-f="age" inputmode="numeric" autocomplete="off" placeholder="예: 78"></div>' +
+        '<div class="field"><span class="lab">집 위치 (선택)</span><p class="c-note">어르신 폰에서 등록할 때 정하면 좋아요. 좌표는 이 휴대폰에만 두고, 밖에서 찍은 사진과의 거리만 계산해요.</p>' +
+          '<div class="two"><button type="button" class="btn small" data-act="form-home-here">' + IC.home + '지금 위치로</button><button type="button" class="btn small" data-act="form-home-photo">' + IC.cam + '집 사진으로</button></div><p class="okline" id="f-home-ok"' + (form.home ? '' : ' hidden') + '>집 위치를 정했어요</p></div>' +
+        '<div class="field"><span class="lab">사진 (선택)</span><div class="photo-row"><span id="f-photo-prev">' + (form.photo ? '<img class="av" src="' + form.photo + '" alt="" style="width:48px;height:48px">' : avatar({ short: '사진' }, 48)) + '</span><button type="button" class="btn small" data-act="form-avatar">사진 고르기</button></div></div>' +
+        '<button type="button" class="btn primary block" data-act="create-elder" data-submit disabled>초대 코드 만들기</button><p class="c-note">어르신이 동의하시기 전에는 아무것도 기록하지 않아요.</p>' };
+    }
+    if (sheet.type === 'invite') {
+      var iel = st.elders[sheet.id]; if (!iel) return null;
+      if (sheet.step === 'done') {
+        var im = memberOf(iel, sheet.pid), ip = person(sheet.pid);
+        if (!im) return { title: '가족 초대 코드', body: '<p class="c-p">저장하는 중이에요…</p>' };
+        if (im.status === 'joined') return { title: '함께 보게 됐어요', body: '<p class="c-p">' + esc(ip.name) + ' 님이 이제 ' + esc(iel.name) + ' 님 리포트를 함께 봐요. 어르신 화면에도 알려 드려요.</p><button type="button" class="btn primary block" data-act="close-sheet">확인</button>' };
+        return { title: '가족 초대 코드', body: '<p class="c-p">' + esc(ip.name) + ' 님이 기억마실에서 이 코드를 넣으면 ' + esc(iel.name) + ' 님 리포트를 함께 봐요. 다른 어르신 리포트는 보이지 않아요.</p><div class="code">' + fmtCode(im.code) + '</div>' +
+          '<button type="button" class="btn block" data-act="copy" data-text="' + esc(im.code) + '">초대 코드 복사</button>' +
+          '<button type="button" class="btn primary block" data-act="accept-invite" data-id="' + iel.id + '" data-pid="' + esc(sheet.pid) + '">수락 처리 (시연)</button><p class="c-note">시연에서는 가족이 코드를 넣은 것처럼 바로 수락할 수 있어요.</p>' };
+      }
+      var chipsOf = function (list, target) { return '<div class="chips">' + list.map(function (r) { return '<button type="button" class="chipbtn" data-act="rel-chip" data-target="' + target + '" data-val="' + r + '" aria-pressed="false">' + r + '</button>'; }).join('') + '</div>'; };
+      return { title: '가족 초대하기', body:
+        '<p class="c-p">' + esc(iel.name) + ' 님 리포트를 함께 볼 가족을 초대해요. 초대받은 가족은 이 어르신 리포트만 봐요.</p>' +
+        '<div class="field"><label for="f-fname">가족 이름</label><input class="input" id="f-fname" data-f="name" autocomplete="off" placeholder="예: 김민수"></div>' +
+        '<div class="field"><label for="f-frel">어르신과의 관계</label><input class="input" id="f-frel" data-f="rel" autocomplete="off" placeholder="예: 아들">' + chipsOf(REL_MEMBER, 'rel') + '</div>' +
+        '<div class="field"><label for="f-fcall">어르신을 부르는 말</label><input class="input" id="f-fcall" data-f="call" autocomplete="off" placeholder="예: 어머니" value="' + esc(form.call || '') + '">' + chipsOf(CALL_CHIPS, 'call') + '</div>' +
+        '<button type="button" class="btn primary block" data-act="create-invite" data-submit disabled>초대 코드 만들기</button>' };
+    }
+    if (sheet.type === 'member') {
+      var mel = st.elders[sheet.id], mb = mel && memberOf(mel, sheet.pid); if (!mb) return null;
+      var mp = person(sheet.pid), mineM = sheet.pid === ui.viewer, cf = !!sheet.confirm, mbody = '';
+      var rmBtn = function (label, done) { return '<button type="button" class="btn block' + (cf ? ' confirm' : '') + '" data-act="member-remove">' + (cf ? done : label) + '</button>'; };
+      if (mb.status === 'invited') {
+        mbody = '<p class="c-p">' + esc(relText(mb)) + ' · 아직 초대를 수락하지 않았어요. 이 코드를 넣으면 ' + esc(mel.name) + ' 님 리포트를 함께 봐요.</p><div class="code">' + fmtCode(mb.code) + '</div>' +
+          '<button type="button" class="btn block" data-act="copy" data-text="' + esc(mb.code) + '">초대 코드 복사</button>' +
+          '<button type="button" class="btn primary block" data-act="accept-invite" data-id="' + mel.id + '" data-pid="' + esc(sheet.pid) + '">수락 처리 (시연)</button>' +
+          (isMain(mel) ? rmBtn('초대 취소', '한 번 더 누르면 취소돼요') : '');
+      } else {
+        mbody = '<p class="c-p">' + esc(relText(mb)) + ' · ' + E.md(mb.since) + '부터 ' + esc(mel.name) + ' 님 리포트를 함께 보고 있어요. 다른 어르신 리포트는 보이지 않아요.</p>' +
+          (mineM ? rmBtn('이 리포트에서 나가기', '한 번 더 누르면 나가요') : isMain(mel) ? rmBtn('함께 보기에서 빼기', '한 번 더 누르면 빠져요') : '') +
+          '<p class="c-note">어르신도 화면의 ‘같이 보는 사람’에서 직접 뺄 수 있어요.</p>';
+      }
+      return { title: esc(mp.name) + (mineM ? ' (나)' : ''), body: mbody };
+    }
+    if (sheet.type === 'memory') {
+      var me = st.elders[sheet.id]; if (!me) return null;
+      return { title: '옛날 사진 올리기', body:
+        '<p class="c-p">' + esc(me.name) + ' 님 화면에 이 사진과 질문이 보여요. 영상으로 대답하시면 회상 앨범에 쌓여요.</p>' +
+        '<div class="field"><span class="lab">사진</span><div id="f-mem-prev">' + (form.memURL ? '<img class="sheet-media" src="' + form.memURL + '" alt="고른 사진">' : '') + '</div><button type="button" class="btn block" data-act="form-mem-photo">' + IC.cam + (form.memURL ? '다른 사진 고르기' : '사진 고르기') + '</button></div>' +
+        '<div class="field"><label for="f-q">질문</label><input class="input" id="f-q" data-f="q" autocomplete="off" placeholder="예: 이 사진 어디서 찍으셨어요?"><div class="chips">' + MEMORY_Q.map(function (q) { return '<button type="button" class="chipbtn" data-act="rel-chip" data-target="q" data-val="' + q + '" aria-pressed="false">' + q + '</button>'; }).join('') + '</div></div>' +
+        '<button type="button" class="btn primary block" data-act="create-memory" data-submit disabled>보내기</button>' };
+    }
+    return null;
+  }
+  // 입력 확인: 다시 그리지 않고 단추 상태만 바꾼다 (한글 조합이 깨지지 않게)
+  function syncForm() {
+    var btn = $('#layer [data-submit]'); if (!btn || !sheet) return;
+    if (sheet.type === 'connect' && !sheet.step) btn.disabled = !((form.name || '').trim() && (form.relation || '').trim() && form.area);
+    if (sheet.type === 'invite' && !sheet.step) btn.disabled = !((form.name || '').trim() && (form.rel || '').trim() && (form.call || '').trim());
+    if (sheet.type === 'memory') btn.disabled = !(form.memBlob && (form.q || '').trim());
+    $('#layer').querySelectorAll('[data-act="rel-chip"]').forEach(function (c) { var tg = c.getAttribute('data-target'); c.setAttribute('aria-pressed', String((form[tg] || '') === c.getAttribute('data-val'))); });
+  }
+  function readField(el) { var f = el.getAttribute('data-f'); if (f) form[f] = el.value; }
+
+  /* ---------- 파일 고르기 (카메라) ---------- */
+  function pick(ctx) { var p = $('#picker'); pickCtx = ctx; p.value = ''; p.setAttribute('accept', ctx.accept || 'image/*'); if (ctx.capture) p.setAttribute('capture', ctx.capture); else p.removeAttribute('capture'); p.click(); }
+  $('#picker').addEventListener('change', function () { var f = this.files && this.files[0], c = pickCtx; pickCtx = null; if (f && c) onPicked(c, f); });
+  async function onPicked(c, f) {
+    var st = S();
+    if (c.purpose === 'elder') { onElderMedia(f); return; }
+    if (c.purpose === 'home') {
+      var pos = await photoPos(f);
+      if (!pos) { toast('사진에 위치 정보가 없어요. 카메라의 위치 저장을 켜고 집에서 찍은 사진을 골라 주세요'); return; }
+      if (c.form) { form.home = pos; var ok = $('#f-home-ok'); if (ok) ok.hidden = false; toast('집 위치를 정했어요'); return; }
+      saveHome(c.id, pos); render(); renderSheet(); toast('집 위치를 정했어요. 이 휴대폰에만 저장돼요'); return;
+    }
+    if (c.purpose === 'avatar') {
+      try { var b = await downscale(f, 160, 0.82); form.photo = await blobToDataURL(b); var pv2 = $('#f-photo-prev'); if (pv2) pv2.innerHTML = '<img class="av" src="' + form.photo + '" alt="" style="width:48px;height:48px">'; } catch (e) { toast('이 사진은 열 수 없어요'); }
+      return;
+    }
+    if (c.purpose === 'mem-photo') {
+      try { form.memBlob = await downscale(f, 1280, 0.82); form.memURL = URL.createObjectURL(form.memBlob); renderSheet(); } catch (e) { toast('이 사진은 열 수 없어요'); }
+      return;
+    }
+    var prep;
+    try { prep = await prepMedia(f); } catch (e) { toast(e && e.code === 'too_big' ? '영상이 너무 커요. 짧게 찍어 주세요' : '이 파일은 열 수 없어요'); return; }
+    toast('보내는 중이에요');
+    var ref; try { ref = await mediaPut(prep.blob); } catch (e) { toast('보내지 못했어요. 다시 해 주세요'); return; }
+    if (c.purpose === 'reply') {
+      var mid = newId('i'), o = { inbox: {} }; o.inbox[mid] = { id: mid, from: me().short, kind: prep.kind, media: ref, at: stamp() };
+      update(patchElder(c.id, o)); toast('어르신께 ' + (prep.kind === 'video' ? '영상' : '사진') + '을 보냈어요');
+    } else if (c.purpose === 'mem-answer') {
+      var mel0 = curElder(), mm0 = ((mel0 && mel0.memories) || {})[c.id], oa = { memories: {} }; oa.memories[c.id] = { answer: { kind: prep.kind, media: ref, at: stamp() } };
+      update(patchElder(mel0.id, oa)); enav = { screen: 'home', id: null }; render(); goTop();
+      celebrate({ title: '이야기를 보냈어요', sub: (mm0 && mm0.by ? mm0.by + ' 님이' : seersText(mel0) + '이') + ' 회상 앨범에서 보실 거예요', speak: '이야기를 보냈어요' });
+    } else if (c.purpose === 'ck') {
+      var oc = { schedules: {} }; oc.schedules[c.id] = { check: {} }; oc.schedules[c.id].check[c.item] = { done: true, photo: ref };
+      update(oc); toast('사진을 남겼어요');
+    }
+  }
+
+  /* ---------- 동작 ---------- */
+  var toastTimer = null;
+  function toast(msg) {
+    var el = $('#toast'); if (!el) return;
+    el.textContent = msg; el.hidden = false; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.hidden = true; }, 3200);
+  }
+  function setRole(r) { ui.role = r; saveUI(); nav = { tab: 'report', detail: null }; enav = { screen: 'home', id: null }; eflow = null; elderStep = 0; confirmKey = null; sheet = null; renderSheet(); render(); goTop(); }
+  function copy(text) { try { navigator.clipboard.writeText(text).then(function () { toast('초대 코드를 복사했어요'); }, function () { toast('코드를 길게 눌러 복사해 주세요'); }); } catch (e) { toast('코드를 길게 눌러 복사해 주세요'); } }
+  async function setHomeHere(id, toForm) {
+    toast('위치를 확인하고 있어요');
+    var pos = await currentPos(6000);
+    if (!pos) { toast('이 화면에서는 현재 위치를 쓸 수 없어요. 집에서 찍은 사진으로 정해 주세요'); return; }
+    if (toForm) { form.home = pos; var ok = $('#f-home-ok'); if (ok) ok.hidden = false; toast('집 위치를 정했어요'); return; }
+    saveHome(id, pos); render(); toast('집 위치를 정했어요. 이 휴대폰에만 저장돼요');
+  }
+  async function aiMeal(elId, pid) {
+    var p = ((S().elders[elId] || {}).posts || {})[pid]; if (!p || !caps.sample) return;
+    toast('AI가 밥상을 읽고 있어요');
+    try {
+      var blob = await mediaBlob(p.media);
+      var r = await caps.sample.json('이 사진은 어르신이 직접 찍은 식사 사진이에요. 밥과 국을 뺀 반찬 가짓수, 고기·생선·달걀·두부·콩 같은 단백질 반찬이 있는지, 사진 속 음식을 15자 안팎 한국어로 요약해 주세요. 건강이나 영양을 진단하거나 평가하는 말은 쓰지 마세요. JSON만 답하세요: {"dishes": 숫자, "protein": true 또는 false, "summary": "문장"}', { images: [blob], modelTier: 'quick' });
+      if (!r || typeof r !== 'object') throw new Error('empty');
+      var txt = '반찬 ' + (Number(r.dishes) || 0) + '가지 · 단백질 반찬 ' + (r.protein ? '있음' : '없음') + (r.summary ? ' · ' + String(r.summary).slice(0, 30) : '');
+      var o = { posts: {} }; o.posts[pid] = { ai: txt }; update(patchElder(elId, o));
+    } catch (e) { toast(e && e.code === 'not_granted' ? 'AI 사용을 허용하지 않아 읽지 못했어요' : 'AI가 사진을 읽지 못했어요'); }
+  }
+
+  document.addEventListener('click', function (ev) {
+    var cel = ev.target.closest('#celebrate');
+    if (cel) {
+      if (ev.target.closest('[data-act="undo"]') && lastAct) { var la = lastAct; hideCelebrate(); var po = { days: {} }; po.days[la.date] = la.patch; update(patchElder(la.id, po)); toast('되돌렸어요'); }
+      else hideCelebrate();
+      return;
+    }
+    var t = ev.target.closest('[data-act]'); if (!t || t.disabled) return;
+    var a = t.getAttribute('data-act'), id = t.getAttribute('data-id'), st = S();
+    if (confirmKey && a !== 'withdraw' && a !== 'reset') { confirmKey = null; if (st) render(); }
+    if (sheet && sheet.confirm && a !== 'member-remove') { sheet.confirm = false; if (a !== 'close-sheet') renderSheet(); }
+    switch (a) {
+      case 'seed': replaceAll(E.buildSeed()); return;
+      case 'role': setRole(t.getAttribute('data-role')); return;
+      case 'role-reset': setRole(null); return;
+      case 'tab': nav = { tab: t.getAttribute('data-tab'), detail: null }; render(); goTop(); return;
+      case 'back': nav.detail = null; render(); goTop(); return;
+      case 'pick': if (id && id !== ui.elderId) { ui.elderId = id; saveUI(); render(); } return;
+      case 'add-elder': openSheet({ type: 'connect' }); return;
+      case 'open-alert': nav.detail = { type: 'alert', id: id }; render(); goTop(); return;
+      case 'place': openSheet({ type: 'place', p: t.getAttribute('data-p') }); return;
+      case 'snap': openSheet({ type: 'snap', post: t.getAttribute('data-post') }); return;
+      case 'close-sheet': closeSheet(); return;
+      case 'open-pay': openSheet({ type: 'pay' }); return;
+      case 'open-invite': { var ie = st && st.elders[id]; if (!ie) return; sheet = { type: 'invite', id: id }; form = { call: callOf(ie) }; renderSheet(); return; }
+      case 'open-member': openSheet({ type: 'member', id: id, pid: t.getAttribute('data-pid') }); return;
+      case 'open-visit': openSheet({ type: 'visit', id: id }); return;
+      case 'open-memory': openSheet({ type: 'memory', id: id }); return;
+      case 'copy': copy(t.getAttribute('data-text')); return;
+      case 'download': doDownload(); return;
+      case 'form-home-here': setHomeHere(null, true); return;
+      case 'form-home-photo': pick({ purpose: 'home', form: true, accept: 'image/jpeg,image/*' }); return;
+      case 'form-avatar': pick({ purpose: 'avatar', accept: 'image/*' }); return;
+      case 'form-mem-photo': pick({ purpose: 'mem-photo', accept: 'image/*' }); return;
+      case 'home-here': setHomeHere(id, false); return;
+      case 'home-photo': pick({ purpose: 'home', id: id, accept: 'image/jpeg,image/*' }); return;
+      case 'home-clear': delete homes[id]; saveHomes(); render(); toast('집 위치를 지웠어요'); return;
+      case 'reply': pick({ purpose: 'reply', id: id, accept: 'image/*,video/*' }); return;
+      case 'ck-photo': pick({ purpose: 'ck', id: id, item: t.getAttribute('data-item'), accept: 'image/*', capture: 'environment' }); return;
+      case 'e-photo': pick({ purpose: 'elder', accept: 'image/*,video/*', capture: 'environment' }); return;
+      case 'e-mem-video': pick({ purpose: 'mem-answer', id: id, accept: 'video/*,image/*', capture: 'user' }); return;
+      case 'ai-meal': aiMeal(t.getAttribute('data-el'), id); return;
+    }
+    if (!st) return;
+    var el = curElder();
+    switch (a) {
+      case 'e-nav': enav = { screen: t.getAttribute('data-to'), id: null }; render(); goTop(); return;
+      case 'e-open': enav = { screen: t.getAttribute('data-to'), id: id }; render(); goTop(); if (enav.screen === 'inbox') { var msg = (el.inbox || {})[id]; if (msg) say(msg.from + ' 님이 보냈어요'); } return;
+      case 'e-meal': {
+        var k = t.getAttribute('data-k'), day = el.days[st.today] || {}, prev = (day.m && day.m[k]) || false;
+        var p = { days: {} }; p.days[st.today] = { m: {} }; p.days[st.today].m[k] = { t: nowHM(), p: E.placeAt(day, nowMin()) };
+        update(patchElder(el.id, p));
+        var um = { m: {} }; um.m[k] = prev; lastAct = { id: el.id, date: st.today, patch: um };
+        celebrate({ title: '잘 드셨어요!', sub: seersText(el) + '께도 알려 드렸어요', next: nextText(S().elders[el.id]), undo: true, speak: '잘 드셨어요' });
+        return;
+      }
+      case 'e-walk': {
+        var d0 = el.days[st.today] || {}, pw = { days: {} }; pw.days[st.today] = { w: { t: nowHM() } };
+        update(patchElder(el.id, pw));
+        lastAct = { id: el.id, date: st.today, patch: { w: d0.w || null } };
+        celebrate({ title: '잘하셨어요!', sub: '마실 다녀오신 걸 기록했어요', next: nextText(S().elders[el.id]), undo: true, speak: '마실 다녀오셨네요. 잘하셨어요' });
+        return;
+      }
+      case 'e-cancel': eflow = null; render(); return;
+      case 'e-ans-home': if (eflow && eflow.pos) saveHome(el.id, eflow.pos); if (eflow) { var c1 = eflow; c1.km = 0; atHome(c1); } return;
+      case 'e-ans-out': if (eflow) finishPhoto(eflow, 'out'); return;
+      case 'e-ans-in': if (eflow) atHome(eflow); return;
+      case 'e-ans-meal': if (eflow) finishPhoto(eflow, 'home', eflow.meal); return;
+      case 'e-ans-plain': if (eflow) finishPhoto(eflow, 'home'); return;
+      case 'e-seen': {
+        var sm = (el.inbox || {})[id], os = { inbox: {} }; os.inbox[id] = { seenAt: stamp() }; update(patchElder(el.id, os));
+        enav = { screen: 'home', id: null }; render(); goTop(); toast((sm && sm.from ? sm.from + ' 님' : seersText(el)) + '께 고맙다고 전했어요'); return;
+      }
+      case 'e-ack': { var oack = { circle: {} }; oack.circle[id] = { ack: true }; update(patchElder(el.id, oack)); return; }
+      case 'e-member': enav = { screen: 'member', id: id, from: t.getAttribute('data-from') || 'people' }; render(); goTop(); return;
+      case 'e-keep': { var ok3 = { circle: {} }; ok3.circle[id] = { ack: true }; enav = { screen: enav.from || 'people', id: null }; update(patchElder(el.id, ok3)); render(); goTop(); return; }
+      case 'e-remove': {
+        var gone = person(id), orm = { circle: {} }; orm.circle[id] = null;
+        enav = { screen: enav.from === 'home' ? 'home' : 'people', id: null }; update(patchElder(el.id, orm)); render(); goTop();
+        toast(gone.short + ' 님을 뺐어요. 이제 리포트를 볼 수 없어요'); say(gone.short + ' 님을 뺐어요'); return;
+      }
+      case 'e-mem-skip': { var ok2 = { memories: {} }; ok2.memories[id] = { answer: { skip: true, at: stamp() } }; update(patchElder(el.id, ok2)); enav = { screen: 'home', id: null }; render(); goTop(); return; }
+      case 'loc': { var on = !(el.paused && el.paused.on); update(patchElder(el.id, { paused: { on: on, at: stamp() } })); toast(on ? '위치 기록을 잠시 껐어요' : '위치 기록을 다시 켰어요'); return; }
+      case 'voice': ui.voice = !ui.voice; saveUI(); render(); if (ui.voice) say('소리로 안내해 드릴게요'); return;
+      case 'e-step': elderStep = Math.max(0, Math.min(3, elderStep + Number(t.getAttribute('data-d')))); render(); goTop(); return;
+      case 'e-agree': elderStep = 0; update(patchElder(id, { consent: { status: 'agreed', at: stamp() }, since: st.elders[id].since || st.today })); toast('고마워요. 오늘부터 기록을 시작해요'); goTop(); return;
+      case 'e-later': elderStep = 0; update(patchElder(id, { consent: { status: 'declined', at: stamp() } })); toast('괜찮아요. 언제든 다시 시작할 수 있어요'); return;
+      case 'e-restart': elderStep = 0; update(patchElder(id, { consent: { status: 'pending', at: null } })); return;
+      case 'as-elder': ui.elderId = id; elderStep = 0; closeSheet(); setRole('elder'); return;
+      case 'log-call': { var ck = newId('k'), oc = { calls: {} }; oc.calls[ck] = { id: ck, by: me().name, at: stamp() }; update(patchElder(id, oc)); toast('안부 전화를 기록했어요. 돌봄 가족이 함께 봐요'); return; }
+      case 'praise': { var pm = newId('i'), op = { inbox: {} }; op.inbox[pm] = { id: pm, from: me().short, kind: 'praise', text: '잘하셨어요!', at: stamp() }; update(patchElder(id, op)); toast('어르신 화면에 칭찬을 보냈어요'); return; }
+      case 'confirm-alert': { var o = { alerts: {} }; o.alerts[id] = { confirmedAt: stamp(), by: me().short }; update(o); toast('알림을 확인 완료로 바꿨어요. 돌봄 가족도 함께 봐요'); return; }
+      case 'viewer': {
+        if (!id || id === ui.viewer) return;
+        ui.viewer = id; var vis = visibleElders(); if (vis.length && !vis.some(function (e) { return e.id === ui.elderId; })) ui.elderId = vis[0].id;
+        saveUI(); nav = { tab: 'report', detail: null }; render(); goTop(); toast(person(id).name + ' 님 화면으로 바꿨어요'); return;
+      }
+      case 'accept-invite': {
+        var apid = t.getAttribute('data-pid'), oai = { circle: {} }; oai.circle[apid] = { status: 'joined', since: st.today, code: '', ack: false };
+        var keep = sheet && sheet.type === 'invite';
+        update(patchElder(id, oai)); if (keep) renderSheet(); else closeSheet();
+        toast(person(apid).name + ' 님이 초대를 수락했어요. 어르신 화면에도 알려 드려요'); return;
+      }
+      case 'member-remove': {
+        if (!sheet || sheet.type !== 'member') return;
+        if (!sheet.confirm) { sheet.confirm = true; renderSheet(); return; }
+        var rel0 = st.elders[sheet.id], rpid = sheet.pid, rp = person(rpid), self = rpid === ui.viewer, rm0 = memberOf(rel0, rpid), orr = { circle: {} }; orr.circle[rpid] = null;
+        closeSheet(); update(patchElder(sheet ? sheet.id : rel0.id, orr));
+        toast(self ? rel0.name + ' 님 리포트에서 나왔어요' : rm0 && rm0.status === 'invited' ? rp.name + ' 님 초대를 취소했어요' : rp.name + ' 님을 뺐어요. 이제 리포트를 볼 수 없어요'); return;
+      }
+      case 'tick': { var it = t.getAttribute('data-item'), cur = ((((st.schedules || {})[id] || {}).check || {})[it] || {}).done, ot = { schedules: {} }; ot.schedules[id] = { check: {} }; ot.schedules[id].check[it] = { done: !cur }; update(ot); return; }
+      case 'pick-chip': form[t.getAttribute('data-field')] = t.getAttribute('data-val'); renderSheet(); return;
+      case 'save-visit': { var o2 = { schedules: {} }; o2.schedules[sheet.id] = { day: form.day, slot: form.slot, at: stamp() }; update(o2); toast(dayLabel(form.day) + ' ' + form.slot + ' 방문 일정을 넣었어요'); closeSheet(); return; }
+      case 'pay': sheet.step = 'paying'; renderSheet(); setTimeout(function () { update({ plan: 'plus' }); if (sheet && sheet.type === 'pay') { sheet.step = 'done'; renderSheet(); } }, 900); return;
+      case 'plan-free': update({ plan: 'free' }); toast('무료 요금제로 바꿨어요'); return;
+      case 'withdraw': {
+        var key = 'withdraw:' + id;
+        if (confirmKey !== key) { confirmKey = key; render(); return; }
+        confirmKey = null; update(patchElder(id, { consent: { status: 'withdrawn', at: stamp() } })); toast('동의를 철회했어요. 기록과 리포트를 멈춰요'); return;
+      }
+      case 'reinvite': update(patchElder(id, { consent: { status: 'pending', at: null, code: newCode() } })); ui.elderId = id; saveUI(); toast('새 초대 코드를 만들었어요'); return;
+      case 'reset':
+        if (confirmKey !== 'reset') { confirmKey = 'reset'; render(); return; }
+        confirmKey = null; weekSel = {}; nav = { tab: 'settings', detail: null }; ui.elderId = 'e1'; ui.viewer = 'g1'; saveUI(); idbClear(); replaceAll(E.buildSeed()); toast('테스트 데이터를 처음으로 되돌렸어요'); return;
+      case 'rel-chip': { var inp = $('#layer [data-f="' + t.getAttribute('data-target') + '"]'); if (inp) { inp.value = t.getAttribute('data-val'); readField(inp); } syncForm(); return; }
+      case 'create-elder': {
+        var name = (form.name || '').trim().slice(0, 10), rel = (form.relation || '').trim().slice(0, 8), area = form.area, age = parseInt(form.age, 10);
+        if (!name || !rel || !area) return;
+        var nid = newId('e'), layout = area === '화도읍' ? 'hwado' : /진접|오남|별내/.test(area) ? 'jinjeop' : 'sudong';
+        var ne = { id: nid, name: name, short: name.length >= 3 ? name.slice(1) : name, age: age > 0 && age < 120 ? age : null, area: area, living: '', phone: '010-0000-0000', layout: layout, since: null, photo: form.photo || null,
+          consent: { status: 'pending', at: null, code: newCode() }, paused: { on: false, at: null }, days: {}, posts: {}, inbox: {}, memories: {}, calls: {}, circle: {} };
+        ne.circle[ui.viewer] = { role: 'main', call: rel, rel: '', since: st.today, status: 'joined', ack: true };   // 연결한 사람이 이 어르신의 주보호자
+        if (form.home) saveHome(nid, form.home);
+        var po2 = { elders: {}, order: (st.order || []).concat(nid) }; po2.elders[nid] = ne;
+        update(po2); ui.elderId = nid; saveUI(); sheet = { type: 'connect', step: 'done', id: nid }; renderSheet(); return;
+      }
+      case 'create-invite': {
+        var iel = st.elders[sheet.id], fname = (form.name || '').trim().slice(0, 10), frel = (form.rel || '').trim().slice(0, 8), fcall = (form.call || '').trim().slice(0, 8);
+        if (!iel || !fname || !frel || !fcall) return;
+        // 같은 이름의 가족이 이미 있으면 그 사람을 다시 쓴다 → 한 사람이 여러 어르신의 돌봄 가족이 될 수 있다
+        var ex = personByName(fname), fid = ex ? ex.id : newId('f'), was = memberOf(iel, fid);
+        if (was && (was.role === 'main' || was.status === 'joined')) { toast(fname + ' 님은 이미 함께 보고 있어요'); return; }
+        var oc2 = { circle: {} }; oc2.circle[fid] = { role: 'family', call: fcall, rel: frel, since: st.today, status: 'invited', code: newCode(), ack: false };
+        var fo = patchElder(iel.id, oc2); if (!ex) { fo.people = {}; fo.people[fid] = { id: fid, name: fname, short: fname.length >= 3 ? fname.slice(1) : fname }; }
+        sheet = { type: 'invite', step: 'done', id: iel.id, pid: fid }; update(fo); renderSheet(); return;
+      }
+      case 'create-memory': {
+        var q = (form.q || '').trim().slice(0, 40), blob = form.memBlob, target = sheet.id;
+        if (!q || !blob) return;
+        t.disabled = true; t.textContent = '보내는 중…';
+        mediaPut(blob).then(function (ref) {
+          var mid = newId('r'), om = { memories: {} }; om.memories[mid] = { id: mid, media: ref, q: q, by: me().short, at: stamp(), answer: null };
+          update(patchElder(target, om)); closeSheet(); toast('어르신 화면에 옛날 사진을 보냈어요');
+        }).catch(function () { t.disabled = false; t.textContent = '보내기'; toast('보내지 못했어요. 다시 해 주세요'); });
+        return;
+      }
+    }
+  });
+
+  // 지도 장소는 키보드로도 연다 · 한글 조합 중 Enter는 무시
+  document.addEventListener('keydown', function (e) {
+    var t = e.target;
+    if ((e.key === 'Enter' || e.key === ' ') && t.classList && t.classList.contains('ptap')) { e.preventDefault(); t.dispatchEvent(new MouseEvent('click', { bubbles: true })); return; }
+    if (e.key === 'Enter' && t.matches && t.matches('input[data-f]')) {
+      if (e.isComposing || e.keyCode === 229 || composing) return;
+      e.preventDefault(); var b = $('#layer [data-submit]'); if (b && !b.disabled) b.click(); return;
+    }
+    if (e.key === 'Escape') { if (!$('#celebrate').hidden) hideCelebrate(); else if (sheet) closeSheet(); else if (nav.detail) { nav.detail = null; render(); } }
+  });
+  document.addEventListener('compositionstart', function () { composing = true; });
+  document.addEventListener('compositionend', function (e) { composing = false; if (e.target.matches && e.target.matches('[data-f]')) { readField(e.target); syncForm(); } });
+  document.addEventListener('input', function (e) { if (e.target.matches && e.target.matches('[data-f]')) { readField(e.target); syncForm(); } });
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.id === 'week-sel') { var el = curElder(); if (el) { weekSel[el.id] = Number(t.value); render(); } return; }
+    if (t.matches && t.matches('[data-f]')) { readField(t); syncForm(); }
+  });
+
+  // 헤더: 내리면 숨고 올리면 나온다
+  (function () {
+    var sc = $('#scroller'), bar = $('#appbar'), lastY = 0;
+    sc.addEventListener('scroll', function () {
+      var y = sc.scrollTop;
+      if (y > lastY + 6 && y > 64) bar.classList.add('hide');
+      else if (y < lastY - 6 || y < 12) bar.classList.remove('hide');
+      lastY = y;
+    }, { passive: true });
+  })();
+
+  // 프로필 좌우로 넘기기
+  function bindCarousel() {
+    var c = $('#carousel'); if (!c) return;
+    var els = visibleElders(), idx = Math.max(0, els.map(function (e) { return e.id; }).indexOf(ui.elderId));
+    var step = c.children.length > 1 ? c.children[1].offsetLeft - c.children[0].offsetLeft : c.clientWidth;
+    c.scrollLeft = idx * step;
+    var timer = null;
+    c.addEventListener('scroll', function () {
+      clearTimeout(timer);
+      timer = setTimeout(function () { var i = Math.round(c.scrollLeft / (step || 1)); if (i < els.length && els[i].id !== ui.elderId) { ui.elderId = els[i].id; saveUI(); render(); } }, 140);
+    }, { passive: true });
+  }
+
+  async function doDownload() {
+    if (!caps.downloads) { toast('이 화면에서는 내려받을 수 없어요'); return; }
+    try {
+      var res = await fetch('kiokmasil-offline.html'); if (!res.ok) throw new Error('fetch');
+      await caps.downloads.save({ filename: '기억마실-오프라인.html', data: await res.text() });
+      toast('HTML 파일을 내려받았어요');
+    } catch (e) { if (e && e.code === 'declined') return; toast('내려받지 못했어요. 잠시 뒤 다시 눌러 주세요'); }
+  }
+
+  /* ---------- 아이폰 프레임 ---------- */
+  function frameMode() { var h = (location.hash || '').slice(1); if (h === 'pc' || h === 'phone') return h; return (innerWidth >= 760 && innerHeight >= 560) ? 'pc' : 'phone'; }
+  function layoutFrame() {
+    var f = frameMode(); document.documentElement.setAttribute('data-frame', f);
+    if (f === 'pc') { var s = Math.min(1, (innerHeight - 60) / 876, (innerWidth - 32) / 417); document.documentElement.style.setProperty('--fs', Math.max(0.45, s).toFixed(3)); }
+  }
+  function tickClock() { var d = new Date(), h = d.getHours() % 12 || 12; $('#sb-time').textContent = h + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes(); }
+  window.addEventListener('resize', function () { layoutFrame(); bindCarousel(); });
+  window.addEventListener('hashchange', layoutFrame);
+  layoutFrame(); tickClock(); setInterval(tickClock, 15000);
+  setInterval(function () { if (store.state && ui.role === 'elder' && !eflow && enav.screen === 'home' && !sheet) render(); }, 60000);   // 시간이 지나면 '지금 할 일'이 바뀐다
+
+  /* ---------- 시작 ---------- */
+  (async function boot() {
+    var splash = $('#splash'), t0 = Date.now(), ok = false;
+    try { ok = await connect(); } catch (e) { ok = false; }
+    if (!ok) startLocal();
+    setTimeout(function () { splash.classList.add('out'); setTimeout(function () { splash.hidden = true; }, 500); }, Math.max(0, 3000 - (Date.now() - t0)));
+  })();
+})();
+</script>
