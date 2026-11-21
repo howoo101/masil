@@ -1325,14 +1325,14 @@ var Engine = (function () {
   function todayLine(el) {
     var t = S().today, day = el.days[t] || {}, ms = day.m || {};
     var eaten = E.MEALS.filter(function (k) { return ms[k] && upTo(t, ms[k].t); }).map(function (k) { return E.MEAL_NAME[k]; });
-    var places = [], last = null;
+    var places = [], last = null, snap = false;
     if (day.q !== 'gap') (day.v || []).forEach(function (v) {
       if (!upTo(t, v.e) || v.p === 'home') return;
-      var n = v.p === 'snap' ? '바깥나들이' : E.TYPES[v.p]; if (n && places.indexOf(n) < 0) places.push(n);
+      var n = v.p === 'snap' ? null : E.TYPES[v.p]; if (n && places.indexOf(n) < 0) places.push(n); if (v.p === 'snap') snap = true;
       if (!last || v.e > last) last = v.e;
     });
     E.MEALS.forEach(function (k) { if (ms[k] && upTo(t, ms[k].t) && (!last || ms[k].t > last)) last = ms[k].t; });
-    if (day.w && day.w.t && upTo(t, day.w.t) && !places.length) places.push('바깥나들이');
+    if (!places.length && (snap || (day.w && day.w.t && upTo(t, day.w.t)))) places.push('바깥나들이');
     var who = callOf(el) + '는 오늘 ', s;
     if (eaten.length && places.length) s = who + eaten.join('·') + ' 드시고 ' + places.join('·') + ' 다녀오셨어요';
     else if (eaten.length) s = who + eaten.join('·') + ' 드셨어요';
