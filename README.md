@@ -44,4 +44,7 @@
 | [pitch-deck.pptx](https://howoo101.github.io/masil/files/pitch-deck.pptx) | 데모데이 피치덱 (5장 시연 영상, 발표자 노트에 대본) |
 | [demo.mp4](https://howoo101.github.io/masil/files/demo.mp4) | 실제 웹 화면 시연 영상 57초 (보호자 답장 → 어르신 답장 보기·사진 보내기 → 다시 보호자) |
 | [presentation-script.md](files/presentation-script.md) | 발표 스크립트 5분 + 예상 질문 |
+| [pitch-deck-B.pptx](https://howoo101.github.io/masil/files/pitch-deck-B.pptx) | B안 피치덱: 팀원이 만든 ‘마실’ 사이트(식사·복약·운동 체크, GPS 걷기, 기관 연결) 기준 |
+| [demo-B.mp4](https://howoo101.github.io/masil/files/demo-B.mp4) | B안 시연 영상 55초 (어르신 체크·걷기·편지 → 보호자 리포트·안부 확인) |
+| [presentation-script-B.md](files/presentation-script-B.md) | B안 발표 스크립트 + 예상 질문 |
 | [photo-flow.png](https://howoo101.github.io/masil/files/photo-flow.png) | 사진이 리포트에 보이는 방식 |
