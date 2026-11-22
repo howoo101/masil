@@ -576,7 +576,7 @@ html[data-frame="phone"] .statusbar,html[data-frame="phone"] .homebar,html[data-
 var Engine = (function () {
   'use strict';
   var TODAY = '2026-11-22';
-  var TYPES = { home: '집', senior: '경로당', clinic: '보건지소', mart: '마트', market: '오일장', walk: '산책로', snap: '사진 찍은 곳' };
+  var TYPES = { home: '집', senior: '경로당', clinic: '보건지소', mart: '마트', market: '오일장', walk: '산책로', snap: '사진 찍은 곳', gps: '걷기 기록' };
   var PLACE_ORDER = ['senior', 'clinic', 'mart', 'market', 'walk'];
   // 정확한 좌표 대신 "집에서 몇 km, 어느 쪽"만 둔다. [거리 km, 방향 °(동쪽 0, 반시계), 이름표 위치]
   var LAYOUTS = {
@@ -613,7 +613,7 @@ var Engine = (function () {
   function isObj(v) { return v && typeof v === 'object' && !Array.isArray(v); }
   // db의 update와 같은 규칙: 객체는 재귀로 합치고 배열과 값은 통째로 바꾼다
   function merge(t, p) { Object.keys(p).forEach(function (k) { var v = p[k]; if (isObj(v) && isObj(t[k])) merge(t[k], v); else t[k] = v === undefined ? v : clone(v); }); return t; }
-  function placeKm(layout, p) { if (p === 'home' || p === 'snap') return 0; var L = LAYOUTS[layout] || LAYOUTS.sudong; return L[p] ? L[p][0] : 0; }
+  function placeKm(layout, p) { if (p === 'home' || p === 'snap' || p === 'gps') return 0; var L = LAYOUTS[layout] || LAYOUTS.sudong; return L[p] ? L[p][0] : 0; }
   function visitKm(layout, v) { return v.km != null ? v.km : placeKm(layout, v.p); }
   function steps(k) { return Math.round(2 * k * RULES.stepsPerKm / 100) * 100; }
   function stepsKm(total) { return Math.round(total * RULES.stepsPerKm / 100) * 100; }   // 오간 거리 합계 → 걸음 (추정)
@@ -705,7 +705,7 @@ var Engine = (function () {
     if (!gap) vs.forEach(function (v) {
       if (!TYPES[v.p] || v.p === 'home') return;
       var d = Math.max(0, toMin(v.e) - toMin(v.s)), k = visitKm(layout, v);
-      r.out = true; r.outMin += d; r.maxKm = Math.max(r.maxKm, k); r.walkKm += 2 * k;
+      r.out = true; r.outMin += d; r.maxKm = Math.max(r.maxKm, k); r.walkKm += v.walk != null ? v.walk : 2 * k;
       r.places[v.p] = (r.places[v.p] || 0) + 1; r.placeMin[v.p] = (r.placeMin[v.p] || 0) + d;
       if (v.src === 'photo') r.photoOut++;
     });
@@ -1015,6 +1015,52 @@ var Engine = (function () {
     var seed = 0; for (var i = 0; i < d.length; i++) seed = (seed * 31 + d.charCodeAt(i)) % 997;
     var frac = d === t ? Math.max(0, Math.min(1, (nowMin() - 420) / 780)) : 1;
     return Math.round((E.stepsKm(kmSum) + (500 + seed % 500) * frac) / 10) * 10;
+  }
+  // GPS 걷기 기록: 화면을 켜 둔 동안 위치로 걸은 거리를 재고, 보폭 65cm로 걸음을 추정한다 (집 좌표는 이 기기에만)
+  var gps = { watch: null, elId: null, prev: null, m: 0, r: 0, deg: null, start: null, last: 0 };
+  function gpsOn(el) { return gps.watch !== null && (!el || gps.elId === el.id); }
+  function gpsStepsOf(m) { return Math.round(m / 0.65 / 10) * 10; }
+  function gpsText(m) { return (m / 1000).toFixed(2) + 'km · 약 ' + gpsStepsOf(m).toLocaleString() + '걸음'; }
+  function gpsStart(el) {
+    if (!navigator.geolocation) { toast('이 휴대폰에서는 위치를 쓸 수 없어요'); return; }
+    if (el.paused && el.paused.on) { toast('위치 기록이 꺼져 있어요. 설정에서 켜 주세요'); return; }
+    var g0 = ((el.days || {})[S().today] || {}).g || {};
+    gps = { watch: null, elId: el.id, prev: null, m: g0.m || 0, r: g0.r || 0, deg: g0.deg != null ? g0.deg : null, start: nowHM(), last: Date.now() };
+    gps.watch = navigator.geolocation.watchPosition(gpsFix, function () { toast('위치를 확인할 수 없어요. 잠시 뒤 다시 해 주세요'); gpsStop(true); }, { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 });
+    enav = { screen: 'home', id: null }; render(); goTop(); toast('걷기 기록을 시작했어요. 화면을 켜 둔 동안 기록해요');
+  }
+  function gpsFix(pos) {
+    if (gps.watch === null) return;
+    var c = pos.coords, ts = pos.timestamp;
+    if (document.hidden) { gps.prev = null; return; }
+    if (c.accuracy > 100) return;                       // 위치가 부정확하면 쓰지 않는다
+    var here = { lat: c.latitude, lon: c.longitude }, hm0 = homes[gps.elId];
+    if (hm0) { var d = distKm(hm0, here); if (d > gps.r) { gps.r = d; gps.deg = bearing(hm0, here); } }
+    if (c.accuracy <= 35) {
+      if (gps.prev) {
+        var sec = (ts - gps.prev.ts) / 1000, mt = distKm(gps.prev.p, here) * 1000;
+        if (sec > 0 && sec <= 90 && mt / sec <= 3) { if (mt >= Math.max(5, (c.accuracy + gps.prev.acc) / 3)) { gps.m += mt; gps.prev = { p: here, ts: ts, acc: c.accuracy }; } }   // 걷는 속도(초속 3m 이하)만 더한다
+        else gps.prev = { p: here, ts: ts, acc: c.accuracy };
+      } else gps.prev = { p: here, ts: ts, acc: c.accuracy };
+    } else gps.prev = null;
+    var live = $('#gps-live'); if (live) live.textContent = gpsText(gps.m);
+    if (Date.now() - gps.last > 8000) gpsCommit();
+  }
+  function gpsCommit() {
+    var st = S(), el = st && st.elders[gps.elId]; if (!el) return; gps.last = Date.now();
+    var t = st.today, day = el.days[t] || {}, dp = { g: { m: Math.round(gps.m), r: Math.round(gps.r * 100) / 100, deg: gps.deg != null ? Math.round(gps.deg) : null, t: nowHM() } };
+    if (gps.m >= 150 || gps.r >= 0.15) {                // 150m 넘게 움직이면 바깥나들이로 센다
+      var vis = (day.v || []).filter(function (v) { return v.src !== 'gps'; }), old = (day.v || []).filter(function (v) { return v.src === 'gps'; })[0];
+      vis.push({ p: 'gps', s: old ? old.s : gps.start, e: nowHM(), km: Math.round(Math.max(gps.r, 0) * 100) / 100, deg: gps.deg != null ? Math.round(gps.deg) : null, src: 'gps', walk: Math.round(gps.m) / 1000 });
+      dp.v = vis; if (!day.w) dp.w = { t: nowHM() };
+    }
+    var o = { days: {} }; o.days[t] = dp; update(patchElder(el.id, o));
+  }
+  function gpsStop(silent) {
+    if (gps.watch === null) return;
+    try { navigator.geolocation.clearWatch(gps.watch); } catch (e) { /* 무시 */ }
+    var m = gps.m; gpsCommit(); gps.watch = null; gps.prev = null; render();
+    if (!silent) { if (m >= 50) celebrate({ title: '잘 걸으셨어요!', sub: gpsText(m), next: seersText(S().elders[gps.elId]) + '께도 알려 드렸어요', speak: '잘 걸으셨어요' }); else toast('걷기 기록을 끝냈어요'); }
   }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function nowMin() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
@@ -1395,7 +1441,7 @@ var Engine = (function () {
     var places = [], last = null, snap = false;
     if (day.q !== 'gap') (day.v || []).forEach(function (v) {
       if (!upTo(t, v.e) || v.p === 'home') return;
-      var n = v.p === 'snap' ? null : E.TYPES[v.p]; if (n && places.indexOf(n) < 0) places.push(n); if (v.p === 'snap') snap = true;
+      var n = v.p === 'snap' || v.p === 'gps' ? null : E.TYPES[v.p]; if (n && places.indexOf(n) < 0) places.push(n); if (v.p === 'snap' || v.p === 'gps') snap = true;
       if (!last || v.e > last) last = v.e;
     });
     E.MEALS.forEach(function (k) { if (ms[k] && upTo(t, ms[k].t) && (!last || ms[k].t > last)) last = ms[k].t; });
@@ -1422,6 +1468,7 @@ var Engine = (function () {
     var chips = [], pp = pillOf(el, t), hs = healthSteps(el, t);
     if (hasPill(el)) chips.push(pp ? (pp.unk ? '약: 기억 안 나요' : '약 드셨어요 ' + esc(pp.t || '')) : '약: 아직 체크 없음');
     if (hs != null) chips.push('걸음 ' + hs.toLocaleString() + '보 · 건강 앱' + (el.health.src === 'native' ? '' : ' (시연 값)'));
+    var gg = (el.days[t] || {}).g; if (gg && gg.m) chips.push('걷기 기록 ' + gpsText(gg.m));
     if (chips.length) h += '<p class="t-sub">' + chips.join(' · ') + '</p>';
     if (wait.length) {
       var p = wait[0], d = String(p.at).split(' '), tag = p.meal ? E.MEAL_NAME[p.meal] + ' 밥상' : p.where === 'out' ? '마실' : '사진';
@@ -1654,7 +1701,7 @@ var Engine = (function () {
       var day = el.days[d] || {}, out = 0;
       if (day.q !== 'gap') (day.v || []).forEach(function (v) {
         var xy;
-        if (v.p === 'snap') { if (v.km == null || v.deg == null) return; xy = polar(v.km, v.deg); snaps.push({ xy: xy, v: v }); }
+        if (v.p === 'snap' || v.p === 'gps') { if (v.km == null || v.deg == null) return; xy = polar(v.km, v.deg); snaps.push({ xy: xy, v: v }); }
         else if (lay[v.p]) { xy = pos(v.p); visited[v.p] = true; }
         else return;
         var dmin = Math.max(0, E.toMin(v.e) - E.toMin(v.s)), end = cellIdx(xy[0], xy[1]);
@@ -1927,7 +1974,10 @@ var Engine = (function () {
     var greet = nm < 660 ? '좋은 아침이에요' : nm < 1020 ? '좋은 오후예요' : '편안한 저녁 되세요';
     var unseen = inboxUnseen(el), memo = memoryOpen(el), cur = E.currentMission(day, nm), nj = newJoin(el), card, hidePhoto = false;
     var pillDue = hasPill(el) && !day.p && nm >= 480, healthAsk = !el.health, hsToday = healthSteps(el, t);
-    if (unseen.length) {
+    if (gpsOn(el)) {
+      hidePhoto = true;
+      card = eCard('now', MICO.walk, '걷는 중이에요', '<span id="gps-live">' + gpsText(gps.m) + '</span>', '<button type="button" class="btn primary e-main" data-act="gps-stop">걷기 기록 끝내기</button>');
+    } else if (unseen.length) {
       var msg = unseen[0], what = msg.post ? '답장했어요' : msg.kind === 'praise' ? '칭찬을 보냈어요' : msg.kind === 'video' ? '영상을 보냈어요' : '사진을 보냈어요';
       card = eCard('now', msg.kind === 'praise' ? MICO.heart : MICO.letter, esc(msg.from) + ' 님이 ' + what, '', '<button type="button" class="btn primary e-main" data-act="e-open" data-to="inbox" data-id="' + esc(msg.id) + '">보기</button>');
     } else if (nj) {
@@ -1941,7 +1991,7 @@ var Engine = (function () {
       card = eCard('now', MICO.pill, '약 드셨어요?', '', '<button type="button" class="btn primary e-main" data-act="e-pill" data-v="yes">네, 먹었어요</button><button type="button" class="btn e-second" data-act="e-pill" data-v="unk">기억 안 나요</button>');
     } else if (cur && cur.k === 'w') {
       hidePhoto = true;
-      card = eCard('now', MICO.walk, '오늘 마실 다녀오셨어요?', '밖에서 사진을 찍으면 저절로 기록돼요', '<button type="button" class="btn primary e-main" data-act="e-photo">밖에서 사진 찍기</button><button type="button" class="btn e-second" data-act="e-walk">그냥 다녀왔어요</button>');
+      card = eCard('now', MICO.walk, '오늘 마실 다녀오셨어요?', '밖에서 사진을 찍으면 저절로 기록돼요', '<button type="button" class="btn primary e-main" data-act="e-photo">밖에서 사진 찍기</button><button type="button" class="btn e-second" data-act="gps-start">걷기 기록 시작</button><button type="button" class="btn e-second" data-act="e-walk">그냥 다녀왔어요</button>');
     } else if (cur) {
       card = eCard('now', MICO.bowl, E.MEAL_NAME[cur.k] + ' 드셨어요?', '', '<button type="button" class="btn primary e-main" data-act="e-meal" data-k="' + cur.k + '">네, 먹었어요</button><button type="button" class="btn e-second" data-act="e-meal-unk" data-k="' + cur.k + '">기억 안 나요</button>');
     } else if (memo) {
@@ -1950,13 +2000,14 @@ var Engine = (function () {
       hidePhoto = true;
       card = eCard('', MICO.letter, '오늘 본 걸 사진으로 보내 보세요', esc(mainName(el)) + ' 님이 꼭 답장해 드려요', '<button type="button" class="btn primary e-main" data-act="e-photo">' + IC.cam + '사진 찍어 보내기</button>');
     }
-    return '<div class="e-page"><p class="e-greet">' + esc(el.short) + ' 님, ' + greet + '<span>' + dateLabel(t) + '</span></p>' + card + stampsHTML(day, el) + (hsToday != null ? '<p class="e-steps">오늘 <b>' + hsToday.toLocaleString() + '</b>걸음 · 저절로 기록 중</p>' : '') +
+    return '<div class="e-page"><p class="e-greet">' + esc(el.short) + ' 님, ' + greet + '<span>' + dateLabel(t) + '</span></p>' + card + stampsHTML(day, el) + (hsToday != null ? '<p class="e-steps">오늘 <b>' + hsToday.toLocaleString() + '</b>걸음 · 저절로 기록 중</p>' : (day.g && day.g.m && !gpsOn(el) ? '<p class="e-steps">오늘 걷기 기록 <b>' + gpsStepsOf(day.g.m).toLocaleString() + '</b>걸음</p>' : '')) +
       (hidePhoto ? '' : '<button type="button" class="btn e-second" data-act="e-photo">' + IC.cam + '사진 보내기</button>') +
       '<button type="button" class="btn e-second" data-act="e-nav" data-to="more">더보기</button></div>';
   }
   function mainName(el) { var m = mainOf(el); return m ? m.p.short : '가족'; }
   function eMore(el) {
     return '<div class="e-page">' + eHead('더보기', 'home') +
+      '<button type="button" class="btn e-second" data-act="' + (gpsOn(el) ? 'gps-stop' : 'gps-start') + '">' + (gpsOn(el) ? '걷기 기록 끝내기' : '걷기 기록 시작') + '</button>' +
       '<button type="button" class="btn e-second" data-act="e-nav" data-to="week">이번 주 나의 마실</button>' +
       '<button type="button" class="btn e-second" data-act="e-nav" data-to="settings">설정</button>' +
       '<button type="button" class="btn e-second" data-act="role" data-role="guardian">보호자 화면으로</button></div>';
@@ -2279,7 +2330,7 @@ var Engine = (function () {
     el.textContent = msg; el.hidden = false; el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
     clearTimeout(toastTimer); toastTimer = setTimeout(function () { el.hidden = true; }, 3200);
   }
-  function setRole(r) { hideNudge(); if (r === 'elder') setTimeout(function () { mealNudge(false); }, 1500); ui.role = r; saveUI(); nav = { tab: 'report', detail: null }; enav = { screen: 'home', id: null }; eflow = null; elderStep = 0; confirmKey = null; sheet = null; renderSheet(); render(); goTop(); }
+  function setRole(r) { hideNudge(); gpsStop(true); if (r === 'elder') setTimeout(function () { mealNudge(false); }, 1500); ui.role = r; saveUI(); nav = { tab: 'report', detail: null }; enav = { screen: 'home', id: null }; eflow = null; elderStep = 0; confirmKey = null; sheet = null; renderSheet(); render(); goTop(); }
   function copy(text, okMsg) { var fail = okMsg ? '문구를 길게 눌러 복사해 주세요' : '코드를 길게 눌러 복사해 주세요'; try { navigator.clipboard.writeText(text).then(function () { toast(okMsg || '초대 코드를 복사했어요'); }, function () { toast(fail); }); } catch (e) { toast(fail); } }
   async function setHomeHere(id, toForm) {
     toast('위치를 확인하고 있어요');
@@ -2384,6 +2435,8 @@ var Engine = (function () {
       }
       case 'e-mem-skip': { var ok2 = { memories: {} }; ok2.memories[id] = { answer: { skip: true, at: stamp() } }; update(patchElder(el.id, ok2)); enav = { screen: 'home', id: null }; render(); goTop(); return; }
       case 'loc': { var on = !(el.paused && el.paused.on); update(patchElder(el.id, { paused: { on: on, at: stamp() } })); toast(on ? '위치 기록을 잠시 껐어요' : '위치 기록을 다시 켰어요'); return; }
+      case 'gps-start': gpsStart(el); return;
+      case 'gps-stop': gpsStop(false); return;
       case 'e-health-open': enav = { screen: 'health', id: null }; render(); goTop(); return;
       case 'e-health-later': update(patchElder(el.id, { health: { linked: false, at: stamp() } })); return;
       case 'e-health-deny': update(patchElder(el.id, { health: { linked: false, at: stamp() } })); enav = { screen: 'home', id: null }; render(); goTop(); toast('괜찮아요. 설정에서 언제든 켤 수 있어요'); return;
