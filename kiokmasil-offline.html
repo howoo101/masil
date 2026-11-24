@@ -1622,7 +1622,7 @@ var Engine = (function () {
       '<div class="wk">' + line + bars + '</div>' + (avgDay ? '<p class="wk-legend"><i></i>평소 하루 ' + (Math.round(avgDay / 100) * 100).toLocaleString() + '걸음</p>' : '') +
       (best ? '<p class="c-p">가장 멀리 간 곳: <b>' + E.TYPES[best.p] + ' ' + E.km(best.k) + '</b> (' + E.DOW[best.d] + ')</p>' : '<p class="c-p">' + wkWord(W) + '에는 바깥 기록이 없어요</p>') +
       (photos.length ? '<div class="ths">' + photos.slice(-4).reverse().map(function (p) { return thumbBtn(p, postLabel(p)); }).join('') + '</div>' : '') +
-      '<p class="c-note">' + (healthLinked(el) ? '건강 앱 걸음 연동이 켜져 있어요' + (el.health.src === 'native' ? '.' : ' (웹 시연에서는 시연 값).') + ' 사진으로 다녀온 곳과 함께 봐요.' : '어르신이 밖에서 찍은 사진이 그대로 마실 기록이 돼요. 어르신 화면에서 건강 앱 걸음 연동을 켜면 걸음이 저절로 들어와요.') + '</p></section>';
+      '<p class="c-note">' + (healthLinked(el) ? '건강 앱 걸음 연동이 켜져 있어요' + (el.health.src === 'native' ? '.' : ' (웹 시연에서는 시연 값).') + ' 사진으로 다녀온 곳과 함께 봐요.' : '어르신이 밖에서 찍은 사진이 그대로 마실 기록이 돼요. 어르신 화면에서 건강 앱 연동을 켜면 걸음 수를 가져와요.') + '</p></section>';
   }
 
   function mealCard(el, W) {
@@ -2027,9 +2027,9 @@ var Engine = (function () {
       card = eCard('', MICO.memory, '오늘의 옛날 사진이 왔어요', esc(memo.by) + ' 님이 보냈어요', '<button type="button" class="btn primary e-main" data-act="e-open" data-to="memory" data-id="' + esc(memo.id) + '">보기</button>');
     } else {
       hidePhoto = true;
-      card = eCard('', MICO.letter, '오늘 본 걸 사진으로 보내 보세요', esc(mainName(el)) + ' 님이 꼭 답장해 드려요', '<button type="button" class="btn primary e-main" data-act="e-photo">' + IC.cam + '사진 찍어 보내기</button>');
+      card = eCard('', MICO.letter, '오늘 본 걸 사진으로 보내 보세요', esc(mainName(el)) + ' 님이 답장해 드려요', '<button type="button" class="btn primary e-main" data-act="e-photo">' + IC.cam + '사진 찍어 보내기</button>');
     }
-    return '<div class="e-page"><p class="e-greet">' + esc(el.short) + ' 님, ' + greet + '<span>' + dateLabel(t) + '</span></p>' + card + stampsHTML(day, el) + (hsToday != null ? '<p class="e-steps">오늘 <b>' + hsToday.toLocaleString() + '</b>걸음 · 저절로 기록 중</p>' : (day.g && day.g.m && !gpsOn(el) ? '<p class="e-steps">오늘 걷기 기록 <b>' + gpsStepsOf(day.g.m).toLocaleString() + '</b>걸음</p>' : '')) +
+    return '<div class="e-page"><p class="e-greet">' + esc(el.short) + ' 님, ' + greet + '<span>' + dateLabel(t) + '</span></p>' + card + stampsHTML(day, el) + (hsToday != null ? '<p class="e-steps">오늘 <b>' + hsToday.toLocaleString() + '</b>걸음 · 건강 앱에서 가져왔어요</p>' : (day.g && day.g.m && !gpsOn(el) ? '<p class="e-steps">오늘 걷기 기록 <b>' + gpsStepsOf(day.g.m).toLocaleString() + '</b>걸음</p>' : '')) +
       (hidePhoto ? '' : '<button type="button" class="btn e-second" data-act="e-photo">' + IC.cam + '사진 보내기</button>') +
       '<button type="button" class="btn e-second" data-act="e-nav" data-to="more">더보기</button></div>';
   }
@@ -2474,7 +2474,7 @@ var Engine = (function () {
         Promise.resolve(hb && hb.requestAuthorization ? hb.requestAuthorization(['steps', 'distance']) : true).catch(function () { return false; }).then(function (ok) {
           update(patchElder(hid, { health: { linked: !!ok, at: stamp(), src: hb ? 'native' : 'demo' } }));
           enav = { screen: 'home', id: null }; render(); goTop();
-          if (ok) { celebrate({ title: '연결했어요!', sub: '이제 걸음은 저절로 기록돼요', speak: '연결했어요. 이제 걸음은 저절로 기록돼요' }); healthSync(S().elders[hid]); }
+          if (ok) { celebrate({ title: '연결했어요!', sub: '이제 걸음은 휴대폰이 세어 드려요', speak: '연결했어요. 이제 걸음은 휴대폰이 세어 드려요' }); healthSync(S().elders[hid]); }
           else toast('허용하지 않았어요. 설정에서 언제든 켤 수 있어요');
           setTimeout(function () { mealNudge(false); }, 4500);
         });
