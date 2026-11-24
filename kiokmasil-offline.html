@@ -225,6 +225,8 @@ html[data-frame="phone"] .statusbar,html[data-frame="phone"] .homebar,html[data-
 .hl-list li{display:flex;align-items:center;gap:10px;font-size:28px;font-weight:700;padding:12px 14px;border-radius:14px;background:var(--inset)}
 .hl-list svg{width:26px;height:26px;color:var(--accent);flex:none}
 .hl-n{font-size:22px;color:var(--text-2);line-height:1.45}
+.plan-row{display:grid;grid-template-columns:64px minmax(0,1fr);gap:8px;align-items:center;margin-top:6px}
+.plan-row span{font-size:14px;color:var(--text-2)}
 .req{white-space:pre-wrap;font-size:13.5px;line-height:1.6;padding:12px 14px;border-radius:12px;background:var(--inset);color:var(--text-2)}
 .lt-walk{display:grid;gap:3px;min-width:0}
 .lt-bar{height:7px;border-radius:4px;background:var(--inset);overflow:hidden}
@@ -700,8 +702,12 @@ var Engine = (function () {
     elders.e1.circle.f1 = { role: 'family', call: '어머니', rel: '아들', since: '2026-11-02', status: 'joined', ack: true };
     elders.e2.circle.f2 = { role: 'family', call: '아버지', rel: '아들', since: '2026-11-03', status: 'joined', ack: true };
     elders.e1.pill = true; elders.e2.pill = true; elders.e3.pill = false;
+    // 맞춤 설정(보호자가 정함): 약 먹는 때, 요일별 마실 일정(월=0)
+    elders.e1.custom = { pills: ['b'], plan: { 0: 'senior', 2: 'senior', 4: 'welfare' } };
+    elders.e2.custom = { pills: ['b'], plan: { 5: 'clinic' } };
+    elders.e3.custom = { pills: [], plan: {} };
     elders.e1.calls = { k1: { id: 'k1', by: '김민수', at: '2026-11-17 20:10' } };
-    return { v: 6, today: TODAY, plan: 'plus',
+    return { v: 7, today: TODAY, plan: 'plus',
       people: { g1: { id: 'g1', name: '김미경', short: '미경', area: '서울 강동구' }, f1: { id: 'f1', name: '김민수', short: '민수', area: '경기 수원시' }, f2: { id: 'f2', name: '박준혁', short: '준혁', area: '서울 강동구' } },
       elders: elders, order: order,
       alerts: { 'e2:2026-11-09': { confirmedAt: '2026-11-15 20:10', by: '미경' } },
@@ -1006,8 +1012,30 @@ var Engine = (function () {
 
   var $ = function (s, r) { return (r || document).querySelector(s); };
   MICO.pill = '<svg ' + MSV + '><rect x="14" y="36" width="76" height="32" rx="16" transform="rotate(-35 52 52)"/><path d="M43 39l18 26"/></svg>';
-  function hasPill(el) { return !!el && el.pill !== false; }
-  function pillOf(el, d) { var day = (el.days || {})[d] || {}; return day.p || null; }
+  // 맞춤 설정: 약 먹는 때(아침·점심·저녁 중)와 요일별 마실 일정은 어르신마다 다르다
+  var PILL_AT = { b: 480, l: 750, d: 1110 }, PLAN_PLACES = { welfare: '복지관', clinic: '병원', senior: '경로당', market: '시장', walk: '산책' };
+  function pillSlots(el) { var c = el && el.custom; if (c && c.pills) return E.MEALS.filter(function (k) { return c.pills.indexOf(k) >= 0; }); return el && el.pill !== false ? ['b'] : []; }
+  function hasPill(el) { return pillSlots(el).length > 0; }
+  function pillGet(el, d, k) { var day = (el.days || {})[d] || {}, sl = pillSlots(el); return (day.ps || {})[k] || (k === sl[0] ? day.p || null : null); }
+  function pillOf(el, d) {   // 그날 요약: 먹은 횟수 n / 정해 둔 횟수 total
+    var sl = pillSlots(el), n = 0, unk = 0, last = null;
+    sl.forEach(function (k) { var x = pillGet(el, d, k); if (!x) return; if (x.unk) unk++; else n++; last = x; });
+    if (!n && !unk) return null;
+    return { t: last.t, unk: !n, anyUnk: unk > 0, n: n, total: sl.length, all: n === sl.length };
+  }
+  function planKey(el, d) { var c = el && el.custom; return (c && c.plan && c.plan[E.dow(d)]) || null; }
+  function planDone(el, d) {
+    var day = (el.days || {})[d] || {}, k = planKey(el, d); if (!k) return null;
+    if (day.plan) return day.plan;
+    var hit = (day.q === 'gap' ? [] : day.v || []).filter(function (v) { return v.p === k && (d !== S().today || E.toMin(v.e) <= nowMin()); })[0];
+    return hit ? { t: hit.e } : null;
+  }
+  function planLine(el, W) {
+    var t = S().today, tot = 0, done = 0, miss = [];
+    W.m.dates.forEach(function (d, i) { var k = planKey(el, d); if (!k || d > t) return; tot++; if (planDone(el, d)) done++; else if (d < t) miss.push(E.DOW[i] + ' ' + PLAN_PLACES[k]); });
+    if (!tot) return '';
+    return '<p class="c-p">정해 둔 일정 ' + tot + '번 중 <b>' + done + '번</b> 다녀오셨어요' + (miss.length ? ' · 못 가신 날: ' + esc(miss.join(', ')) : '') + '</p>';
+  }
   // 건강 앱 걸음 연동: 설치형 앱(껍데기)이 window.MasilHealth 를 넣어 주면 실제 값을, 웹 시연에서는 다녀온 거리로 만든 시연 값을 쓴다
   //   MasilHealth.requestAuthorization(['steps','distance']) → Promise<boolean>,  MasilHealth.getSteps('YYYY-MM-DD') → Promise<number>
   var healthCache = {};
@@ -1170,7 +1198,7 @@ var Engine = (function () {
   function startLocal() {
     store.mode = 'local'; store.ref = null; store.loading = false;
     var saved = lsGet();
-    apply(saved && saved.v === 6 && saved.elders ? saved : E.buildSeed());
+    apply(saved && saved.v === 7 && saved.elders ? saved : E.buildSeed());
   }
   async function connect() {
     if (!viewerAvailable) return false;
@@ -1494,7 +1522,8 @@ var Engine = (function () {
       '<p class="t-sub">' + (tl.last ? '마지막 소식 ' + esc(tl.last) + ' · ' : '') + (late ? '평소 이 시간엔 소식이 있었어요. 안부 전화 한 통 어떠세요?' : '평소와 다른 점이 생기면 바로 알려 드려요') + '</p>' +
       (late ? '<a class="btn primary block" href="tel:' + esc(el.phone.replace(/-/g, '')) + '">' + IC.phone + '안부 전화하기</a>' : '');
     var chips = [], pp = pillOf(el, t), hs = healthSteps(el, t);
-    if (hasPill(el)) chips.push(pp ? (pp.unk ? '약: 기억 안 나요' : '약 드셨어요 ' + esc(pp.t || '')) : '약: 아직 체크 없음');
+    if (hasPill(el)) chips.push(pp ? (pp.total > 1 ? '약 ' + pp.n + '/' + pp.total + '번' + (pp.anyUnk ? ' (기억 안 나요 있음)' : '') : (pp.unk ? '약: 기억 안 나요' : '약 드셨어요 ' + esc(pp.t || ''))) : '약: 아직 체크 없음');
+    var pk = planKey(el, t); if (pk) { var pdn = planDone(el, t); chips.push('오늘 일정 ' + PLAN_PLACES[pk] + ': ' + (pdn ? '다녀오셨어요' + (pdn.t ? ' ' + esc(pdn.t) : '') : '아직 소식 없음')); }
     if (hs != null) chips.push('걸음 ' + hs.toLocaleString() + '보 · 건강 앱' + (el.health.src === 'native' ? '' : ' (시연 값)'));
     var gg = (el.days[t] || {}).g; if (gg && gg.m) chips.push('걷기 기록 ' + gpsText(gg.m));
     if (chips.length) h += '<p class="t-sub">' + chips.join(' · ') + '</p>';
@@ -1510,6 +1539,7 @@ var Engine = (function () {
       var r = done[0].reply, rm = (el.inbox || {})[r.msg];
       h += '<p class="sent">' + IC.check + ' 최근 사진에 모두 답장했어요 · ' + esc(r.by) + ' 님 “' + esc(r.text || '사진') + '” · ' + (rm && rm.seenAt ? '어르신이 보셨어요' : '아직 안 보셨어요') + '</p>';
     }
+    h += '<button type="button" class="btn block quiet" data-act="open-custom" data-id="' + el.id + '">맞춤 설정 · 약 먹는 때와 요일별 일정</button>';
     return h + '</section>';
   }
 
@@ -1590,7 +1620,7 @@ var Engine = (function () {
     var rows = m.dates.map(function (d, i) {
       var p = m.per[i], dp = posts.filter(function (x) { return String(x.at).indexOf(d) === 0; });
       var meals = E.MEALS.map(function (k) { var s = mealState(el, d, k, p); return '<i class="ml ' + s.s + '" title="' + E.MEAL_NAME[k] + '">' + (s.s === 'photo' ? IC.cam : E.MEAL_NAME[k].charAt(0)) + '</i>'; }).join('');
-      if (hasPill(el)) { var pl = pillOf(el, d); meals += '<i class="ml ' + (d > t ? 'none' : pl ? (pl.unk ? 'unk' : 'ok') : 'miss') + '" title="약">' + (pl && pl.unk ? '?' : '약') + '</i>'; }
+      if (hasPill(el)) { var pl = pillOf(el, d); meals += '<i class="ml ' + (d > t ? 'none' : pl ? (pl.all ? 'ok' : pl.n ? 'senior' : 'unk') : 'miss') + '" title="약">' + (pl && pl.unk ? '?' : '약') + '</i>'; }
       var walk;
       if (!p) walk = '<span class="lt-none">' + (d > t ? '' : '기록 전') + '</span>';
       else if (p.gap) walk = '<span class="lt-none">위치 기록 없음 · 외출로 세지 않음</span>';
@@ -1622,7 +1652,7 @@ var Engine = (function () {
       '<div class="wk">' + line + bars + '</div>' + (avgDay ? '<p class="wk-legend"><i></i>평소 하루 ' + (Math.round(avgDay / 100) * 100).toLocaleString() + '걸음</p>' : '') +
       (best ? '<p class="c-p">가장 멀리 간 곳: <b>' + E.TYPES[best.p] + ' ' + E.km(best.k) + '</b> (' + E.DOW[best.d] + ')</p>' : '<p class="c-p">' + wkWord(W) + '에는 바깥 기록이 없어요</p>') +
       (photos.length ? '<div class="ths">' + photos.slice(-4).reverse().map(function (p) { return thumbBtn(p, postLabel(p)); }).join('') + '</div>' : '') +
-      '<p class="c-note">' + (healthLinked(el) ? '건강 앱 걸음 연동이 켜져 있어요' + (el.health.src === 'native' ? '.' : ' (웹 시연에서는 시연 값).') + ' 사진으로 다녀온 곳과 함께 봐요.' : '어르신이 밖에서 찍은 사진이 그대로 마실 기록이 돼요. 어르신 화면에서 건강 앱 연동을 켜면 걸음 수를 가져와요.') + '</p></section>';
+      planLine(el, W) + '<p class="c-note">' + (healthLinked(el) ? '건강 앱 걸음 연동이 켜져 있어요' + (el.health.src === 'native' ? '.' : ' (웹 시연에서는 시연 값).') + ' 사진으로 다녀온 곳과 함께 봐요.' : '어르신이 밖에서 찍은 사진이 그대로 마실 기록이 돼요. 어르신 화면에서 건강 앱 연동을 켜면 걸음 수를 가져와요.') + '</p></section>';
   }
 
   function mealCard(el, W) {
@@ -1632,9 +1662,9 @@ var Engine = (function () {
     var li = [];
     li.push([miss.length >= 3, miss.length ? '체크 없는 끼니: ' + miss.join(', ') : '빠진 끼니 없이 챙겨 드셨어요']);
     if (hasPill(el)) {
-      var pc = 0, pu = 0, t0 = S().today;
-      m.dates.forEach(function (d) { if (d > t0) return; var pl = pillOf(el, d); if (pl && pl.unk) pu++; else if (pl) pc++; });
-      li.push([pc <= m.elapsed - 2, '약 체크 ' + pc + '/' + m.elapsed + '일' + (pu ? ' · 기억 안 나요 ' + pu + '일' : '')]);
+      var pc = 0, pu = 0, t0 = S().today, tot = pillSlots(el).length;
+      m.dates.forEach(function (d) { if (d > t0) return; var pl = pillOf(el, d); if (pl) { pc += pl.n; if (pl.anyUnk) pu++; } });
+      li.push([pc <= (m.elapsed - 2) * tot, '약 체크 ' + pc + '/' + (m.elapsed * tot) + (tot > 1 ? '번' : '일') + (pu ? ' · 기억 안 나요 ' + pu + '일' : '')]);
     }
     var mu = 0; m.dates.forEach(function (d) { var dd = (el.days || {})[d]; if (dd && dd.u) mu += Object.keys(dd.u).filter(function (k) { return dd.u[k]; }).length; });
     if (mu) li.push([mu >= 3, '식사를 ‘기억 안 나요’로 답한 끼니 ' + mu + '번']);
@@ -1989,9 +2019,9 @@ var Engine = (function () {
   function eHead(title, back) { return '<div class="e-head"><h1>' + title + '</h1><button type="button" class="icon-btn e-back" data-act="e-nav" data-to="' + back + '" aria-label="뒤로">' + IC.back + '</button></div>'; }
   function eCard(now, ico, q, sub, btns) { return '<section class="e-card' + (now ? ' now' : '') + '">' + ico + '<h2 class="e-q">' + q + '</h2>' + (sub ? '<p class="e-sub">' + sub + '</p>' : '') + (btns || '') + '</section>'; }
   function stampsHTML(day, el) {
-    var ms = E.missionState(day), u = (day && day.u) || {}, pill = hasPill(el), p = (day && day.p) || null;
+    var ms = E.missionState(day), u = (day && day.u) || {}, pill = hasPill(el), p = pill ? pillOf(el, S().today) : null;
     var list = E.MISSIONS.map(function (x) { return { name: x.name, on: ms[x.k] && !(u[x.k] && !(day.m || {})[x.k]), unk: !!u[x.k] && !(day.m || {})[x.k] }; });
-    if (pill) list.push({ name: '약', on: !!p && !p.unk, unk: !!(p && p.unk) });
+    if (pill) list.push({ name: '약', on: !!p && p.all, unk: !!p && !p.all && p.anyUnk });
     var n = list.filter(function (x) { return x.on; }).length;
     return '<div class="stamps' + (list.length > 4 ? ' five' : '') + '" role="img" aria-label="오늘 도장 ' + list.length + '개 중 ' + n + '개"><p class="stamps-h">오늘 도장 ' + n + '개</p>' + list.map(function (x) {
       return '<div class="stamp' + (x.on ? ' on' : x.unk ? ' unk' : '') + '"><i>' + (x.on ? IC.check : x.unk ? '?' : '') + '</i><span>' + x.name + '</span></div>';
@@ -2001,7 +2031,9 @@ var Engine = (function () {
     var st = S(), t = st.today, day = el.days[t] || {}, nm = nowMin();
     var greet = nm < 660 ? '좋은 아침이에요' : nm < 1020 ? '좋은 오후예요' : '편안한 저녁 되세요';
     var unseen = inboxUnseen(el), memo = memoryOpen(el), cur = E.currentMission(day, nm), nj = newJoin(el), card, hidePhoto = false;
-    var pillDue = hasPill(el) && !day.p && nm >= 480, healthAsk = false, hsToday = healthSteps(el, t);
+    var pillK = null; pillSlots(el).forEach(function (k) { if (!pillK && !pillGet(el, t, k) && nm >= PILL_AT[k]) pillK = k; });
+    var planK = planKey(el, t), planDue = !!planK && !planDone(el, t) && nm >= 540;
+    var pillDue = !!pillK, healthAsk = false, hsToday = healthSteps(el, t);
     if (!el.health) setTimeout(function () { healthPrompt(false); }, 700);
     if (gpsOn(el)) {
       hidePhoto = true;
@@ -2017,7 +2049,10 @@ var Engine = (function () {
       hidePhoto = true;
       card = eCard('now', MICO.walk, '걸음을 저절로 기록할까요?', '휴대폰이 재는 걸음 수만 가져와요', '<button type="button" class="btn primary e-main" data-act="e-health-open">연결하기</button><button type="button" class="btn e-second" data-act="e-health-later">다음에 할게요</button>');
     } else if (pillDue && (!cur || cur.k === 'w')) {
-      card = eCard('now', MICO.pill, '약 드셨어요?', '', '<button type="button" class="btn primary e-main" data-act="e-pill" data-v="yes">네, 먹었어요</button><button type="button" class="btn e-second" data-act="e-pill" data-v="unk">기억 안 나요</button>');
+      card = eCard('now', MICO.pill, (pillSlots(el).length > 1 ? E.MEAL_NAME[pillK] + ' ' : '') + '약 드셨어요?', '', '<button type="button" class="btn primary e-main" data-act="e-pill" data-v="yes" data-k="' + pillK + '">네, 먹었어요</button><button type="button" class="btn e-second" data-act="e-pill" data-v="unk" data-k="' + pillK + '">기억 안 나요</button>');
+    } else if (planDue && (!cur || cur.k === 'w')) {
+      hidePhoto = true;
+      card = eCard('now', MICO.walk, '오늘은 ' + PLAN_PLACES[planK] + ' 가는 날이에요', '다녀오시면 눌러 주세요', '<button type="button" class="btn primary e-main" data-act="e-plan-done">다녀왔어요</button><button type="button" class="btn e-second" data-act="e-photo">밖에서 사진 찍기</button>');
     } else if (cur && cur.k === 'w') {
       hidePhoto = true;
       card = eCard('now', MICO.walk, '오늘 마실 다녀오셨어요?', '밖에서 사진을 찍으면 저절로 기록돼요', '<button type="button" class="btn primary e-main" data-act="e-photo">밖에서 사진 찍기</button><button type="button" class="btn e-second" data-act="gps-start">걷기 기록 시작</button><button type="button" class="btn e-second" data-act="e-walk">그냥 다녀왔어요</button>');
@@ -2227,6 +2262,19 @@ var Engine = (function () {
         '<button type="button" class="btn block" data-act="reply" data-id="' + el2.id + '">' + IC.cam + '이 사진에 답장하기</button>' +
         '<p class="c-note">어르신이 사진을 찍을 때만 위치를 읽고, 가족에게는 집에서의 거리와 방향만 보내요. 사진 속 위치 정보는 지우고 보내요.</p>' };
     }
+    if (sheet.type === 'custom') {
+      var cel = st.elders[sheet.id]; if (!cel) return { title: '맞춤 설정', body: '' };
+      var pon = function (k) { return (form.pills || '').indexOf(k) >= 0; };
+      var prow = E.MEALS.map(function (k) { return '<button type="button" class="chipbtn" data-act="custom-pill" data-val="' + k + '" aria-pressed="' + pon(k) + '">' + E.MEAL_NAME[k] + '</button>'; }).join('');
+      var rows = E.DOW.map(function (dn, i) {
+        var cur = form['plan' + i] || '';
+        return '<div class="plan-row"><span>' + dn + '요일</span><select class="select" data-f="plan' + i + '" aria-label="' + dn + '요일 일정"><option value="">없음</option>' +
+          Object.keys(PLAN_PLACES).map(function (k) { return '<option value="' + k + '"' + (cur === k ? ' selected' : '') + '>' + PLAN_PLACES[k] + '</option>'; }).join('') + '</select></div>';
+      }).join('');
+      return { title: esc(callOf(cel)) + ' 맞춤 설정', body: '<div class="field"><span class="lab">약 먹는 때 (안 드시면 모두 꺼 두세요)</span><div class="chips">' + prow + '</div></div>' +
+        '<div class="field"><span class="lab">요일별 마실 일정 (가야 하는 곳)</span>' + rows + '</div>' +
+        '<button type="button" class="btn primary block" data-act="save-custom" data-submit>저장하기</button><p class="c-note">어르신 화면에 그날 약과 일정을 물어보고, 리포트에 함께 보여 드려요.</p>' };
+    }
     if (sheet.type === 'visit') {
       var sat = nextWeekday(st.today, 5), sun = E.addDays(sat, 1), cur = (st.schedules || {})[sheet.id] || {};
       var day = form.day || cur.day || sat, slot = form.slot || cur.slot || '오후';
@@ -2407,6 +2455,17 @@ var Engine = (function () {
       case 'open-invite': { var ie = st && st.elders[id]; if (!ie) return; sheet = { type: 'invite', id: id }; form = { call: callOf(ie) }; renderSheet(); return; }
       case 'open-member': openSheet({ type: 'member', id: id, pid: t.getAttribute('data-pid') }); return;
       case 'open-visit': openSheet({ type: 'visit', id: id }); return;
+      case 'open-custom': {
+        var ce = st && st.elders[id]; if (!ce) return; sheet = { type: 'custom', id: id }; form = { pills: pillSlots(ce).join('') };
+        var cp = (ce.custom && ce.custom.plan) || {}; for (var ci = 0; ci < 7; ci++) form['plan' + ci] = cp[ci] || '';
+        renderSheet(); return;
+      }
+      case 'custom-pill': { var cv = t.getAttribute('data-val'), cs = form.pills || ''; form.pills = cs.indexOf(cv) >= 0 ? cs.replace(cv, '') : cs + cv; renderSheet(); return; }
+      case 'save-custom': {
+        var npl = {}; for (var si = 0; si < 7; si++) npl[si] = form['plan' + si] || null;
+        update(patchElder(sheet.id, { pill: (form.pills || '').length > 0, custom: { pills: E.MEALS.filter(function (k) { return (form.pills || '').indexOf(k) >= 0; }), plan: npl } }));
+        toast('맞춤 설정을 저장했어요. 어르신 화면에 바로 반영돼요'); closeSheet(); return;
+      }
       case 'open-memory': openSheet({ type: 'memory', id: id }); return;
       case 'copy': copy(t.getAttribute('data-text')); return;
       case 'copy-req': copy(t.getAttribute('data-text'), '요청 문구를 복사했어요'); return;
@@ -2482,10 +2541,18 @@ var Engine = (function () {
       }
       case 'health-toggle': if (healthLinked(el)) { update(patchElder(el.id, { health: { linked: false, at: stamp() } })); toast('걸음 자동 기록을 껐어요'); } else { enav = { screen: 'home', id: null }; render(); goTop(); healthPrompt(true); } return;
       case 'e-pill': {
-        var pv = t.getAttribute('data-v'), pd = { days: {} }; pd.days[st.today] = { p: pv === 'unk' ? { unk: true, t: nowHM() } : { t: nowHM() } };
-        update(patchElder(el.id, pd)); lastAct = { id: el.id, date: st.today, patch: { p: null } };
+        var pv = t.getAttribute('data-v'), pk2 = t.getAttribute('data-k') || pillSlots(el)[0] || 'b', pd = { days: {} }, pu2 = { ps: {} };
+        pd.days[st.today] = { ps: {} }; pd.days[st.today].ps[pk2] = pv === 'unk' ? { unk: true, t: nowHM() } : { t: nowHM() }; pu2.ps[pk2] = null;
+        update(patchElder(el.id, pd)); lastAct = { id: el.id, date: st.today, patch: pu2 };
         if (pv === 'unk') celebrate({ title: '괜찮아요', sub: '기억 안 나는 날도 있어요. ' + seersText(el) + '께는 ‘기억 안 나요’로 보여요', undo: true, speak: '괜찮아요' });
         else celebrate({ title: '잘 챙기셨어요!', sub: '약 드신 걸 ' + seersText(el) + '께도 알려 드렸어요', next: nextText(S().elders[el.id]), undo: true, speak: '잘 챙기셨어요' });
+        return;
+      }
+      case 'e-plan-done': {
+        var dpl = el.days[st.today] || {}, opl = { days: {} }; opl.days[st.today] = { plan: { t: nowHM() } }; if (!dpl.w) opl.days[st.today].w = { t: nowHM() };
+        var plab = PLAN_PLACES[planKey(el, st.today)] || '마실';
+        update(patchElder(el.id, opl)); lastAct = { id: el.id, date: st.today, patch: { plan: null, w: dpl.w || null } };
+        celebrate({ title: '잘 다녀오셨어요!', sub: plab + ' 다녀오신 걸 ' + seersText(el) + '께도 알려 드렸어요', undo: true, speak: '잘 다녀오셨어요' });
         return;
       }
       case 'e-meal-unk': {
