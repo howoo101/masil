@@ -27,6 +27,7 @@ B안(팀원의 ‘마실’)에서 좋은 점을 가져와 합쳤습니다.
 - **약 체크와 ‘기억 안 나요’**: 어르신 화면에서 식사 뒤 “약 드셨어요?”를 묻고, 식사·약 모두 ‘기억 안 나요’로 답할 수 있습니다. 보호자 화면의 오늘 카드, 생활표, 밥상 일기에 함께 보입니다.
 - **건강 앱 걸음 연동**: 어르신 화면을 처음 켜면 알림 허용 창처럼 동의 창이 자동으로 뜨고, 허용하면 그다음부터 걸음이 저절로 들어옵니다(설정에서 켜고 끌 수 있음). 웹에서는 실제 건강 앱을 읽을 수 없어 시연 값으로 보여 주고, 설치형 앱으로 감쌀 때 `window.MasilHealth`(`requestAuthorization`, `getSteps`)를 넣어 주면 실제 걸음 수를 씁니다.
 - **GPS 걷기 기록**: ‘걷기 기록 시작’을 누르면 화면을 켜 둔 동안 걸은 거리와 걸음 수(보폭 65cm 추정)를 기록합니다. 150m 넘게 움직이면 바깥나들이로 셉니다.
+- **어르신별 맞춤 설정**: 보호자 화면의 ‘맞춤 설정’에서 약 먹는 때(아침·점심·저녁)와 요일별 마실 일정(복지관·병원 등)을 정합니다. 어르신 화면이 그날 약과 일정을 묻고, 리포트에 ‘정해 둔 일정 3번 중 2번’처럼 보입니다.
 - **남양주 기관 연결**: 변화 알림 화면에서 요청 문구를 복사하고 남양주보건소 방문건강관리·시 돌봄 담당으로 연결합니다(시연에서는 전화하지 않음, 번호는 쓰기 전에 확인).
 
 돌봄 가족은 어르신마다 따로입니다. 보호자 설정의 ‘보는 사람 (시연)’에서 김민수로 바꾸면 이정숙 님 리포트만 보입니다.
@@ -46,19 +47,13 @@ B안(팀원의 ‘마실’)에서 좋은 점을 가져와 합쳤습니다.
 
 ## 발표 자료 (내려받기)
 
-**메인 발표는 B안**입니다. 팀원이 만든 ‘마실’ 사이트(https://geongang-masil.lavishavocet3.chatgpt.site/)를 시연합니다.
+합친 앱(기억마실) 하나로 발표합니다. 팀원의 ‘마실’ 시안(B안)에서 좋은 점은 이 앱에 합쳤고, B안 자료는 지웠습니다.
 
 | 파일 | 내용 |
 |---|---|
-| [pitch-deck-B.pptx](https://howoo101.github.io/masil/files/pitch-deck-B.pptx) | **메인** 피치덱: 식사·복약·운동 체크, GPS 걷기, 보호자 리포트, 남양주 기관 연결 (8장 QR은 팀원 사이트) |
-| [demo-B.mp4](https://howoo101.github.io/masil/files/demo-B.mp4) | **메인** 시연 영상 55초 (어르신 체크·걷기·편지 → 보호자 리포트·안부 확인) |
-| [presentation-script-B.md](files/presentation-script-B.md) | **메인** 발표 스크립트 5분 + 예상 질문 |
-
-참고용 A안(이 저장소의 ‘기억마실’ 웹앱 · 사진과 답장 중심)
-
-| 파일 | 내용 |
-|---|---|
-| [pitch-deck.pptx](https://howoo101.github.io/masil/files/pitch-deck.pptx) | A안 피치덱 |
-| [demo.mp4](https://howoo101.github.io/masil/files/demo.mp4) | A안 시연 영상 74초 (보호자 답장 → 걸음 연동 동의·답장 보기·밥때 알림·약·걷기 기록·사진 → 보호자 오늘 한 줄·남양주 기관 연결) |
-| [presentation-script.md](files/presentation-script.md) | A안 발표 스크립트 + 예상 질문 |
-| [photo-flow.png](https://howoo101.github.io/masil/files/photo-flow.png) | 사진이 리포트에 보이는 방식 (A안) |
+| [pitch-deck.pptx](https://howoo101.github.io/masil/files/pitch-deck.pptx) | 데모데이 피치덱 12장 (클릭 애니메이션, 7장 시연 영상, 발표자 노트에 대본, 12장은 질문용 부록) |
+| [demo.mp4](https://howoo101.github.io/masil/files/demo.mp4) | 시연 영상 46초 (보호자 답장·맞춤 설정 → 어르신 걸음 연결·답장·식사·약·오늘 일정 → 보호자 오늘 소식·남양주 기관 연결) |
+| [presentation-script.md](files/presentation-script.md) | 발표 대본 4분과 예상 질문 전체 |
+| [presentation-script.pdf](https://howoo101.github.io/masil/files/presentation-script.pdf) | 인쇄용 대본 3쪽 |
+| [persona-sim/](files/persona-sim) | AI 보호자 페르소나 설문 설계와 결과 (규칙 기반, 실제 응답 아님) |
+| [photo-flow.png](https://howoo101.github.io/masil/files/photo-flow.png) | 사진이 리포트에 보이는 방식 |
